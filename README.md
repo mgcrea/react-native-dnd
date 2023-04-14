@@ -66,7 +66,7 @@ pnpm add react-native-reanimated react-native-gesture-handler react-native-hapti
 
 Then you must follow their respective installation instructions:
 
-- [react-native-reanimated@>=3](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation)
+- [react-native-reanimated](https://docs.swmansion.com/react-native-reanimated/docs/fundamentals/installation)
 - [react-native-gesture-handler](https://docs.swmansion.com/react-native-gesture-handler/docs/installation)
 
 ## Quickstart
