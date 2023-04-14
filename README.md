@@ -46,7 +46,7 @@ yarn add @mgcrea/react-native-dnd
 pnpm add @mgcrea/react-native-dnd
 ```
 
-## Requirements
+### Dependencies
 
 This package relies on :
 
