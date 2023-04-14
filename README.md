@@ -24,6 +24,8 @@
 </p>
 <!-- markdownlint-enable MD037 -->
 
+![demo](./.github/assets/demo.gif)
+
 ## Features
 
 Modern and easy-to-use drag&drop library for react-native.
