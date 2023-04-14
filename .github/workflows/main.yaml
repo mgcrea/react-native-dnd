@@ -35,7 +35,7 @@ jobs:
         run: pnpm run prettycheck
       - name: TypeScript 🔍
         run: pnpm run typecheck
-      - name: Vitest 🔍
+      - name: Spec 🔍
         run: pnpm run spec
   build:
     runs-on: ubuntu-latest
