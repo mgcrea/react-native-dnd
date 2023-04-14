@@ -15,9 +15,12 @@
     "build:source": "NODE_ENV=production babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --delete-dir-on-start --ignore **/__tests__ src/",
     "build:typings": "NODE_ENV=production tsc --project tsconfig.build.json --declaration",
     "prettify": "prettier --write src/ test/",
-    "spec": "jest",
     "lint": "eslint src/ test/",
-    "test": "npm run lint && npm run spec"
+    "prettycheck": "prettier --check src/ test/",
+    "typecheck": "tsc --noEmit",
+    "spec": "jest",
+    "test": "npm run lint && npm run spec",
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react-native-gesture-handler": ">=2",
