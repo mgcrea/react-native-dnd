@@ -1,0 +1,16 @@
+{
+  "extends": "@tsconfig/react-native",
+  "compilerOptions": {
+    "declaration": true,
+    "resolveJsonModule": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "baseUrl": "./",
+    "paths": {
+      "src/*": ["src/*"]
+    }
+  },
+  "include": ["src"]
+}

@@ -1,0 +1,76 @@
+{
+  "name": "@mgcrea/react-native-dnd",
+  "version": "0.0.1",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "start": "cd example; npm start",
+    "dev": "cd example; npm run dev",
+    "android": "cd example; npm run android",
+    "ios": "cd example; npm run ios",
+    "build": "npm run build:source && npm run build:typings",
+    "build:source": "NODE_ENV=production babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --delete-dir-on-start --ignore **/__tests__ src/",
+    "build:typings": "NODE_ENV=production tsc --project tsconfig.build.json --declaration",
+    "prettify": "prettier --write src/ test/",
+    "spec": "jest",
+    "lint": "eslint src/ test/",
+    "test": "npm run lint && npm run spec"
+  },
+  "peerDependencies": {
+    "react-native-gesture-handler": ">=2",
+    "react-native-haptic-feedback": ">=2",
+    "react-native-reanimated": ">=3",
+    "react-native": ">=0.70",
+    "react": ">=17"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.21.0",
+    "@babel/core": "^7.21.4",
+    "@babel/preset-env": "^7.21.4",
+    "@babel/runtime": "^7.21.0",
+    "@mgcrea/eslint-config-react-native": "^0.2.3",
+    "@testing-library/jest-native": "^5.4.2",
+    "@testing-library/react-native": "^12.0.1",
+    "@tsconfig/react-native": "^2.0.3",
+    "@types/jest": "^29.5.0",
+    "@types/react": "^18.0.34",
+    "@types/react-test-renderer": "^18.0.0",
+    "babel-jest": "^29.5.0",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "eslint": "^8.38.0",
+    "jest": "^29.5.0",
+    "metro-react-native-babel-preset": "^0.76.1",
+    "prettier": "^2.8.7",
+    "prettier-plugin-organize-imports": "^3.2.2",
+    "react": "^18.2.0",
+    "react-native": "^0.71.6",
+    "react-native-gesture-handler": "^2.9.0",
+    "react-native-haptic-feedback": "^2.0.3",
+    "react-native-reanimated": "^3.0.2",
+    "react-test-renderer": "^18.2.0",
+    "tsup": "^6.7.0",
+    "typescript": "^5.0.4"
+  },
+  "jest": {
+    "preset": "react-native",
+    "setupFiles": [
+      "./node_modules/react-native-gesture-handler/jestSetup.js"
+    ],
+    "setupFilesAfterEnv": [
+      "./test/setup.ts"
+    ],
+    "moduleNameMapper": {
+      "^src/(.*)$": "<rootDir>/src/$1"
+    },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(react-native|@react-native/.*|react-native-.*)/)"
+    ],
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/example/"
+    ]
+  }
+}
