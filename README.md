@@ -24,8 +24,6 @@
 </p>
 <!-- markdownlint-enable MD037 -->
 
-![demo](./.github/assets/demo.gif)
-
 ## Features
 
 Modern and easy-to-use drag&drop library for react-native.
@@ -37,6 +35,10 @@ Modern and easy-to-use drag&drop library for react-native.
 - **Hooks based:** Exposes powerful hooks [`useDraggable`](./src/hooks/useDraggable.ts) and [`useDroppable`](./src/hooks/useDroppable.ts) to build your own primitive components.
 
 - **Powerful & Performant:** The implementation has been tailored for advanced use cases where performance is critical. It can be used for a wide range of use cases like sorting.
+
+## Demo
+
+![demo](./.github/assets/demo.gif)
 
 ## Install
 
