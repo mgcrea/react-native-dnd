@@ -31,6 +31,7 @@ import type { UniqueIdentifier } from "./types";
 
 export type DndProviderProps = {
   springConfig?: WithSpringConfig;
+  disabled?: boolean;
   onDragEnd?: (ev: { active: ItemOptions; over: ItemOptions | null }) => void;
   onBegin?: (
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
@@ -55,7 +56,7 @@ export type DndProviderHandle = Pick<
 
 export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndProviderProps>>(
   function DndProvider(
-    { children, springConfig = {}, hapticFeedback, onDragEnd, onBegin, onUpdate, onFinalize, style },
+    { children, springConfig = {}, disabled, hapticFeedback, onDragEnd, onBegin, onUpdate, onFinalize, style },
     ref
   ) {
     const containerRef = useRef<View | null>(null);
@@ -120,10 +121,13 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         "worklet";
         const { value: layouts } = draggableLayouts;
         const { value: offsets } = draggableOffsets;
+        const { value: options } = draggableOptions;
         for (const [id, layout] of Object.entries(layouts)) {
           // console.log({ [id]: floorLayout(layout.value) });
           const offset = offsets[id];
+          const isDisabled = options[id].disabled;
           if (
+            !isDisabled &&
             includesPoint(layout.value, {
               x: x - offset.x.value,
               y: y - offset.y.value,
@@ -139,11 +143,9 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         "worklet";
         const { value: layouts } = droppableLayouts;
         const { value: options } = droppableOptions;
-        // console.log({ activeLayout: floorLayout(activeLayout) });
         for (const [id, layout] of Object.entries(layouts)) {
           // console.log({ [id]: floorLayout(layout.value) });
           const isDisabled = options[id].disabled;
-          // console.log({ [id]: options[id] });
           if (!isDisabled && overlapsRectangle(activeLayout, layout.value)) {
             return id;
           }
@@ -154,6 +156,10 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       return Gesture.Pan()
         .onBegin((event) => {
           const { state, x, y } = event;
+          // Gesture is globally disabled
+          if (disabled) {
+            return;
+          }
           // console.log("begin", { state, x, y });
           // Track current state for cancellation purposes
           draggableState.value = state;
@@ -268,7 +274,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         })
         .withTestId("DndProvider.pan");
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [disabled]);
 
     return (
       <DndContext.Provider value={contextValue.current}>
