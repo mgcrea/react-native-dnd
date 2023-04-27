@@ -6,8 +6,8 @@ import { getCollection } from "astro:content";
 
 const { BASE_URL } = import.meta.env;
 const data = Astro.props;
-const currentPage = Astro.url.pathname.replace(BASE_URL, "/");
-// console.log({ currentPage });
+const currentPage = Astro.url.pathname.replace(BASE_URL, "/").replace(/\/$/, "");
+// console.log({ pathname: Astro.url.pathname, currentPage });
 
 // Get all entries from a collection. Requires the name of the collection as an argument.
 const docs = await getCollection("docs");
