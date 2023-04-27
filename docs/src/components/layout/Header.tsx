@@ -34,7 +34,7 @@ export const Header: FunctionComponent<HeaderProps> = ({ currentPage }) => {
       </div>
       <div className="relative flex basis-0 justify-end gap-6 sm:gap-8 md:flex-grow">
         {/* <ThemeSelector className="relative z-10" /> */}
-        <Link href={GITHUB_REPO_URL} className="group" aria-label="GitHub">
+        <Link href={GITHUB_REPO_URL} className="group" aria-label="GitHub" target="_blank">
           <GitHubIcon className="h-6 w-6 fill-slate-400 group-hover:fill-slate-500 dark:group-hover:fill-slate-300" />
         </Link>
       </div>

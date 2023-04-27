@@ -19,7 +19,6 @@ export const Navigation: FunctionComponent<NavigationProps> = ({ className, item
   const sections = Object.entries(items).sort(([a], [b]) =>
     SECTIONS_ORDER.indexOf(a) < SECTIONS_ORDER.indexOf(b) ? -1 : 1
   );
-
   return (
     <nav className={classNames("text-base lg:text-sm", className)}>
       <ul role="list" className="space-y-9">
@@ -33,7 +32,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({ className, item
               {links.map((link) => (
                 <li key={link.href} className="relative">
                   <Link
-                    href={link.href}
+                    href={`${link.href}`}
                     className={classNames(
                       "block w-full pl-3.5 before:pointer-events-none before:absolute before:-left-1 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full",
                       link.href === currentPage
