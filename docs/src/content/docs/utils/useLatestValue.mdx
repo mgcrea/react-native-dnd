@@ -1,0 +1,38 @@
+---
+title: "useLatestValue"
+---
+
+`useLatestValue` is a custom React Hook that keeps the latest value of a variable inside a `ref` object, which is not subject to component re-renders. This is particularly useful when you need to access the latest value of a prop or state variable within a callback or a nested function.
+
+## Usage
+
+```tsx
+import { useLatestValue } from "path/to/useLatestValue";
+
+const SomeComponent = ({ someProp }) => {
+  const latestValueRef = useLatestValue(someProp);
+
+  // Render component content
+};
+```
+
+## Parameters
+
+`useLatestValue` accepts the following parameters:
+
+<Properties>
+  <Property name="value" type="T">
+    The value to be stored inside the ref object.
+  </Property>
+  <Property name="dependencies" type="DependencyList" optional defaultValue={`[value]`}>
+    An optional array of dependencies to update the value in the ref object when changed. Default is `[value]`.
+  </Property>
+  <Property name="disabled" type="boolean" optional defaultValue={`false`}>
+    A boolean indicating whether the draggable component should be disabled (i.e., not be able to be dragged).
+    Default is `false`.
+  </Property>
+</Properties>
+
+## Return values
+
+`useLatestValue` returns a `RefObject` containing the latest value of the input.

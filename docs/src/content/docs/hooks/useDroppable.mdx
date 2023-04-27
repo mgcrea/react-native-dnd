@@ -1,0 +1,69 @@
+---
+title: "useDroppable"
+description: "Lorem ipsum dolor sit amet - 4"
+---
+
+# {frontmatter.title}
+
+`useDroppable` is a custom React Hook that allows a component to become a droppable target for drag-and-drop operations. This hook manages the registration, layout, and state of a droppable component.
+
+## Usage
+
+```tsx
+// src/components/DroppableComponent.tsx
+import { useDroppable } from "@mgcrea/react-native-dnd";
+
+const DroppableComponent = ({ id, data, disabled }) => {
+  const { setNodeRef, setNodeLayout, activeId, draggableState } = useDroppable({
+    id,
+    data,
+    disabled,
+  });
+
+  return (
+    <Animated.View ref={setNodeRef} onLayout={setNodeLayout}>
+      {/* Render component content */}
+    </Animated.View>
+  );
+};
+```
+
+### Parameters
+
+`useDroppable` accepts an object with the following properties:
+
+<Properties>
+  <Property name="id" type="UniqueIdentifier">
+    A unique identifier for the droppable component.
+  </Property>
+  <Property name="data" type="Data" optional defaultValue={`{}`}>
+    An optional data object that can be used to store additional information about the droppable component.
+    Default is an empty object (`{}`).
+  </Property>
+  <Property name="disabled" type="boolean" optional defaultValue={`false`}>
+    A boolean indicating whether the droppable component should be disabled (i.e., not accept any draggable
+    components). Default is `false`.
+  </Property>
+</Properties>
+
+### Interface
+
+`useDroppable` returns an object with the following properties:
+
+<Properties>
+  <Property name="setNodeRef" type={`RefCallback<Animated.View>`}>
+    A ref callback function used to store a reference to the droppable component's `Animated.View`.
+  </Property>
+  <Property name="setNodeLayout" type={`ViewProps["onLayout"]"`}>
+    An `onLayout` event handler that should be attached to the droppable component's `Animated.View` to track
+    its layout.
+  </Property>
+  <Property name="activeId" type={`SharedValue<UniqueIdentifier | null>`}>
+    A `SharedValue` containing the ID of the currently active droppable component or `null` if there's no
+    active droppable component.
+  </Property>
+  <Property name="draggableState" type={`SharedValue<DraggableState>`}>
+    A `SharedValue` containing the state of the currently dragged component.
+  </Property>
+</Properties>
+```

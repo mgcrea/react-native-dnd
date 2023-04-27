@@ -1,0 +1,52 @@
+---
+title: "useActiveDragReaction"
+---
+
+# {frontmatter.title}
+
+`useActiveDragReaction` is a custom React Hook that listens to the changes in the active draggable component and triggers a callback when the specified component becomes active or inactive.
+
+## Usage
+
+```tsx
+// src/components/DraggableComponent.tsx
+import { useActiveDragReaction } from "@mgcrea/react-native-dnd";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+
+const DraggableComponent = ({ id, style, children }) => {
+  const scale = useSharedValue(1);
+
+  useActiveDragReaction(id, (isActive) => {
+    "worklet";
+    console.log("Draggable component is active:", isActive);
+    scale.value = withSpring(isActive ? 1.1 : 1);
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          scale: scale.value,
+        },
+      ],
+    };
+  }, [id]);
+
+  // Render component content
+  return <Animated.View style={[style, animatedStyle]}>{children}</Animated.View>;
+};
+```
+
+## Parameters
+
+`useActiveDropReaction` accepts the following parameters:
+
+<Properties>
+  <Property name="id" type="UniqueIdentifier">
+    A unique identifier for the draggable component.
+  </Property>
+  <Property name="callback" type="(isActive: boolean) => void">
+    A callback function that is called when the specified droppable component's active state changes. The
+    function receives a boolean `isActive` which is `true` if the component is active and `false` otherwise.
+  </Property>
+</Properties>

@@ -1,0 +1,27 @@
+---
+title: "useEvent"
+---
+
+`useEvent` is a custom React Hook to define an event handler with a function identity that is always stable.
+
+The event handler will be referentially the same during each re-render. Essentially, the event handler will have the following properties:
+
+- The function will not be recreated each time prop or state changes
+
+- The function will have access to the latest value of both the prop and state
+
+See this [LogRocket blog post](https://blog.logrocket.com/what-you-need-know-react-useevent-hook-rfc) for more information
+
+## Usage
+
+```tsx
+const SomeComponent = ({ someProp }) => {
+  const [someState, setSomeState] = useState(0);
+
+  const handleEvent = useEvent(() => {
+    console.log(`log some state: `, someState);
+  });
+
+  // Render component content
+};
+```

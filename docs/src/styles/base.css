@@ -1,0 +1,45 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply h-full;
+  }
+  body {
+    @apply h-full;
+  }
+  h1 {
+    @apply text-2xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+  h3 {
+    @apply text-lg;
+  }
+  figure.code-block > figcaption {
+    @apply absolute z-10 flex items-baseline justify-between px-4 font-mono text-zinc-500;
+  }
+  figure.code-block > figcaption span.lang {
+    @apply pl-8 text-xs;
+  }
+  figure.code-block > figcaption + div > pre.astro-code {
+    @apply pt-12;
+  }
+}
+
+@layer components {
+  .btn-blue {
+    @apply rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700;
+  }
+}
+
+@layer utilities {
+  .filter-none {
+    filter: none;
+  }
+  .filter-grayscale {
+    filter: grayscale(100%);
+  }
+}

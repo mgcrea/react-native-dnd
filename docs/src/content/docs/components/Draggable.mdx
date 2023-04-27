@@ -1,0 +1,55 @@
+---
+title: "Draggable"
+---
+
+# {frontmatter.title}
+
+`Draggable` is a reusable React component that can be used to quickly make elements draggable within a Drag and Drop context.
+
+For advanced use case, you should use [useDraggable](./../hooks/useDraggable) directly instead.
+
+## Usage
+
+```tsx
+// src/components/SomeComponent.tsx
+import { Draggable } from "@mgcrea/react-native-dnd";
+
+const SomeComponent = () => {
+  const id = "unique-id";
+  const data = { key: "value" };
+
+  return (
+    <Draggable id={id} data={data}>
+      {/* Render draggable content */}
+    </Draggable>
+  );
+};
+```
+
+## Props
+
+The `Draggable` component accepts the following props:
+
+---
+
+<Properties>
+  <Property name="id" type="UniqueIdentifier">
+    A unique identifier for the draggable component.
+  </Property>
+  <Property name="data" type="Data" optional defaultValue={`{}`}>
+    An optional data object that can be used to store additional information about the draggable component.
+    Default is an empty object (`{}`).
+  </Property>
+  <Property name="disabled" type="boolean" optional defaultValue={`false`}>
+    A boolean indicating whether the draggable component should be disabled (i.e., not be able to be dragged).
+    Default is `false`.
+  </Property>
+  <Property name="style" type="ViewStyle" optional>
+    An optional style object to apply custom styles to the draggable component.
+  </Property>
+  <Property name="animatedStyleWorklet" type="AnimatedStyleWorklet" optional>
+    An optional animated style worklet that returns the animated style for the draggable component. The worklet
+    function takes in the style object and a boolean `isActive` which is `true` if the component is active and
+    `false` otherwise.
+  </Property>
+</Properties>

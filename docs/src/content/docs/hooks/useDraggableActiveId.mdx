@@ -1,0 +1,24 @@
+---
+title: "useDraggableActiveId"
+---
+
+# {frontmatter.title}
+
+`useDraggableActiveId` is a custom React Hook that listens for changes in the active draggable component and returns the ID of the currently active draggable component or `null` if there is no active draggable component.
+
+## Usage
+
+```tsx
+// src/components/SomeComponent.tsx
+import { useDraggableActiveId } from "@mgcrea/react-native-dnd";
+
+const SomeComponent = ({ id, style, children }) => {
+  const activeId = useDraggableActiveId();
+
+  // Render component content
+};
+```
+
+## Interface
+
+`useDraggableActiveId` returns a state value containing the ID of the currently active draggable component (`UniqueIdentifier`) or `null` if there is no active draggable component.

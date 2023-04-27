@@ -1,0 +1,50 @@
+@import "./reset.css";
+@import "./base.css";
+
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  /* color: rgba(255, 255, 255, 0.87);
+  background-color: #242424; */
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-text-size-adjust: 100%;
+}
+@keyframes electronOrbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+@keyframes circle {
+  to {
+    transform: rotate(1turn);
+  }
+}
+@keyframes updown {
+  to {
+    /* (rx - ry) * 2 */
+    transform: translateX(-70px);
+  }
+}
+.logoElectronContainer {
+  transform-origin: 0 0;
+  animation: updown 2s infinite ease-in-out alternate;
+}
+.logoElectron {
+  /* (rx - ry) 0 */
+  transform-origin: 35px 0;
+  animation: circle 4s infinite linear;
+}
+.logoAtom {
+  transform-origin: 0 0;
+  animation: circle 8s infinite linear;
+}

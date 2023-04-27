@@ -1,0 +1,71 @@
+---
+title: "useDraggable"
+---
+
+# {frontmatter.title}
+
+`useDraggable` is a custom React Hook that enables a component to become draggable for drag-and-drop operations. This hook manages the registration, layout, and state of a draggable component.
+
+## Usage
+
+```tsx
+// src/components/DraggableComponent.tsx
+import { useDraggable } from "@mgcrea/react-native-dnd";
+
+const DraggableComponent = ({ id, data, disabled }) => {
+  const { offset, setNodeRef, activeId, setNodeLayout, draggableState } = useDraggable({
+    id,
+    data,
+    disabled,
+  });
+
+  return (
+    <Animated.View ref={setNodeRef} onLayout={setNodeLayout}>
+      {/* Render component content */}
+    </Animated.View>
+  );
+};
+```
+
+## Parameters
+
+`useDraggable` accepts an object with the following properties:
+
+<Properties>
+  <Property name="id" type="UniqueIdentifier">
+    A unique identifier for the draggable component.
+  </Property>
+  <Property name="data" type="Data" optional defaultValue={`{}`}>
+    An optional data object that can be used to store additional information about the draggable component.
+    Default is an empty object (`{}`).
+  </Property>
+  <Property name="disabled" type="boolean" optional defaultValue={`false`}>
+    A boolean indicating whether the draggable component should be disabled (i.e., not be able to be dragged).
+    Default is `false`.
+  </Property>
+</Properties>
+
+## Return values
+
+`useDraggable` returns an object with the following properties:
+
+<Properties>
+  <Property name="offset" type={`SharedPoint`}>
+    A `SharedPoint` containing the x and y offsets of the draggable component.
+  </Property>
+  <Property name="setNodeRef" type={`RefCallback<Animated.View>`}>
+    A ref callback function used to store a reference to the draggable component's `Animated.View`.
+  </Property>
+  <Property name="setNodeLayout" type={`ViewProps["onLayout"]"`}>
+    An `onLayout` event handler that should be attached to the draggable component's `Animated.View` to track
+    its layout.
+  </Property>
+  <Property name="activeId" type={`SharedValue<UniqueIdentifier | null>`}>
+    A `SharedValue` containing the ID of the currently active draggable component or `null` if there's no
+    active draggable component.
+  </Property>
+  <Property name="draggableState" type={`SharedValue<DraggableState>`}>
+    A `SharedValue` containing the state of the currently dragged component.
+  </Property>
+</Properties>
+```

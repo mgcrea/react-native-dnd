@@ -1,0 +1,56 @@
+---
+title: "Droppable"
+---
+
+# {frontmatter.title}
+
+`Droppable` is a reusable React component that can be used to quickly make elements droppable within a Drag and Drop context.
+
+For advanced use case, you should use [useDroppable](./../hooks/usedroppable) directly instead.
+
+## Usage
+
+```tsx
+// src/components/SomeComponent.tsx
+import { Droppable } from "@mgcrea/react-native-dnd";
+
+const SomeComponent = () => {
+  const id = "unique-id";
+  const data = { key: "value" };
+
+  return (
+    <Droppable id={id} data={data}>
+      {/* Render droppable content */}
+    </Droppable>
+  );
+};
+```
+
+## Props
+
+The `Droppable` component accepts the following props:
+
+---
+
+<Properties>
+  <Property name="id" type="UniqueIdentifier">
+    A unique identifier for the droppable component.
+  </Property>
+  <Property name="data" type="Data" optional defaultValue={`{}`}>
+    An optional data object that can be used to store additional information about the droppable component.
+    Default is an empty object (`{}`).
+  </Property>
+  <Property name="disabled" type="boolean" optional defaultValue={`false`}>
+    A boolean indicating whether the droppable component should be disabled (i.e., not accept any draggable
+    components). Default is `false`.
+  </Property>
+  <Property name="style" type="ViewStyle" optional>
+    An optional style object to apply custom styles to the droppable component.
+  </Property>
+  <Property name="animatedStyleWorklet" type="AnimatedStyleWorklet" optional>
+    An optional animated style worklet that returns the animated style for the droppable component. The worklet
+    function takes in the style object and a boolean `isActive` which is `true` if the component is active and
+    `false` otherwise.
+  </Property>
+</Properties>
+```

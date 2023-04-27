@@ -1,0 +1,31 @@
+---
+import { Code } from "astro/components";
+import type { Props as CodeProps } from "astro/components/Code.astro";
+import { CopyButton } from "./components/CopyButton";
+
+interface Props {
+  code: string;
+  lang: CodeProps["lang"];
+  filename?: string;
+}
+const { code, lang, filename } = Astro.props;
+
+const hasLang = !!lang;
+const hasFileName = !!filename;
+const showHeader = hasLang || hasFileName;
+---
+
+<figure class="code-block">
+  {
+    showHeader && (
+      <figcaption class="header">
+        {hasFileName && <span class="filename">// {filename}</span>}
+        {hasLang && <span class="lang">({lang})</span>}
+      </figcaption>
+    )
+  }
+  <div class="group relative">
+    <Code code={code} lang={lang ?? "tsx"} theme="one-dark-pro" />
+    <CopyButton code={code} client:idle />
+  </div>
+</figure>

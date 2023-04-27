@@ -1,0 +1,15 @@
+---
+title: "useNodeRef"
+---
+
+`useNodeRef` is a custom React Hook to receive a stable ref setter with an optional onChange handler.
+
+## Usage
+
+```tsx
+const SomeComponent = ({ someProp }) => {
+  const [node, setNodeRef] = useNodeRef<Animated.View>();
+
+  return <Animated.View ref={setNodeRef} />;
+};
+```

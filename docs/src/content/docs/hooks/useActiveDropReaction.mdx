@@ -1,0 +1,52 @@
+---
+title: "useActiveDropReaction"
+---
+
+# {frontmatter.title}
+
+`useActiveDropReaction` is a custom React Hook that listens to the changes in the active droppable component and triggers a callback when the specified component becomes active or inactive.
+
+## Usage
+
+```tsx
+// src/components/DroppableComponent.tsx
+import { useActiveDropReaction } from "@mgcrea/react-native-dnd";
+import Animated, { useAnimatedStyle, useSharedValue, withSpring } from "react-native-reanimated";
+
+const DroppableComponent = ({ id, style, children }) => {
+  const rotateZ = useSharedValue(0);
+
+  useActiveDropReaction(id, (isActive) => {
+    "worklet";
+    console.log("Droppable component is active:", isActive);
+    rotateZ.value = withSpring(isActive ? 10 : 0);
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      transform: [
+        {
+          rotateZ: `${rotateZ.value}deg`,
+        },
+      ],
+    };
+  }, [id]);
+
+  // Render component content
+  return <Animated.View style={[style, animatedStyle]}>{children}</Animated.View>;
+};
+```
+
+## Parameters
+
+`useActiveDropReaction` accepts the following parameters:
+
+<Properties>
+  <Property name="id" type="UniqueIdentifier">
+    A unique identifier for the droppable component.
+  </Property>
+  <Property name="callback" type="(isActive: boolean) => void">
+    A callback function that is called when the specified droppable component's active state changes. The
+    function receives a boolean `isActive` which is `true` if the component is active and `false` otherwise.
+  </Property>
+</Properties>

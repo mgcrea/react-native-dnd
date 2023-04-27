@@ -1,0 +1,29 @@
+---
+import { CollectionEntry, getCollection } from "astro:content";
+import MainLayout from "../layouts/main.astro";
+// import MainLayout from "../layouts/MainLayout.astro";
+// import { Blockquote } from "src/components/Markdown/Blockquote";
+// import { Code as code } from "src/components/Markdown/Code";
+// import Code from "src/components/Markdown/Code2.astro";
+// // import Property from "src/components/Markdown/Property.astro";
+// // import Properties from "src/components/Markdown/Properties.astro";
+import * as components from "src/components/markdown";
+
+export async function getStaticPaths() {
+  const docs = await getCollection("docs");
+  return docs.map((entry) => ({
+    params: {
+      slug: entry.slug,
+    },
+    props: entry,
+  }));
+}
+type Props = CollectionEntry<"docs">;
+
+const page = Astro.props;
+const { Content } = await page.render();
+---
+
+<MainLayout {...page.data}>
+  <Content components={components} />
+</MainLayout>
