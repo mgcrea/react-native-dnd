@@ -1,0 +1,64 @@
+---
+title: "DndProvider"
+---
+
+# {frontmatter.title}
+
+`DndProvider` is a React component that sets up the Drag and Drop context (`DndContext`) for its children components.
+
+It provides the necessary state and logic for draggable and droppable components.
+
+## Usage
+
+```tsx
+// src/App.tsx
+import { DndProvider } from "path/to/DndProvider";
+import type { FunctionComponent } from "react";
+
+export const App: FunctionComponent = () => {
+  return <DndProvider>{/* Render draggable and droppable components */}</DndProvider>;
+};
+```
+
+## Props
+
+`DndProvider` component accepts the following props:
+
+<Properties>
+  <Property name="springConfig" type="WithSpringConfig" optional defaultValue={`{}`}>
+    An optional spring configuration object to be used for animating the dragged item back to its initial
+    position. Default is `{}`.
+  </Property>
+  <Property name="disabled" type="boolean" optional defaultValue={`false`}>
+    An optional boolean value to disable the Drag and Drop functionality globally. Default is `false`.
+  </Property>
+  <Property name="hapticFeedback" type="HapticFeedbackTypes" optional>
+    An optional haptic feedback type to trigger when a draggable item becomes active.
+  </Property>
+  <Property name="onDragEnd" type="function" optional>
+    A callback function to be called when a drag event ends. It receives an object with `active` and `over`
+    properties representing the active draggable item options and the droppable item options that the draggable
+    item is over, respectively.
+  </Property>
+  <Property name="onBegin" type="function" optional>
+    A callback function to be called when a drag event begins. It receives the gesture event and an object with
+    `activeId` and `activeLayout` properties representing the active draggable item's ID and layout,
+    respectively.
+  </Property>
+  <Property name="onUpdate" type="function" optional>
+    A callback function to be called when a drag event updates. It receives the gesture event and an object
+    with `activeId` and `activeLayout` properties representing the active draggable item's ID and updated
+    layout, respectively.
+  </Property>
+  <Property name="onFinalize" type="function" optional>
+    A callback function to be called when a drag event is finalized. It receives the gesture event and an
+    object with `activeId` and `activeLayout` properties representing the active draggable item's ID and
+    updated layout, respectively.
+  </Property>
+  <Property name="style" type="StyleProp<ViewStyle>" optional>
+    An optional style object to apply custom styles to the DndProvider component.
+  </Property>
+  <Property name="children" type="React.ReactNode" optional>
+    The draggable and droppable components to be rendered within the Drag and Drop context.
+  </Property>
+</Properties>

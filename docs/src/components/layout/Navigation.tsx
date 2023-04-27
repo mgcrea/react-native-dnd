@@ -3,7 +3,7 @@ import type { FunctionComponent, HTMLAttributes } from "react";
 import { classNames, ucfirst } from "src/utils";
 import { Link } from "../Link";
 
-const SECTIONS_ORDER = ["guides", "hooks", "components", "utils"];
+const SECTIONS_ORDER = ["guides", "hooks", "providers", "components", "utils"];
 
 type NavigationItem = {
   title: string;
