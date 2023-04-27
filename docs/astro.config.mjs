@@ -37,5 +37,6 @@ export default defineConfig({
     MDXCodeBlocks(),
     mdx(),
   ],
-  site: `https://astro.build`,
+  site: `https://mgcrea.github.io`,
+  base: "/react-native-dnd",
 });
