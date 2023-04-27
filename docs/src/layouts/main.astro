@@ -4,8 +4,9 @@ import { SITE } from "src/config";
 import "../styles/main.css";
 import { getCollection } from "astro:content";
 
+const { BASE_URL } = import.meta.env;
 const data = Astro.props;
-const currentPage = Astro.url.pathname;
+const currentPage = Astro.url.pathname.replace(BASE_URL, "/");
 // console.log({ currentPage });
 
 // Get all entries from a collection. Requires the name of the collection as an argument.

@@ -42,9 +42,9 @@ export const Logo: FunctionComponent = (props) => {
       <div className="flex flex-col items-center">
         <span className="hidden px-3 font-mono text-xs font-semibold lg:inline-block">React Native</span>
         <span className="mx-3 hidden rounded-md bg-slate-800 px-2 font-mono font-semibold lg:inline-block">
-          <span className="cursor-move text-[#61dafb] hover:text-[#ffc743]">Drag</span>
+          <span className="text-primary-500 cursor-move hover:text-[#ffc743]">Drag</span>
           <span className="font-black text-white">&</span>
-          <span className="cursor-crosshair text-[#ffc743] hover:text-[#61dafb]">Drop</span>
+          <span className="hover:text-primary-500 cursor-crosshair text-[#ffc743]">Drop</span>
         </span>
       </div>
     </div>
