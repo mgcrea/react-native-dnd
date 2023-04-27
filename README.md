@@ -1,6 +1,9 @@
-# React Native Drag and Drop
-
 <!-- markdownlint-disable MD033 -->
+<p align="center">
+  <a href="https://mgcrea.github.io/react-native-dnd">
+    <img src="./.github/assets/logo2.png" alt="logo" width="320" height="200"/>
+  </a>
+</p>
 <p align="center">
   <a href="https://www.npmjs.com/package/@mgcrea/react-native-dnd">
     <img src="https://img.shields.io/npm/v/@mgcrea/react-native-dnd.svg?style=for-the-badge" alt="npm version" />
@@ -20,11 +23,6 @@
   </a>
   <a href="https://depfu.com/github/mgcrea/react-native-dnd">
     <img src="https://img.shields.io/depfu/dependencies/github/mgcrea/react-native-dnd?style=for-the-badge" alt="dependencies status" />
-  </a>
-</p>
-<p align="center">
-  <a href="https://mgcrea.github.io/react-native-dnd">
-    <img src="./.github/assets/logo2.png" alt="logo" width="320" height="200"/>
   </a>
 </p>
 <!-- markdownlint-enable MD037 -->
