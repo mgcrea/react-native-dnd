@@ -23,7 +23,7 @@
   </a>
 </p>
 
-<p align="center" style="margin: 32px 48px">
+<p align="center" style="margin: 32px 128px">
   <a href="https://mgcrea.github.io/react-native-dnd">
     <img src="./.github/assets/logo.png" alt="logo" />
   </a>
