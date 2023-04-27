@@ -22,6 +22,12 @@
     <img src="https://img.shields.io/depfu/dependencies/github/mgcrea/react-native-dnd?style=for-the-badge" alt="dependencies status" />
   </a>
 </p>
+
+<p align="center" style="margin: 32px 48px">
+  <a href="https://mgcrea.github.io/react-native-dnd">
+    <img src="./.github/assets/logo.png" alt="logo" />
+  </a>
+</p>
 <!-- markdownlint-enable MD037 -->
 
 ## Features
