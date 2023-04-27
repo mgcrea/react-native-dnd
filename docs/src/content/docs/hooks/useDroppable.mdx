@@ -1,13 +1,14 @@
 ---
 title: "useDroppable"
 description: "Lorem ipsum dolor sit amet - 4"
+order: 1
 ---
 
 # {frontmatter.title}
 
 `useDroppable` is a custom React Hook that allows a component to become a droppable target for drag-and-drop operations. This hook manages the registration, layout, and state of a droppable component.
 
-## Usage
+## Minimal Example
 
 ```tsx
 // src/components/DroppableComponent.tsx
@@ -23,6 +24,51 @@ const DroppableComponent = ({ id, data, disabled }) => {
   return (
     <Animated.View ref={setNodeRef} onLayout={setNodeLayout}>
       {/* Render component content */}
+    </Animated.View>
+  );
+};
+```
+
+## Advanced Usage
+
+```tsx
+// src/components/MyDroppable.tsx
+import { type AnimateProps } from "@mgcrea/react-native-dnd";
+import { type FunctionComponent, type PropsWithChildren } from "react";
+import { type ViewProps } from "react-native";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { type UseDraggableOptions } from "../hooks";
+
+export type MyDroppableProps = AnimateProps<ViewProps> & UseDraggableOptions;
+
+export const MyDroppable: FunctionComponent<PropsWithChildren<MyDroppableProps>> = ({
+  children,
+  id,
+  disabled,
+  data,
+  style,
+  ...otherProps
+}) => {
+  const { setNodeRef, setNodeLayout, activeId } = useDroppable({
+    id,
+    disabled,
+    data,
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const isActive = activeId.value === id;
+    const style = {
+      opacity: isActive ? 0.9 : 1,
+    };
+    if (animatedStyleWorklet) {
+      animatedStyleWorklet(style, isActive);
+    }
+    return style;
+  }, [id]);
+
+  return (
+    <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
+      {children}
     </Animated.View>
   );
 };

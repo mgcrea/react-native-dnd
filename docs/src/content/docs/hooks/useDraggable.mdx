@@ -1,12 +1,13 @@
 ---
 title: "useDraggable"
+order: 0
 ---
 
 # {frontmatter.title}
 
 `useDraggable` is a custom React Hook that enables a component to become draggable for drag-and-drop operations. This hook manages the registration, layout, and state of a draggable component.
 
-## Usage
+## Minimal Example
 
 ```tsx
 // src/components/DraggableComponent.tsx
@@ -22,6 +23,57 @@ const DraggableComponent = ({ id, data, disabled }) => {
   return (
     <Animated.View ref={setNodeRef} onLayout={setNodeLayout}>
       {/* Render component content */}
+    </Animated.View>
+  );
+};
+```
+
+## Advanced Usage
+
+```tsx
+// src/components/MyDraggable.tsx
+import { useDraggable, type AnimateProps } from "@mgcrea/react-native-dnd";
+import { type FunctionComponent, type PropsWithChildren } from "react";
+import { type ViewProps } from "react-native";
+import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import { type UseDroppableOptions } from "../hooks";
+
+export type MyDraggableProps = AnimateProps<ViewProps> & UseDroppableOptions;
+
+export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>> = ({
+  children,
+  id,
+  data,
+  disabled,
+  style,
+  ...otherProps
+}) => {
+  const { setNodeRef, setNodeLayout, activeId, offset } = useDraggable({
+    id,
+    data,
+    disabled,
+  });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    const isActive = activeId.value === id;
+    const style = {
+      opacity: isActive ? 0.9 : 1,
+      zIndex: isActive ? 999 : 1,
+      transform: [
+        {
+          translateX: offset.x.value,
+        },
+        {
+          translateY: offset.y.value,
+        },
+      ],
+    };
+    return style;
+  }, [id]);
+
+  return (
+    <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
+      {children}
     </Animated.View>
   );
 };

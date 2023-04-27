@@ -16,6 +16,7 @@ export type NavigationProps = Pick<HTMLAttributes<HTMLDivElement>, "className"> 
 };
 
 export const Navigation: FunctionComponent<NavigationProps> = ({ className, items, currentPage }) => {
+  // console.log(JSON.stringify(items));
   const sections = Object.entries(items).sort(([a], [b]) =>
     SECTIONS_ORDER.indexOf(a) < SECTIONS_ORDER.indexOf(b) ? -1 : 1
   );

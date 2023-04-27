@@ -6,21 +6,22 @@ import { getCollection } from "astro:content";
 
 const data = Astro.props;
 const currentPage = Astro.url.pathname;
-console.log({ currentPage });
+// console.log({ currentPage });
 
 // Get all entries from a collection. Requires the name of the collection as an argument.
 const docs = await getCollection("docs");
 
 type SidebarItem = {
   title: string;
+  order: number;
   href: string;
 };
 
 const sidebarItems = docs.reduce<Record<string, SidebarItem[]>>((soFar, entry) => {
   const path = entry.slug.split("/");
-  const { title } = entry.data;
+  const { title, order } = entry.data;
 
-  const sidebarItem: SidebarItem = { title, href: `/${entry.slug}` };
+  const sidebarItem: SidebarItem = { title, order, href: `/${entry.slug}` };
   const sectionSlug = String(path[0]);
   if (!soFar[sectionSlug]) {
     soFar[sectionSlug] = [];
@@ -28,6 +29,9 @@ const sidebarItems = docs.reduce<Record<string, SidebarItem[]>>((soFar, entry) =
   soFar[sectionSlug]?.push(sidebarItem);
   return soFar;
 }, {});
+Object.entries(sidebarItems).forEach(([_, items]) => {
+  items.sort((a, b) => a.order - b.order);
+});
 ---
 
 <html dir={data.dir} lang={data.lang}>
@@ -35,6 +39,7 @@ const sidebarItems = docs.reduce<Record<string, SidebarItem[]>>((soFar, entry) =
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={data.description} />
     <meta name="generator" content={Astro.generator} />
     <title>
       {`${data.title} 🚀 ${SITE.title}`}

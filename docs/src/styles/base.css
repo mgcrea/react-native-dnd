@@ -21,8 +21,11 @@
   figure.code-block > figcaption {
     @apply absolute z-10 flex items-baseline justify-between px-4 font-mono text-zinc-500;
   }
+  figure.code-block > figcaption span.filename {
+    @apply pr-8;
+  }
   figure.code-block > figcaption span.lang {
-    @apply pl-8 text-xs;
+    @apply text-xs;
   }
   figure.code-block > figcaption + div > pre.astro-code {
     @apply pt-12;
