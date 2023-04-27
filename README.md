@@ -22,10 +22,9 @@
     <img src="https://img.shields.io/depfu/dependencies/github/mgcrea/react-native-dnd?style=for-the-badge" alt="dependencies status" />
   </a>
 </p>
-
-<p align="center" style="margin: 64px">
-  <a href="https://mgcrea.github.io/react-native-dnd" style="display: block; max-width: 384px">
-    <img src="./.github/assets/logo.png" alt="logo"/>
+<p align="center">
+  <a href="https://mgcrea.github.io/react-native-dnd">
+    <img src="./.github/assets/logo@0.5x.png" alt="logo"/>
   </a>
 </p>
 <!-- markdownlint-enable MD037 -->
