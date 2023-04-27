@@ -23,9 +23,9 @@
   </a>
 </p>
 
-<p align="center" style="margin: 32px">
-  <a href="https://mgcrea.github.io/react-native-dnd">
-    <img src="./.github/assets/logo.png" alt="logo" style="max-width: 256px" />
+<p align="center" style="margin: 64px">
+  <a href="https://mgcrea.github.io/react-native-dnd" style="display: block; max-width: 384px">
+    <img src="./.github/assets/logo.png" alt="logo"/>
   </a>
 </p>
 <!-- markdownlint-enable MD037 -->
