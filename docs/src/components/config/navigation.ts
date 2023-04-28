@@ -1,6 +1,7 @@
 import { getCollection } from "astro:content";
 
 const docs = await getCollection("docs");
+
 const SECTIONS_ORDER = ["guides", "hooks", "providers", "components", "utils"];
 
 export type NavigationItem = {

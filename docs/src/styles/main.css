@@ -15,7 +15,16 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
+
+  --unit-100vh: 100vh;
 }
+
+@supports (height: 100dvh) {
+  :root {
+    --unit-100vh: 100dvh;
+  }
+}
+
 @keyframes electronOrbit {
   0% {
     transform: rotate(0deg);
