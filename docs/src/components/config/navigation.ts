@@ -29,3 +29,5 @@ export const NAVIGATION_ITEMS = Object.entries(docsBySection).sort(([a], [b]) =>
 NAVIGATION_ITEMS.forEach(([_, items]) => {
   items.sort((a, b) => a.order - b.order);
 });
+
+console.dir(NAVIGATION_ITEMS, { depth: null });

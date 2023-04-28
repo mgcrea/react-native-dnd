@@ -3,6 +3,7 @@ import { Article, Header, Navigation } from "src/components/layout";
 import type { CollectionEntry } from "astro:content";
 import { SITE } from "src/config";
 import "../styles/main.css";
+import { NAVIGATION_ITEMS } from "src/components/config/navigation";
 
 type Props = CollectionEntry<"docs">["data"];
 
@@ -93,7 +94,7 @@ const currentPage = Astro.url.pathname.replace(BASE_URL, "/").replace(/\/$/, "")
     <footer>
       <small
         ><pre><code>
-        {JSON.stringify({ pathname: Astro.url.pathname, currentPage }, null, 2)}
+        {JSON.stringify({ pathname: Astro.url.pathname, currentPage, BASE_URL, NAVIGATION_ITEMS }, null, 2)}
       </code></pre></small
       >
     </footer>
