@@ -90,12 +90,5 @@ const currentPage = Astro.url.pathname.replace(BASE_URL, "/").replace(/\/$/, "")
         </dl> -->
       </div>
     </div>
-    <footer>
-      <small
-        ><pre><code>
-        {JSON.stringify({ pathname: Astro.url.pathname, currentPage, BASE_URL, NAVIGATION_ITEMS }, null, 2)}
-      </code></pre></small
-      >
-    </footer>
   </body>
 </html>
