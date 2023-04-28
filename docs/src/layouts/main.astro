@@ -2,37 +2,11 @@
 import { Article, Header, Navigation } from "src/components/layout";
 import { SITE } from "src/config";
 import "../styles/main.css";
-import { getCollection } from "astro:content";
 
 const { BASE_URL } = import.meta.env;
 const data = Astro.props;
 const currentPage = Astro.url.pathname.replace(BASE_URL, "/").replace(/\/$/, "");
 // console.log({ pathname: Astro.url.pathname, currentPage });
-
-// Get all entries from a collection. Requires the name of the collection as an argument.
-const docs = await getCollection("docs");
-
-type SidebarItem = {
-  title: string;
-  order: number;
-  href: string;
-};
-
-const sidebarItems = docs.reduce<Record<string, SidebarItem[]>>((soFar, entry) => {
-  const path = entry.slug.split("/");
-  const { title, order } = entry.data;
-
-  const sidebarItem: SidebarItem = { title, order, href: `/${entry.slug}` };
-  const sectionSlug = String(path[0]);
-  if (!soFar[sectionSlug]) {
-    soFar[sectionSlug] = [];
-  }
-  soFar[sectionSlug]?.push(sidebarItem);
-  return soFar;
-}, {});
-Object.entries(sidebarItems).forEach(([_, items]) => {
-  items.sort((a, b) => a.order - b.order);
-});
 ---
 
 <html dir={data.dir} lang={data.lang}>
@@ -48,7 +22,6 @@ Object.entries(sidebarItems).forEach(([_, items]) => {
   </head>
   <body>
     <Header currentPage={currentPage} client:idle />
-
     <div class="relative mx-auto flex max-w-8xl justify-center sm:px-2 lg:px-8 xl:px-12">
       <div class="hidden lg:relative lg:block lg:flex-none">
         <!-- <div class="absolute inset-y-0 right-0 w-[50vw] bg-gradient-to-b from-slate-100 bg-white dark:hidden">
@@ -61,7 +34,7 @@ Object.entries(sidebarItems).forEach(([_, items]) => {
         <div
           class="sticky top-[4.5rem] -ml-0.5 h-[calc(100vh-4.5rem)] overflow-y-auto overflow-x-hidden py-16 pl-0.5"
         >
-          <Navigation currentPage={currentPage} items={sidebarItems} className="w-64 pr-8 xl:w-72 xl:pr-16" />
+          <Navigation currentPage={currentPage} className="w-64 pr-8 xl:w-72 xl:pr-16" />
         </div>
       </div>
 

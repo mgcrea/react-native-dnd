@@ -1,29 +1,19 @@
 /** @jsxImportSource react */
 import type { FunctionComponent, HTMLAttributes } from "react";
+import { useNavigationStore } from "src/hooks";
 import { classNames, ucfirst } from "src/utils";
 import { Link } from "../Link";
 
-const SECTIONS_ORDER = ["guides", "hooks", "providers", "components", "utils"];
-
-type NavigationItem = {
-  title: string;
-  href: string;
-};
-
 export type NavigationProps = Pick<HTMLAttributes<HTMLDivElement>, "className"> & {
   currentPage: string;
-  items: Record<string, NavigationItem[]>;
 };
 
-export const Navigation: FunctionComponent<NavigationProps> = ({ className, items, currentPage }) => {
-  // console.log(JSON.stringify(items));
-  const sections = Object.entries(items).sort(([a], [b]) =>
-    SECTIONS_ORDER.indexOf(a) < SECTIONS_ORDER.indexOf(b) ? -1 : 1
-  );
+export const Navigation: FunctionComponent<NavigationProps> = ({ className, currentPage }) => {
+  const items = useNavigationStore((state) => state.items);
   return (
     <nav className={classNames("text-base lg:text-sm", className)}>
       <ul role="list" className="space-y-9">
-        {sections.map(([section, links]) => (
+        {items.map(([section, links]) => (
           <li key={section}>
             <h2 className="font-display font-medium text-slate-900 dark:text-white">{ucfirst(section)}</h2>
             <ul
