@@ -1,13 +1,12 @@
 ---
 import { Article, Header, Navigation } from "src/components/layout";
 import type { CollectionEntry } from "astro:content";
-import { SITE } from "src/config";
 import "../styles/main.css";
-import { NAVIGATION_ITEMS } from "src/components/config/navigation";
+import { NAVIGATION_ITEMS } from "src/config/navigation";
+import { BASE_URL, SITE } from "src/config/env";
 
 type Props = CollectionEntry<"docs">["data"];
 
-const { BASE_URL } = import.meta.env;
 const data = Astro.props;
 const currentPage = Astro.url.pathname.replace(BASE_URL, "/").replace(/\/$/, "");
 ---

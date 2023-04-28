@@ -19,6 +19,7 @@ export const MobileNavigation: FunctionComponent<{ currentPage: string }> = ({ c
   // const [isOpen, setIsOpen] = useState(false);
   // const navigationStore = useNavigationStore());
   // console.log({ navigation, navigationStore });
+  console.log({ currentPage });
   return (
     <Popover className="relative">
       {({ open }) => (

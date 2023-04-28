@@ -1,4 +1,4 @@
-import { NAVIGATION_ITEMS } from "src/components/config/navigation";
+import { NAVIGATION_ITEMS } from "src/config/navigation";
 import { create } from "zustand";
 
 type NavigationState = {

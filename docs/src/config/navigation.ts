@@ -30,4 +30,4 @@ NAVIGATION_ITEMS.forEach(([_, items]) => {
   items.sort((a, b) => a.order - b.order);
 });
 
-console.dir(NAVIGATION_ITEMS, { depth: null });
+// console.dir(NAVIGATION_ITEMS, { depth: null });

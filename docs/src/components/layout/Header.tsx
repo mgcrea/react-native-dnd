@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 import type { FunctionComponent } from "react";
-import { GITHUB_REPO_URL } from "src/config";
+import { GITHUB_REPO_URL } from "src/config/env";
 import { useIsScrolled } from "src/hooks";
 import { classNames } from "src/utils";
 import { Link } from "../Link";

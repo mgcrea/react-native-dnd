@@ -1,8 +1,7 @@
 /** @jsxImportSource react */
 import type { AnchorHTMLAttributes, FunctionComponent, PropsWithChildren } from "react";
+import { BASE_URL } from "src/config/env";
 
-const { BASE_URL } = import.meta.env;
-console.dir({ BASE_URL });
 export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement>;
 
 export const Link: FunctionComponent<PropsWithChildren<LinkProps>> = ({

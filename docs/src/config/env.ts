@@ -1,3 +1,7 @@
+const { BASE_URL: ASTRO_BASE_URL } = import.meta.env;
+
+export const BASE_URL = ASTRO_BASE_URL.replace(/"/g, "");
+
 export const SITE = {
   title: "React Native DND",
   description: "Your website description.",
