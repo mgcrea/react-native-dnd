@@ -33,9 +33,9 @@ Modern and easy-to-use drag&drop library for react-native.
 
 - **Modern and future-proof:** Built on [react-native-reanimated v3](https://github.com/software-mansion/react-native-reanimated/)
 
-- **Ready to use:** Out-of-the-box configurable components like [`Draggable`](./src/components/Draggable.tsx) and [`Droppable`](./src/components/Droppable.tsx) to quickly get started.
-
 - **Hooks based:** Exposes powerful hooks [`useDraggable`](./src/hooks/useDraggable.ts) and [`useDroppable`](./src/hooks/useDroppable.ts) to build your own primitive components.
+
+- **Ready to use:** Out-of-the-box configurable components like [`Draggable`](./src/components/Draggable.tsx) and [`Droppable`](./src/components/Droppable.tsx) to quickly get started.
 
 - **Powerful & Performant:** The implementation has been tailored for advanced use cases where performance is critical. It can be used for a wide range of use cases like sorting items.
 
