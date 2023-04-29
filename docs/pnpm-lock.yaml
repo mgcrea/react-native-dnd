@@ -67,14 +67,14 @@ devDependencies:
     specifier: ^3.2.2
     version: 3.2.2(prettier@2.8.8)(typescript@5.0.4)
   prettier-plugin-tailwindcss:
-    specifier: ^0.2.7
-    version: 0.2.7(prettier-plugin-astro@0.8.0)(prettier-plugin-organize-imports@3.2.2)(prettier@2.8.8)
+    specifier: ^0.2.8
+    version: 0.2.8(prettier-plugin-astro@0.8.0)(prettier-plugin-organize-imports@3.2.2)(prettier@2.8.8)
   rehype-external-links:
     specifier: ^2.0.1
     version: 2.0.1
   shiki:
-    specifier: ^0.14.1
-    version: 0.14.1
+    specifier: ^0.14.2
+    version: 0.14.2
   typescript:
     specifier: ^5.0.4
     version: 5.0.4
@@ -3184,12 +3184,11 @@ packages:
       typescript: 5.0.4
     dev: true
 
-  /prettier-plugin-tailwindcss@0.2.7(prettier-plugin-astro@0.8.0)(prettier-plugin-organize-imports@3.2.2)(prettier@2.8.8):
-    resolution: {integrity: sha512-jQopIOgjLpX+y8HeD56XZw7onupRTC0cw7eKKUimI7vhjkPF5/1ltW5LyqaPtSyc8HvEpvNZsvvsGFa2qpa59w==}
+  /prettier-plugin-tailwindcss@0.2.8(prettier-plugin-astro@0.8.0)(prettier-plugin-organize-imports@3.2.2)(prettier@2.8.8):
+    resolution: {integrity: sha512-KgPcEnJeIijlMjsA6WwYgRs5rh3/q76oInqtMXBA/EMcamrcYJpyhtRhyX1ayT9hnHlHTuO8sIifHF10WuSDKg==}
     engines: {node: '>=12.17.0'}
     peerDependencies:
       '@ianvs/prettier-plugin-sort-imports': '*'
-      '@prettier/plugin-php': '*'
       '@prettier/plugin-pug': '*'
       '@shopify/prettier-plugin-liquid': '*'
       '@shufo/prettier-plugin-blade': '*'
@@ -3206,8 +3205,6 @@ packages:
       prettier-plugin-twig-melody: '*'
     peerDependenciesMeta:
       '@ianvs/prettier-plugin-sort-imports':
-        optional: true
-      '@prettier/plugin-php':
         optional: true
       '@prettier/plugin-pug':
         optional: true
@@ -3551,8 +3548,8 @@ packages:
       vscode-textmate: 6.0.0
     dev: true
 
-  /shiki@0.14.1:
-    resolution: {integrity: sha512-+Jz4nBkCBe0mEDqo1eKRcCdjRtrCjozmcbTUjbPTX7OOJfEbTZzlUWlZtGe3Gb5oV1/jnojhG//YZc3rs9zSEw==}
+  /shiki@0.14.2:
+    resolution: {integrity: sha512-ltSZlSLOuSY0M0Y75KA+ieRaZ0Trf5Wl3gutE7jzLuIcWxLp5i/uEnLoQWNvgKXQ5OMpGkJnVMRLAuzjc0LJ2A==}
     dependencies:
       ansi-sequence-parser: 1.1.0
       jsonc-parser: 3.2.0

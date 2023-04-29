@@ -34,9 +34,9 @@
     "prettier": "^2.8.8",
     "prettier-plugin-astro": "^0.8.0",
     "prettier-plugin-organize-imports": "^3.2.2",
-    "prettier-plugin-tailwindcss": "^0.2.7",
+    "prettier-plugin-tailwindcss": "^0.2.8",
     "rehype-external-links": "^2.0.1",
-    "shiki": "^0.14.1",
+    "shiki": "^0.14.2",
     "typescript": "^5.0.4"
   }
 }
