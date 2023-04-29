@@ -1,5 +1,6 @@
 import mdx from "@astrojs/mdx";
 import preact from "@astrojs/preact";
+import prefetch from "@astrojs/prefetch";
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
 import AutoImport from "astro-auto-import";
@@ -14,7 +15,10 @@ export default defineConfig({
       [
         rehypeExternalLinks,
         {
-          content: { type: "text", value: " 🔗" },
+          content: {
+            type: "text",
+            value: " 🔗",
+          },
         },
       ],
     ],
@@ -36,6 +40,7 @@ export default defineConfig({
     }),
     MDXCodeBlocks(),
     mdx(),
+    prefetch(),
   ],
   site: `https://mgcrea.github.io`,
   base: "/react-native-dnd",

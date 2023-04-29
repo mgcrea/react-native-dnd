@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 import type { FunctionComponent, HTMLAttributes } from "react";
-import { useNavigationStore } from "src/hooks";
+import { NAVIGATION_ITEMS } from "src/config/navigation";
 import { classNames, ucfirst } from "src/utils";
 import { Link } from "../Link";
 
@@ -9,11 +9,11 @@ export type NavigationProps = Pick<HTMLAttributes<HTMLDivElement>, "className"> 
 };
 
 export const Navigation: FunctionComponent<NavigationProps> = ({ className, currentPage }) => {
-  const items = useNavigationStore((state) => state.items);
+  // const items = useNavigationStore((state) => state.items);
   return (
     <nav className={classNames("text-base lg:text-sm", className)}>
       <ul role="list" className="space-y-9">
-        {items.map(([section, links]) => (
+        {NAVIGATION_ITEMS.map(([section, links]) => (
           <li key={section}>
             <h2 className="font-display font-medium text-slate-900 dark:text-white">{ucfirst(section)}</h2>
             <ul
@@ -24,6 +24,7 @@ export const Navigation: FunctionComponent<NavigationProps> = ({ className, curr
                 <li key={link.href} className="relative">
                   <Link
                     href={link.href}
+                    rel="prefetch"
                     className={classNames(
                       "block w-full pl-3.5 before:pointer-events-none before:absolute before:-left-1 before:top-1/2 before:h-1.5 before:w-1.5 before:-translate-y-1/2 before:rounded-full",
                       link.href === currentPage

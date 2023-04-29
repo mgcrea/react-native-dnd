@@ -51,7 +51,7 @@ export const MobileNavigation: FunctionComponent<{ currentPage: string }> = ({ c
               <div className="overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5">
                 <Navigation
                   currentPage={currentPage}
-                  className="max-h-[calc(var(unit-100vh)-5rem)] overflow-scroll p-6"
+                  className="max-h-[calc(var(--unit-100vh)-5rem)] overflow-scroll p-6"
                 />
               </div>
             </Popover.Panel>
