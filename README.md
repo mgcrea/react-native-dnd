@@ -39,6 +39,8 @@ Modern and easy-to-use drag&drop library for react-native.
 
 - **Powerful & Performant:** The implementation has been tailored for advanced use cases where performance is critical. It can be used for a wide range of use cases like sorting items.
 
+Check the [**Documentation**](https://mgcrea.github.io/react-native-dnd/) for usage details.
+
 ## Demo
 
 ![demo](./.github/assets/demo.gif)
