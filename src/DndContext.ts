@@ -3,9 +3,9 @@ import type { LayoutRectangle, View } from "react-native";
 import type { GestureEventPayload } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
 import type { SharedPoint } from "./hooks";
-import type { DataRef, UniqueIdentifier } from "./types";
+import type { SharedData, UniqueIdentifier } from "./types";
 
-export type ItemOptions = { id: UniqueIdentifier; data: DataRef; disabled: boolean };
+export type ItemOptions = { id: UniqueIdentifier; data: SharedData; disabled: boolean };
 export type Options = Record<UniqueIdentifier, ItemOptions>;
 export type Layouts = Record<UniqueIdentifier, SharedValue<LayoutRectangle>>;
 export type Offsets = Record<UniqueIdentifier, SharedPoint>;

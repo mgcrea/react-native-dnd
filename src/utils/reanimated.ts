@@ -1,11 +1,13 @@
 import { LayoutRectangle } from "react-native";
 import {
+  SharedValue,
   withSpring,
   type AnimatableValue,
   type AnimationCallback,
   type WithSpringConfig,
 } from "react-native-reanimated";
 import type { SharedPoint } from "src/hooks";
+import type { AnyData } from "src/types";
 
 export const DEFAULT_SPRING_CONFIG: WithSpringConfig = {
   damping: 10, // Defines how the spring’s motion should be damped due to the forces of friction. Default 10.
@@ -125,3 +127,11 @@ export const floorLayout = ({ x, y, width, height }: LayoutRectangle) => {
     height: Math.floor(height),
   };
 };
+
+/**
+ * @summary Checks if a value is a `Reanimated` shared value
+ * @param {object} value - The value to check
+ * @returns {boolean} Whether the value is a `Reanimated` shared value
+ */
+export const isReanimatedSharedValue = (value: unknown): value is SharedValue<AnyData> =>
+  typeof value === "object" && (value as { _isReanimatedSharedValue: boolean })?._isReanimatedSharedValue;

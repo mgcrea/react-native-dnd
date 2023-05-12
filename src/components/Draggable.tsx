@@ -14,6 +14,23 @@ export type DraggableProps = AnimateProps<ViewProps> &
     animatedStyleWorklet?: AnimatedStyleWorklet;
   };
 
+/**
+ * Draggable is a React functional component that can be used to create elements that can be dragged within a Drag and Drop context.
+ *
+ * @component
+ * @example
+ * <Draggable id="draggable-1" data={{ label: "Example" }}>
+ *   <Text>Drag me!</Text>
+ * </Draggable>
+ *
+ * @param {object} props - The properties that define the Draggable component.
+ * @param {string} props.id - A unique identifier for the Draggable component.
+ * @param {object} props.data - An object that contains data associated with the Draggable component.
+ * @param {boolean} props.disabled - A flag that indicates whether the Draggable component is disabled.
+ * @param {object} props.style - An object that defines the style of the Draggable component.
+ * @param {Function} props.animatedStyleWorklet - A worklet function that modifies the animated style of the Draggable component.
+ * @returns {React.Component} Returns a Draggable component that can be moved by the user within a Drag and Drop context.
+ */
 export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = ({
   children,
   id,

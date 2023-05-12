@@ -14,6 +14,23 @@ export type DroppableProps = AnimateProps<ViewProps> &
     animatedStyleWorklet?: AnimatedStyleWorklet;
   };
 
+/**
+ * Droppable is a React functional component that can be used to create a drop target in a Drag and Drop context.
+ *
+ * @component
+ * @example
+ * <Droppable id="droppable-1" data={{ accepts: ["draggable-1"] }}>
+ *   <Text>Drop here!</Text>
+ * </Droppable>
+ *
+ * @param {object} props - The properties that define the Droppable component.
+ * @param {string} props.id - A unique identifier for the Droppable component.
+ * @param {boolean} props.disabled - A flag that indicates whether the Droppable component is disabled.
+ * @param {object} props.data - An object that contains data associated with the Droppable component.
+ * @param {object} props.style - An object that defines the style of the Droppable component.
+ * @param {Function} props.animatedStyleWorklet - A worklet function that modifies the animated style of the Droppable component.
+ * @returns {React.Component} Returns a Droppable component that can serve as a drop target within a Drag and Drop context.
+ */
 export const Droppable: FunctionComponent<PropsWithChildren<DroppableProps>> = ({
   children,
   id,
