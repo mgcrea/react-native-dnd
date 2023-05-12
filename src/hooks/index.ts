@@ -4,6 +4,7 @@ export * from "./useDraggable";
 export * from "./useDraggableActiveId";
 export * from "./useDroppable";
 export * from "./useEvent";
+export * from "./useLatestSharedValue";
 export * from "./useLatestValue";
 export * from "./useNodeRef";
 export * from "./useSharedPoint";
