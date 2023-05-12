@@ -1,0 +1,113 @@
+---
+title: "Data payloads"
+description: "How can you pass data to/between draggable and droppable components?"
+order: 3
+---
+
+# {frontmatter.title}
+
+Both `useDraggable` and `useDroppable` hooks accept a `data` prop that can be used to attach data to the draggable or droppable component.
+
+This data can be either a plain object or a reanimated shared value. If a plain object is passed, it will be automatically wrapped as a shared value.
+
+### Directly using a shared value
+
+```tsx
+// src/App.tsx
+import { DndProvider, DndProviderProps, Draggable, Droppable } from "@mgcrea/react-native-dnd";
+import type { FunctionComponent } from "react";
+import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+export const App: FunctionComponent = () => {
+  const dynamicData = useSharedValue({ count: 0 });
+
+  const handleDragEnd: DndProviderProps["onDragEnd"] = ({ active, over }) => {
+    "worklet";
+    if (over) {
+      console.log(`Current count is ${active.data.value.count}`);
+      dynamicData.value = { ...dynamicData.value, count: dynamicData.value.count + 1 };
+    }
+  };
+
+  return (
+    <SafeAreaView>
+      <GestureHandlerRootView>
+        <DndProvider onBegin={handleBegin} onFinalize={handleFinalize} onDragEnd={handleDragEnd}>
+          <Droppable id="drop" style={styles.box}>
+            <Text>DROP</Text>
+          </Droppable>
+          <Draggable id="drag" data={dynamicData} style={styles.box}>
+            <Text>DRAG</Text>
+          </Draggable>
+        </DndProvider>
+      </GestureHandlerRootView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  box: {
+    margin: 24,
+    padding: 24,
+    height: 128,
+    width: 128,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "darkseagreen",
+  },
+});
+```
+
+### Using a plain object
+
+```tsx
+// src/App.tsx
+import { DndProvider, DndProviderProps, Draggable, Droppable } from "@mgcrea/react-native-dnd";
+import type { FunctionComponent } from "react";
+import { SafeAreaView, StyleSheet, Text } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+
+export const App: FunctionComponent = () => {
+  const [count, setCount] = useState(0);
+
+  const onDragEnd = () => {
+    setCount((count) => count + 1);
+  };
+
+  const handleDragEnd: DndProviderProps["onDragEnd"] = ({ active, over }) => {
+    "worklet";
+    if (over) {
+      console.log(`Current count is ${active.data.value.count}`);
+      runOnJS(onDragEnd)();
+    }
+  };
+
+  return (
+    <SafeAreaView>
+      <GestureHandlerRootView>
+        <DndProvider onBegin={handleBegin} onFinalize={handleFinalize} onDragEnd={handleDragEnd}>
+          <Droppable id="drop" style={styles.box}>
+            <Text>DROP</Text>
+          </Droppable>
+          <Draggable id="drag" data={{ count }} style={styles.box}>
+            <Text>DRAG</Text>
+          </Draggable>
+        </DndProvider>
+      </GestureHandlerRootView>
+    </SafeAreaView>
+  );
+};
+
+const styles = StyleSheet.create({
+  box: {
+    margin: 24,
+    padding: 24,
+    height: 128,
+    width: 128,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "darkseagreen",
+  },
+});
+```
