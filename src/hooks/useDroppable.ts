@@ -1,10 +1,10 @@
 import { useLayoutEffect } from "react";
 import { type LayoutRectangle, type ViewProps } from "react-native";
-import Animated, { runOnUI, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
+import { runOnUI, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { useLatestSharedValue, useNodeRef } from "src/hooks";
+import type { Data, NativeElement, UniqueIdentifier } from "src/types";
 import { assert, isReanimatedSharedValue } from "src/utils";
 import { useDndContext } from "../DndContext";
-import type { Data, UniqueIdentifier } from "../types";
 
 export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?: boolean };
 
@@ -29,7 +29,9 @@ export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?
 export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOptions) => {
   const { droppableLayouts, droppableOptions, droppableActiveId, containerRef, draggableState } =
     useDndContext();
-  const [node, setNodeRef] = useNodeRef<Animated.View>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [node, setNodeRef] = useNodeRef<NativeElement, any>();
+  //            ^?
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const sharedData = isReanimatedSharedValue(data) ? data : useLatestSharedValue(data);
 

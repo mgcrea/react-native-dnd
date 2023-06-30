@@ -1,10 +1,10 @@
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
-import Animated, { runOnUI, useSharedValue } from "react-native-reanimated";
+import { runOnUI, useSharedValue } from "react-native-reanimated";
 import { useLatestSharedValue, useNodeRef } from "src/hooks";
 import { assert, isReanimatedSharedValue } from "src/utils";
 import { useDndContext } from "../DndContext";
-import { Data, UniqueIdentifier } from "../types";
+import { Data, NativeElement, UniqueIdentifier } from "../types";
 import { useSharedPoint } from "./useSharedPoint";
 
 export type UseDraggableOptions = {
@@ -41,7 +41,8 @@ export const useDraggable = ({ id, data = {}, disabled = false }: UseDraggableOp
     containerRef,
     draggableState,
   } = useDndContext();
-  const [node, setNodeRef] = useNodeRef<Animated.View>();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [node, setNodeRef] = useNodeRef<NativeElement, any>();
   // const key = useUniqueId("Draggable");
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const sharedData = isReanimatedSharedValue(data) ? data : useLatestSharedValue(data);

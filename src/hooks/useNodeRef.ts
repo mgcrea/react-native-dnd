@@ -6,15 +6,15 @@ type NodeChangeHandler<T> = (nextElement: T | null, prevElement: T | null) => vo
 /**
  * Hook to receive a stable ref setter with an optional onChange handler
  */
-export const useNodeRef = <T>(onChange?: NodeChangeHandler<T>) => {
+export const useNodeRef = <T, U = T>(onChange?: NodeChangeHandler<T>) => {
   const onChangeHandler = useEvent(onChange);
   const nodeRef = useRef<T | null>(null);
   const setNodeRef = useCallback(
-    (element: T | null) => {
+    (element: U | null) => {
       if (element !== nodeRef.current) {
         onChangeHandler?.(element, nodeRef.current);
       }
-      nodeRef.current = element;
+      nodeRef.current = element as T;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     []
