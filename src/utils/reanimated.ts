@@ -68,9 +68,9 @@ export type AnimationPointCallback = (
   current: [AnimatableValue | undefined, AnimatableValue | undefined]
 ) => void;
 
-export const withDefaultSpring: typeof withSpring = (toValue, userConfig = {}, callback) => {
+export const withDefaultSpring: typeof withSpring = (toValue, userConfig: WithSpringConfig = {}, callback) => {
   "worklet";
-  const config = { ...SLOW_SPRING_CONFIG, ...userConfig };
+  const config: WithSpringConfig = Object.assign({}, SLOW_SPRING_CONFIG, userConfig);
   return withSpring(toValue, config, callback);
 };
 
