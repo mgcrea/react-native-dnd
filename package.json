@@ -76,6 +76,7 @@
       "node_modules/(?!(.pnpm/)?(@?react-native.*|react-native-.*|)/)"
     ],
     "testPathIgnorePatterns": [
+      "/.idea/",
       "/node_modules/",
       "/example/"
     ]
