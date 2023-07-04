@@ -6,7 +6,7 @@ import type { AnimatedStyleWorklet } from "../types";
 
 export type DraggableProps = AnimateProps<ViewProps> &
   UseDroppableOptions &
-  DraggableConstraints & {
+  Partial<DraggableConstraints> & {
     animatedStyleWorklet?: AnimatedStyleWorklet;
     activeOpacity?: number;
   };

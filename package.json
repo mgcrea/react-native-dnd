@@ -24,7 +24,7 @@
     "prettycheck": "prettier --check src/ test/",
     "typecheck": "tsc --noEmit",
     "spec": "jest",
-    "test": "npm run lint && npm run spec",
+    "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
     "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
