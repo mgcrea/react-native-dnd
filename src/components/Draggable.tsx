@@ -1,17 +1,14 @@
 import React, { type FunctionComponent, type PropsWithChildren } from "react";
-import { type ViewProps, type ViewStyle } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  type AnimateProps,
-  type AnimatedStyleProp,
-} from "react-native-reanimated";
-import { useDraggable, type UseDroppableOptions } from "../hooks";
-
-type AnimatedStyleWorklet = <T extends AnimatedStyleProp<ViewStyle>>(style: T, isActive: boolean) => T;
+import { type ViewProps } from "react-native";
+import Animated, { useAnimatedStyle, type AnimateProps } from "react-native-reanimated";
+import { useDraggable, type DraggableConstraints, type UseDroppableOptions } from "../hooks";
+import type { AnimatedStyleWorklet } from "../types";
 
 export type DraggableProps = AnimateProps<ViewProps> &
-  UseDroppableOptions & {
+  UseDroppableOptions &
+  DraggableConstraints & {
     animatedStyleWorklet?: AnimatedStyleWorklet;
+    activeOpacity?: number;
   };
 
 /**
@@ -28,6 +25,7 @@ export type DraggableProps = AnimateProps<ViewProps> &
  * @param {object} props.data - An object that contains data associated with the Draggable component.
  * @param {boolean} props.disabled - A flag that indicates whether the Draggable component is disabled.
  * @param {object} props.style - An object that defines the style of the Draggable component.
+ * @param {number} props.activeOpacity - A number that defines the opacity of the Draggable component when it is active.
  * @param {Function} props.animatedStyleWorklet - A worklet function that modifies the animated style of the Draggable component.
  * @returns {React.Component} Returns a Draggable component that can be moved by the user within a Drag and Drop context.
  */
@@ -37,19 +35,25 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   data,
   disabled,
   style,
+  activeOpacity = 0.9,
+  delay,
+  tolerance,
   animatedStyleWorklet,
   ...otherProps
 }) => {
-  const { setNodeRef, setNodeLayout, activeId, offset } = useDraggable({
+  const { setNodeRef, setNodeLayout, activeId, actingId, offset } = useDraggable({
     id,
     data,
     disabled,
+    delay,
+    tolerance,
   });
 
   const animatedStyle = useAnimatedStyle(() => {
     const isActive = activeId.value === id;
+    const isActing = actingId.value === id;
     const style = {
-      opacity: isActive ? 0.9 : 1,
+      opacity: isActive ? activeOpacity : 1,
       zIndex: isActive ? 999 : 1,
       transform: [
         {
@@ -61,10 +65,10 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
       ],
     };
     if (animatedStyleWorklet) {
-      animatedStyleWorklet(style, isActive);
+      Object.assign(style, animatedStyleWorklet(style, { isActive, isActing, isDisabled: !!disabled }));
     }
     return style;
-  }, [id]);
+  }, [id, activeOpacity]);
 
   return (
     <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>

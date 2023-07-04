@@ -1,17 +1,13 @@
 import React, { type FunctionComponent, type PropsWithChildren } from "react";
-import { type ViewProps, type ViewStyle } from "react-native";
-import Animated, {
-  useAnimatedStyle,
-  type AnimateProps,
-  type AnimatedStyleProp,
-} from "react-native-reanimated";
+import { type ViewProps } from "react-native";
+import Animated, { useAnimatedStyle, type AnimateProps } from "react-native-reanimated";
 import { useDroppable, type UseDraggableOptions } from "../hooks";
-
-type AnimatedStyleWorklet = <T extends AnimatedStyleProp<ViewStyle>>(style: T, isActive: boolean) => T;
+import type { AnimatedStyleWorklet } from "../types";
 
 export type DroppableProps = AnimateProps<ViewProps> &
   UseDraggableOptions & {
     animatedStyleWorklet?: AnimatedStyleWorklet;
+    activeOpacity?: number;
   };
 
 /**
@@ -28,6 +24,7 @@ export type DroppableProps = AnimateProps<ViewProps> &
  * @param {boolean} props.disabled - A flag that indicates whether the Droppable component is disabled.
  * @param {object} props.data - An object that contains data associated with the Droppable component.
  * @param {object} props.style - An object that defines the style of the Droppable component.
+ * @param {number} props.activeOpacity - A number that defines the opacity of the Droppable component when it is active.
  * @param {Function} props.animatedStyleWorklet - A worklet function that modifies the animated style of the Droppable component.
  * @returns {React.Component} Returns a Droppable component that can serve as a drop target within a Drag and Drop context.
  */
@@ -37,6 +34,7 @@ export const Droppable: FunctionComponent<PropsWithChildren<DroppableProps>> = (
   disabled,
   data,
   style,
+  activeOpacity = 0.9,
   animatedStyleWorklet,
   ...otherProps
 }) => {
@@ -49,13 +47,13 @@ export const Droppable: FunctionComponent<PropsWithChildren<DroppableProps>> = (
   const animatedStyle = useAnimatedStyle(() => {
     const isActive = activeId.value === id;
     const style = {
-      opacity: isActive ? 0.9 : 1,
+      opacity: isActive ? activeOpacity : 1,
     };
     if (animatedStyleWorklet) {
-      animatedStyleWorklet(style, isActive);
+      Object.assign(style, animatedStyleWorklet(style, { isActive, isDisabled: !!disabled }));
     }
     return style;
-  }, [id]);
+  }, [id, activeOpacity]);
 
   return (
     <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
