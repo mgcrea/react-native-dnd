@@ -32,19 +32,20 @@ const DraggableComponent = ({ id, data, disabled }) => {
 
 ```tsx
 // src/components/MyDraggable.tsx
-import { useDraggable, type AnimateProps } from "@mgcrea/react-native-dnd";
+import { useDraggable, type AnimateProps, type UseDraggableOptions } from "@mgcrea/react-native-dnd";
 import { type FunctionComponent, type PropsWithChildren } from "react";
 import { type ViewProps } from "react-native";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
-import { type UseDroppableOptions } from "../hooks";
 
-export type MyDraggableProps = AnimateProps<ViewProps> & UseDroppableOptions;
+export type MyDraggableProps = AnimateProps<ViewProps> & UseDraggableOptions;
 
 export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>> = ({
   children,
   id,
   data,
   disabled,
+  delay,
+  tolerance,
   style,
   ...otherProps
 }) => {
@@ -52,6 +53,8 @@ export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>>
     id,
     data,
     disabled,
+    delay,
+    tolerance,
   });
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -91,6 +94,13 @@ export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>>
     An optional data object that can be used to store additional information about the draggable component.
     Default is an empty object (`{}`).
   </Property>
+  <Property name="delay" type="number" optional defaultValue={`0`}>
+    A number representing the duration, in milliseconds, that this draggable item needs to be held for before allowing a drag to start.
+    Default is `0`.
+  </Property>
+  <Property name="tolerance" type="number" optional defaultValue={`false`}>
+    A number representing the distance, in pixels, of motion that is tolerated before the drag operation is aborted.
+  </Property>
   <Property name="disabled" type="boolean" optional defaultValue={`false`}>
     A boolean indicating whether the draggable component should be disabled (i.e., not be able to be dragged).
     Default is `false`.
@@ -113,8 +123,12 @@ export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>>
     its layout.
   </Property>
   <Property name="activeId" type={`SharedValue<UniqueIdentifier | null>`}>
-    A `SharedValue` containing the ID of the currently active draggable component or `null` if there's no
+    A `SharedValue` containing the ID of the currently active draggable component (eg. being interacted with) or `null` if there's no
     active draggable component.
+  </Property>
+  <Property name="actingId" type={`SharedValue<UniqueIdentifier | null>`}>
+    A `SharedValue` containing the ID of the currently acting draggable component (eg. not at rest) or `null` if there's no
+    acting draggable component.
   </Property>
   <Property name="draggableState" type={`SharedValue<DraggableState>`}>
     A `SharedValue` containing the state of the currently dragged component.

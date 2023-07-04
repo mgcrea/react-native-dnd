@@ -18,7 +18,14 @@ import {
   useSharedValue,
   WithSpringConfig,
 } from "react-native-reanimated";
-import { animatePointWithSpring, applyOffset, includesPoint, overlapsRectangle, Point } from "src/utils";
+import {
+  animatePointWithSpring,
+  applyOffset,
+  getDistance,
+  includesPoint,
+  overlapsRectangle,
+  Point,
+} from "src/utils";
 import {
   DndContext,
   type DndContextValue,
@@ -33,6 +40,8 @@ import type { UniqueIdentifier } from "./types";
 
 export type DndProviderProps = {
   springConfig?: WithSpringConfig;
+  activationDelay?: number;
+  minDistance?: number;
   disabled?: boolean;
   onDragEnd?: (ev: { active: ItemOptions; over: ItemOptions | null }) => void;
   onBegin?: (
@@ -62,6 +71,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     {
       children,
       springConfig = {},
+      minDistance = 0,
+      activationDelay = 0,
       disabled,
       hapticFeedback,
       onDragEnd,
@@ -186,151 +197,160 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         }, delay);
       };
 
-      return (
-        Gesture.Pan()
-          // .activateAfterLongPress(1500)
-          .onBegin((event) => {
-            const { state, x, y } = event;
-            debug && console.log("begin", { state, x, y });
-            // Gesture is globally disabled
-            if (disabled) {
-              return;
-            }
-            // console.log("begin", { state, x, y });
-            // Track current state for cancellation purposes
-            draggableState.value = state;
-            const { value: layouts } = draggableLayouts;
-            const { value: offsets } = draggableOffsets;
-            const { value: options } = draggableOptions;
-            const { value: lastActingId } = draggableActingId;
-            // Find the active layout key under {x, y}
-            const activeId = findActiveLayoutId({ x, y });
-            // Update shared state
-            draggableActingId.value = activeId;
-            // Check if an item was actually selected
-            if (activeId !== null) {
-              // Update activeId with an optional delay
-              // draggableActiveId.value = activeId;
-              options[activeId]?.delay > 0
-                ? runOnJS(setActiveId)(activeId, options[activeId].delay)
-                : (draggableActiveId.value = activeId);
-              // Record any ongoing current offset as our initial offset for the gesture
-              const activeOffset = offsets[activeId];
-              draggableActiveOffset.x.value = activeOffset.x.value;
-              draggableActiveOffset.y.value = activeOffset.y.value;
-              // Cancel the ongoing animation if we just reactivated the same item
-              if (activeId === lastActingId) {
-                cancelAnimation(activeOffset.x);
-                cancelAnimation(activeOffset.y);
-                // If not we should reset the resting offset to the current offset value
-              } else {
-                draggableRestingOffset.x.value = activeOffset.x.value;
-                draggableRestingOffset.y.value = activeOffset.y.value;
-              }
-              if (onBegin) {
-                const activeLayout = layouts[activeId].value;
-                onBegin(event, { activeId, activeLayout });
-              }
-            }
-          })
-          .onUpdate((event) => {
-            const { state, translationX, translationY } = event;
-            debug && console.log("update", { state, translationX, translationY });
-            // Track current state for cancellation purposes
-            draggableState.value = state;
-            const { value: activeId } = draggableActiveId;
-            const { value: actingId } = draggableActingId;
-            const { value: options } = draggableOptions;
-            const { value: layouts } = draggableLayouts;
-            const { value: offsets } = draggableOffsets;
-            if (activeId === null) {
-              // Check if we are currently waiting for activation delay
-              if (actingId !== null) {
-                const { tolerance } = options[actingId];
-                // Check if we've moved beyond the activation tolerance
-                const distance = Math.sqrt(Math.abs(translationX) ** 2 + Math.abs(translationY) ** 2);
-                if (distance > tolerance) {
-                  runOnJS(clearActiveId)();
-                  draggableActingId.value = null;
-                }
-              }
-              // Ignore item-free interactions
-              return;
-            }
-            // Update our active offset to pan the active item
+      const panGesture = Gesture.Pan()
+        .onBegin((event) => {
+          const { state, x, y } = event;
+          debug && console.log("begin", { state, x, y });
+          // Gesture is globally disabled
+          if (disabled) {
+            return;
+          }
+          // console.log("begin", { state, x, y });
+          // Track current state for cancellation purposes
+          draggableState.value = state;
+          const { value: layouts } = draggableLayouts;
+          const { value: offsets } = draggableOffsets;
+          const { value: options } = draggableOptions;
+          const { value: lastActingId } = draggableActingId;
+          // Find the active layout key under {x, y}
+          const activeId = findActiveLayoutId({ x, y });
+          // Update shared state
+          draggableActingId.value = activeId;
+          // Check if an item was actually selected
+          if (activeId !== null) {
+            // Update activeId directly or with an optional delay
+            const { activationDelay } = options[activeId];
+            activationDelay > 0
+              ? runOnJS(setActiveId)(activeId, activationDelay)
+              : (draggableActiveId.value = activeId);
+            // Record any ongoing current offset as our initial offset for the gesture
             const activeOffset = offsets[activeId];
-            activeOffset.x.value = translationX + draggableActiveOffset.x.value;
-            activeOffset.y.value = translationY + draggableActiveOffset.y.value;
-            // Check potential droppable candidates
+            draggableActiveOffset.x.value = activeOffset.x.value;
+            draggableActiveOffset.y.value = activeOffset.y.value;
+            // Cancel the ongoing animation if we just reactivated the same item
+            if (activeId === lastActingId) {
+              cancelAnimation(activeOffset.x);
+              cancelAnimation(activeOffset.y);
+              // If not we should reset the resting offset to the current offset value
+            } else {
+              draggableRestingOffset.x.value = activeOffset.x.value;
+              draggableRestingOffset.y.value = activeOffset.y.value;
+            }
+            if (onBegin) {
+              const activeLayout = layouts[activeId].value;
+              onBegin(event, { activeId, activeLayout });
+            }
+          }
+        })
+        .onUpdate((event) => {
+          const { state, translationX, translationY } = event;
+          debug && console.log("update", { state, translationX, translationY });
+          // Track current state for cancellation purposes
+          draggableState.value = state;
+          const { value: activeId } = draggableActiveId;
+          const { value: actingId } = draggableActingId;
+          const { value: options } = draggableOptions;
+          const { value: layouts } = draggableLayouts;
+          const { value: offsets } = draggableOffsets;
+          if (activeId === null) {
+            // Check if we are currently waiting for activation delay
+            if (actingId !== null) {
+              const { activationTolerance } = options[actingId];
+              // Check if we've moved beyond the activation tolerance
+              const distance = getDistance(translationX, translationY);
+              if (distance > activationTolerance) {
+                runOnJS(clearActiveId)();
+                draggableActingId.value = null;
+              }
+            }
+            // Ignore item-free interactions
+            return;
+          }
+          // Update our active offset to pan the active item
+          const activeOffset = offsets[activeId];
+          activeOffset.x.value = translationX + draggableActiveOffset.x.value;
+          activeOffset.y.value = translationY + draggableActiveOffset.y.value;
+          // Check potential droppable candidates
+          const activeLayout = layouts[activeId].value;
+          const updatedLayout = applyOffset(activeLayout, {
+            x: activeOffset.x.value,
+            y: activeOffset.y.value,
+          });
+          droppableActiveId.value = findDroppableLayoutId(updatedLayout);
+          if (onUpdate) {
+            onUpdate(event, { activeId, activeLayout: updatedLayout });
+          }
+        })
+        .onFinalize((event) => {
+          const { state, velocityX, velocityY } = event;
+          debug && console.log("finalize", { state, velocityX, velocityY });
+          // Track current state for cancellation purposes
+          draggableState.value = state; // can be `FAILED` or `ENDED`
+          const { value: activeId } = draggableActiveId;
+          const { value: layouts } = draggableLayouts;
+          const { value: offsets } = draggableOffsets;
+          // Ignore item-free interactions
+          if (activeId === null) {
+            return;
+          }
+          // Reset interaction-related shared state for styling purposes
+          draggableActiveId.value = null;
+          if (onFinalize) {
             const activeLayout = layouts[activeId].value;
+            const activeOffset = offsets[activeId];
             const updatedLayout = applyOffset(activeLayout, {
               x: activeOffset.x.value,
               y: activeOffset.y.value,
             });
-            droppableActiveId.value = findDroppableLayoutId(updatedLayout);
-            if (onUpdate) {
-              onUpdate(event, { activeId, activeLayout: updatedLayout });
-            }
-          })
-          .onFinalize((event) => {
-            const { state, velocityX, velocityY } = event;
-            debug && console.log("finalize", { state, velocityX, velocityY });
-            // Track current state for cancellation purposes
-            draggableState.value = state; // can be `FAILED` or `ENDED`
-            const { value: activeId } = draggableActiveId;
-            const { value: layouts } = draggableLayouts;
-            const { value: offsets } = draggableOffsets;
-            // Ignore item-free interactions
-            if (activeId === null) {
-              return;
-            }
-            // Reset interaction-related shared state for styling purposes
-            draggableActiveId.value = null;
-            if (onFinalize) {
-              const activeLayout = layouts[activeId].value;
-              const activeOffset = offsets[activeId];
-              const updatedLayout = applyOffset(activeLayout, {
-                x: activeOffset.x.value,
-                y: activeOffset.y.value,
-              });
-              onFinalize(event, { activeId, activeLayout: updatedLayout });
-            }
-            // Callback
-            if (state !== State.FAILED && onDragEnd) {
-              const { value: dropActiveId } = droppableActiveId;
-              onDragEnd({
-                active: draggableOptions.value[activeId],
-                over: dropActiveId !== null ? droppableOptions.value[dropActiveId] : null,
-              });
-            }
-            // Reset droppable
-            droppableActiveId.value = null;
-            // Move back to initial position
-            const activeOffset = offsets[activeId];
-            animatePointWithSpring(
-              activeOffset,
-              [draggableRestingOffset.x.value, draggableRestingOffset.y.value],
-              [
-                { ...springConfig, velocity: velocityX },
-                { ...springConfig, velocity: velocityY },
-              ],
-              () => {
-                // Cancel if we are interacting again with an item
-                if (draggableState.value !== State.END && draggableActingId.value !== null) {
-                  return;
-                }
-                // Cancel if we are not the last interaction
-                if (draggableActingId.value !== activeId) {
-                  return;
-                }
-                // Track active "acting" item as long as possible for handling consecutive interactions
-                console.log("out");
-                draggableActingId.value = null;
+            onFinalize(event, { activeId, activeLayout: updatedLayout });
+          }
+          // Callback
+          if (state !== State.FAILED && onDragEnd) {
+            const { value: dropActiveId } = droppableActiveId;
+            onDragEnd({
+              active: draggableOptions.value[activeId],
+              over: dropActiveId !== null ? droppableOptions.value[dropActiveId] : null,
+            });
+          }
+          // Reset droppable
+          droppableActiveId.value = null;
+          // Move back to initial position
+          const activeOffset = offsets[activeId];
+          animatePointWithSpring(
+            activeOffset,
+            [draggableRestingOffset.x.value, draggableRestingOffset.y.value],
+            [
+              { ...springConfig, velocity: velocityX },
+              { ...springConfig, velocity: velocityY },
+            ],
+            () => {
+              // Cancel if we are interacting again with an item
+              if (draggableState.value !== State.END && draggableActingId.value !== null) {
+                return;
               }
-            );
-          })
-          .withTestId("DndProvider.pan")
-      );
+              // Cancel if we are not the last interaction
+              if (draggableActingId.value !== activeId) {
+                return;
+              }
+              // Track active "acting" item as long as possible for handling consecutive interactions
+              draggableActingId.value = null;
+            }
+          );
+        })
+        .withTestId("DndProvider.pan");
+
+      // Duration in milliseconds of the LongPress gesture before Pan is allowed to activate.
+      // If the finger is moved during that period, the gesture will fail.
+      if (activationDelay > 0) {
+        panGesture.activateAfterLongPress(activationDelay);
+      }
+
+      // Minimum distance the finger (or multiple finger) need to travel before the gesture activates. Expressed in points.
+      if (minDistance > 0) {
+        panGesture.minDistance(minDistance);
+      }
+
+      return panGesture;
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [disabled]);
 

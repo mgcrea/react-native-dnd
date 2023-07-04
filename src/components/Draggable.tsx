@@ -24,6 +24,8 @@ export type DraggableProps = AnimateProps<ViewProps> &
  * @param {string} props.id - A unique identifier for the Draggable component.
  * @param {object} props.data - An object that contains data associated with the Draggable component.
  * @param {boolean} props.disabled - A flag that indicates whether the Draggable component is disabled.
+ * @param {number} props.activationDelay - A number representing the duration, in milliseconds, that this draggable item needs to be held for before allowing a drag to start.
+ * @param {number} props.activationTolerance - A number representing the distance, in pixels, of motion that is tolerated before the drag operation is aborted.
  * @param {object} props.style - An object that defines the style of the Draggable component.
  * @param {number} props.activeOpacity - A number that defines the opacity of the Draggable component when it is active.
  * @param {Function} props.animatedStyleWorklet - A worklet function that modifies the animated style of the Draggable component.
@@ -36,8 +38,8 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   disabled,
   style,
   activeOpacity = 0.9,
-  delay,
-  tolerance,
+  activationDelay,
+  activationTolerance,
   animatedStyleWorklet,
   ...otherProps
 }) => {
@@ -45,8 +47,8 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
     id,
     data,
     disabled,
-    delay,
-    tolerance,
+    activationDelay,
+    activationTolerance,
   });
 
   const animatedStyle = useAnimatedStyle(() => {

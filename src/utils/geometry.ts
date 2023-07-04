@@ -66,3 +66,8 @@ export const centerPoint = (layout: Rectangle): Point => {
     y: layout.y + layout.height / 2,
   };
 };
+
+export const getDistance = (x: number, y: number): number => {
+  "worklet";
+  return Math.sqrt(Math.abs(x) ** 2 + Math.abs(y) ** 2);
+};
