@@ -94,12 +94,12 @@ export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>>
     An optional data object that can be used to store additional information about the draggable component.
     Default is an empty object (`{}`).
   </Property>
-  <Property name="delay" type="number" optional defaultValue={`0`}>
+  <Property name="activationDelay" type="number" optional defaultValue={`0`}>
     A number representing the duration, in milliseconds, that this draggable item needs to be held for before allowing a drag to start.
     Default is `0`.
   </Property>
-  <Property name="tolerance" type="number" optional defaultValue={`false`}>
-    A number representing the distance, in pixels, of motion that is tolerated before the drag operation is aborted.
+  <Property name="activationTolerance" type="number" optional defaultValue={`false`}>
+    A number representing the distance, in points, of motion that is tolerated before the drag operation is aborted.
   </Property>
   <Property name="disabled" type="boolean" optional defaultValue={`false`}>
     A boolean indicating whether the draggable component should be disabled (i.e., not be able to be dragged).
