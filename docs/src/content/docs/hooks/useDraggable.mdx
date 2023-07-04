@@ -44,21 +44,22 @@ export const MyDraggable: FunctionComponent<PropsWithChildren<MyDraggableProps>>
   id,
   data,
   disabled,
-  delay,
-  tolerance,
+  activationDelay,
+  activationTolerance,
   style,
   ...otherProps
 }) => {
-  const { setNodeRef, setNodeLayout, activeId, offset } = useDraggable({
+  const { setNodeRef, setNodeLayout, activeId, actingId, offset } = useDraggable({
     id,
     data,
     disabled,
-    delay,
-    tolerance,
+    activationDelay,
+    activationTolerance,
   });
 
   const animatedStyle = useAnimatedStyle(() => {
     const isActive = activeId.value === id;
+    const isResting = actingId.value !== id;
     const style = {
       opacity: isActive ? 0.9 : 1,
       zIndex: isActive ? 999 : 1,
