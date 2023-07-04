@@ -1,4 +1,4 @@
-import { useLayoutEffect } from "react";
+import { useCallback, useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
 import { runOnUI, useSharedValue } from "react-native-reanimated";
 import { useLatestSharedValue, useNodeRef } from "src/hooks";
@@ -7,7 +7,12 @@ import { useDndContext } from "../DndContext";
 import { Data, NativeElement, UniqueIdentifier } from "../types";
 import { useSharedPoint } from "./useSharedPoint";
 
-export type UseDraggableOptions = {
+export type DraggableConstraints = {
+  delay: number;
+  tolerance: number;
+};
+
+export type UseDraggableOptions = Partial<DraggableConstraints> & {
   id: UniqueIdentifier;
   data?: Data;
   disabled?: boolean;
@@ -29,15 +34,23 @@ export type UseDraggableOptions = {
  * @property {object} offset - An object representing the current offset of the draggable component.
  * @property {Function} setNodeRef - A function that can be used to set the ref of the draggable component.
  * @property {string} activeId - The unique identifier of the currently active draggable component.
+ * @property {string} actingId - The unique identifier of the currently interacti draggable component.
  * @property {Function} setNodeLayout - A function that handles the layout event of the draggable component.
  * @property {object} draggableState - An object representing the current state of the draggable component.
  */
-export const useDraggable = ({ id, data = {}, disabled = false }: UseDraggableOptions) => {
+export const useDraggable = ({
+  id,
+  data = {},
+  disabled = false,
+  delay = 0,
+  tolerance = Infinity,
+}: UseDraggableOptions) => {
   const {
     draggableLayouts,
     draggableOffsets,
     draggableOptions,
     draggableActiveId,
+    draggableActingId,
     containerRef,
     draggableState,
   } = useDndContext();
@@ -60,7 +73,7 @@ export const useDraggable = ({ id, data = {}, disabled = false }: UseDraggableOp
       "worklet";
       draggableLayouts.value[id] = layout;
       draggableOffsets.value[id] = offset;
-      draggableOptions.value[id] = { id, data: sharedData, disabled };
+      draggableOptions.value[id] = { id, data: sharedData, disabled, delay, tolerance };
     };
     runOnUI(runLayoutEffect)();
     return () => {
@@ -74,7 +87,7 @@ export const useDraggable = ({ id, data = {}, disabled = false }: UseDraggableOp
       runOnUI(runLayoutEffect)();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [id]);
 
   const onLayout: ViewProps["onLayout"] = () => {
     assert(containerRef.current);
@@ -83,5 +96,26 @@ export const useDraggable = ({ id, data = {}, disabled = false }: UseDraggableOp
     });
   };
 
-  return { offset, setNodeRef, activeId: draggableActiveId, setNodeLayout: onLayout, draggableState };
+  const setDisabled = useCallback(
+    (disabled: boolean) => {
+      const updateDisabled = () => {
+        "worklet";
+        console.log("disabled", disabled);
+        draggableOptions.value[id] = { ...draggableOptions.value[id], disabled };
+      };
+      runOnUI(updateDisabled)();
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [id]
+  );
+
+  return {
+    offset,
+    setNodeRef,
+    activeId: draggableActiveId,
+    actingId: draggableActingId,
+    setNodeLayout: onLayout,
+    draggableState,
+    setDisabled,
+  };
 };
