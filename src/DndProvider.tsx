@@ -287,10 +287,16 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           // Track current state for cancellation purposes
           draggableState.value = state; // can be `FAILED` or `ENDED`
           const { value: activeId } = draggableActiveId;
+          const { value: actingId } = draggableActingId;
           const { value: layouts } = draggableLayouts;
           const { value: offsets } = draggableOffsets;
           // Ignore item-free interactions
           if (activeId === null) {
+            // Check if we were currently waiting for activation delay
+            if (actingId !== null) {
+              runOnJS(clearActiveId)();
+              draggableActingId.value = null;
+            }
             return;
           }
           // Reset interaction-related shared state for styling purposes
@@ -325,7 +331,11 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
             ],
             () => {
               // Cancel if we are interacting again with an item
-              if (draggableState.value !== State.END && draggableActingId.value !== null) {
+              if (
+                draggableState.value !== State.END &&
+                draggableState.value !== State.FAILED &&
+                draggableActingId.value !== null
+              ) {
                 return;
               }
               // Cancel if we are not the last interaction
