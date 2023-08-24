@@ -28,7 +28,7 @@
     "spec": "jest",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
     "prepublishOnly": "npm run build",
-    "prepare": "npm run build:source"
+    "postinstall": "npm run build:source"
   },
   "peerDependencies": {
     "react-native-gesture-handler": ">=2",
