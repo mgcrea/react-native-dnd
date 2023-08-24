@@ -8,6 +8,7 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
+    "src",
     "dist"
   ],
   "scripts": {
@@ -15,9 +16,9 @@
     "dev": "cd example; npm run dev",
     "android": "cd example; npm run android",
     "ios": "cd example; npm run ios",
-    "build": "npm run build:source && npm run build:typings",
+    "build": "npm run build:source -- --delete-dir-on-start && npm run build:typings",
     "build:watch": "NODE_ENV=production babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --ignore **/__tests__ src/ --watch",
-    "build:source": "NODE_ENV=production babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --delete-dir-on-start --ignore **/__tests__ src/",
+    "build:source": "NODE_ENV=production babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --ignore **/__tests__ src/",
     "build:typings": "NODE_ENV=production tsc --project tsconfig.build.json --declaration",
     "prettify": "prettier --write src/ test/",
     "lint": "eslint src/ test/",
@@ -25,7 +26,8 @@
     "typecheck": "tsc --noEmit",
     "spec": "jest",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build:source"
   },
   "peerDependencies": {
     "react-native-gesture-handler": ">=2",
