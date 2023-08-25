@@ -1,4 +1,4 @@
-import { forwardRef, Key, PropsWithChildren, useImperativeHandle, useMemo, useRef } from "react";
+import React, { forwardRef, Key, PropsWithChildren, useImperativeHandle, useMemo, useRef } from "react";
 import { LayoutRectangle, StyleProp, View, ViewStyle } from "react-native";
 import {
   Gesture,
@@ -16,7 +16,7 @@ import {
   runOnUI,
   useAnimatedReaction,
   useSharedValue,
-  WithSpringConfig,
+  type WithSpringConfig,
 } from "react-native-reanimated";
 import {
   animatePointWithSpring,
