@@ -65,7 +65,7 @@ type AnimationCallbackParams = Parameters<AnimationCallback>;
 
 export type AnimationPointCallback = (
   finished: [boolean | undefined, boolean | undefined],
-  current: [AnimatableValue | undefined, AnimatableValue | undefined]
+  current: [AnimatableValue | undefined, AnimatableValue | undefined],
 ) => void;
 
 export const withDefaultSpring: typeof withSpring = (toValue, userConfig: WithSpringConfig = {}, callback) => {
@@ -82,7 +82,7 @@ export const animatePointWithSpring = (
   point: SharedPoint,
   [toValueX, toValueY]: [number, number],
   [configX, configY]: [WithSpringConfig | undefined, WithSpringConfig | undefined] = [undefined, undefined],
-  callback?: AnimationPointCallback
+  callback?: AnimationPointCallback,
 ) => {
   "worklet";
   const [waitForX, waitForY] = waitForAll<[AnimationCallbackParams, AnimationCallbackParams]>(
@@ -91,7 +91,7 @@ export const animatePointWithSpring = (
         return;
       }
       callback([finishedX, finishedY], [currentX, currentY]);
-    }
+    },
   );
   point.x.value = withSpring(toValueX, configX, waitForX);
   point.y.value = withSpring(toValueY, configY, waitForY);
@@ -114,7 +114,7 @@ export const stringifySharedPoint = ({ x, y }: SharedPoint) => {
 export const stringifyLayout = ({ x, y, width, height }: LayoutRectangle) => {
   "worklet";
   return `{"x": ${Math.floor(x)}, "y": ${Math.floor(y)}, "width": ${Math.floor(width)}, "height": ${Math.floor(
-    height
+    height,
   )}}`;
 };
 

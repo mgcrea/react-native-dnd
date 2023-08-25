@@ -11,6 +11,6 @@ export const useActiveDropReaction = (id: UniqueIdentifier, callback: (isActive:
         callback(next);
       }
     },
-    []
+    [],
   );
 };

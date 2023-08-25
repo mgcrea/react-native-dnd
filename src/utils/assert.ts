@@ -5,7 +5,7 @@ class AssertionError extends Error {
     message = "",
     public actual: unknown,
     public expected: unknown = "true",
-    public operator = "=="
+    public operator = "==",
   ) {
     super(message || `${actual} ${operator} ${expected}`);
     Object.setPrototypeOf(this, new.target.prototype);

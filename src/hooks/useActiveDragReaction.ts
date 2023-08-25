@@ -12,6 +12,6 @@ export const useActiveDragReaction = (id: UniqueIdentifier, callback: (isActive:
         callback(next);
       }
     },
-    []
+    [],
   );
 };

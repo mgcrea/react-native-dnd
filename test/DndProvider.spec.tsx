@@ -16,7 +16,7 @@ describe("<DndProvider />", () => {
             <Text>DRAG</Text>
           </Draggable>
         </DndProvider>
-      </GestureHandlerRootView>
+      </GestureHandlerRootView>,
     );
 
     fireGestureHandler<PanGesture>(getByGestureTestId("DndProvider.pan"), [

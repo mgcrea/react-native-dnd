@@ -17,7 +17,7 @@ export const useNodeRef = <T, U = T>(onChange?: NodeChangeHandler<T>) => {
       nodeRef.current = element as T;
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    []
+    [],
   );
 
   return [nodeRef, setNodeRef] as const;

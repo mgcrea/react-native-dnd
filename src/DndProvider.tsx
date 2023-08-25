@@ -46,15 +46,15 @@ export type DndProviderProps = {
   onDragEnd?: (ev: { active: ItemOptions; over: ItemOptions | null }) => void;
   onBegin?: (
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
-    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle }
+    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
   ) => void;
   onUpdate?: (
     event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
-    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle }
+    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
   ) => void;
   onFinalize?: (
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
-    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle }
+    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
   ) => void;
   hapticFeedback?: HapticFeedbackTypes;
   style?: StyleProp<ViewStyle>;
@@ -82,7 +82,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       style,
       debug,
     },
-    ref
+    ref,
   ) {
     const containerRef = useRef<View | null>(null);
     const draggableLayouts = useSharedValue<Layouts>({});
@@ -112,7 +112,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           runOnJS(runFeedback)();
         }
       },
-      []
+      [],
     );
 
     const contextValue = useRef<DndContextValue>({
@@ -140,7 +140,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         };
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
-      []
+      [],
     );
 
     const panGesture = useMemo(() => {
@@ -344,7 +344,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
               }
               // Track active "acting" item as long as possible for handling consecutive interactions
               draggableActingId.value = null;
-            }
+            },
           );
         })
         .withTestId("DndProvider.pan");
@@ -373,5 +373,5 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         </GestureDetector>
       </DndContext.Provider>
     );
-  }
+  },
 );
