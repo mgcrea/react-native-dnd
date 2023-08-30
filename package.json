@@ -8,7 +8,8 @@
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist"
+    "dist",
+    "dist-alt"
   ],
   "scripts": {
     "start": "cd example; npm start",
@@ -16,9 +17,11 @@
     "android": "cd example; npm run android",
     "ios": "cd example; npm run ios",
     "build": "npm run build:source -- --delete-dir-on-start && npm run build:typings",
-    "build2": "tsup src/index.ts --format cjs --sourcemap --dts --clean",
+    "build:alt": "rm -rf alt/; cp -rf dist/ dist-alt/; npm run build:source:alt",
+    "build:bundle": "tsup src/index.ts --format cjs --sourcemap --dts --clean",
     "build:watch": "babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --ignore **/__tests__ src/ --watch",
     "build:source": "babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --ignore **/__tests__ src/",
+    "build:source:alt": "babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist-alt/ --ignore **/__tests__  --config-file ./babel.config.alt.js src/",
     "build:typings": "tsc --project tsconfig.build.json --declaration",
     "prettify": "prettier --write src/ test/",
     "lint": "eslint src/ test/",
@@ -26,7 +29,7 @@
     "typecheck": "tsc --noEmit",
     "spec": "jest",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build && npm run build:alt"
   },
   "peerDependencies": {
     "react-native-gesture-handler": ">=2",
