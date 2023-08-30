@@ -6,6 +6,7 @@
   "repository": "github:mgcrea/react-native-dnd",
   "license": "MIT",
   "main": "./dist/index.js",
+  "alt": "./dist-alt/index.js",
   "types": "./dist/index.d.ts",
   "files": [
     "dist",
