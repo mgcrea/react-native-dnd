@@ -144,8 +144,9 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     );
 
     const panGesture = useMemo(() => {
-      const findActiveLayoutId = ({ x, y }: Point): Key | null => {
+      const findActiveLayoutId = (point: Point): Key | null => {
         "worklet";
+        const { x, y } = point;
         const { value: layouts } = draggableLayouts;
         const { value: offsets } = draggableOffsets;
         const { value: options } = draggableOptions;
@@ -191,7 +192,6 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         timeout = setTimeout(() => {
           runOnUI(() => {
             "worklet";
-            console.log("draggableActiveId.value = id");
             draggableActiveId.value = id;
           })();
         }, delay);
