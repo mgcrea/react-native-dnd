@@ -10,5 +10,6 @@ module.exports = {
         },
       },
     ],
+    "/Users/olivier/Projects/forks/react-native-reanimated/plugin/build/plugin.js",
   ],
 };
