@@ -45,6 +45,8 @@ Check the [**Documentation**](https://mgcrea.github.io/react-native-dnd/) for us
 
 ![demo](./.github/assets/demo.gif)
 
+A working project can be found at [react-native-dnd-demo](https://github.com/mgcrea/react-native-dnd-demo)
+
 ## Install
 
 ```bash
