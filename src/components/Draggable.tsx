@@ -67,7 +67,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
       ],
     };
     if (animatedStyleWorklet) {
-      Object.assign(style, animatedStyleWorklet(style, { isActive, isActing, isDisabled: !!disabled }));
+      animatedStyleWorklet(style, { isActive, isActing, isDisabled: !!disabled });
     }
     return style;
   }, [id, activeOpacity]);

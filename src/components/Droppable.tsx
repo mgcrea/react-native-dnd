@@ -50,7 +50,7 @@ export const Droppable: FunctionComponent<PropsWithChildren<DroppableProps>> = (
       opacity: isActive ? activeOpacity : 1,
     };
     if (animatedStyleWorklet) {
-      Object.assign(style, animatedStyleWorklet(style, { isActive, isDisabled: !!disabled }));
+      animatedStyleWorklet(style, { isActive, isDisabled: !!disabled });
     }
     return style;
   }, [id, activeOpacity]);
