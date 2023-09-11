@@ -182,7 +182,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       };
 
       // Helpers for delayed activation (eg. long press)
-      let timeout: number | null = null;
+      let timeout: ReturnType<typeof setTimeout> | null = null;
       const clearActiveId = () => {
         if (timeout) {
           clearTimeout(timeout);
