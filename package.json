@@ -23,7 +23,7 @@
     "prettycheck": "prettier --check src/ test/",
     "typecheck": "tsc --noEmit",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
-    "prepublishOnly": "npm run build && npm run build:alt"
+    "prepublishOnly": "npm run build"
   },
   "peerDependencies": {
     "react-native-gesture-handler": ">=2",
