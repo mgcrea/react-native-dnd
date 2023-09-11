@@ -1,10 +1,10 @@
 import { useLayoutEffect } from "react";
 import { type LayoutRectangle, type ViewProps } from "react-native";
 import { runOnUI, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
-import { useLatestSharedValue, useNodeRef } from "src/hooks";
-import type { Data, NativeElement, UniqueIdentifier } from "src/types";
-import { assert, isReanimatedSharedValue } from "src/utils";
 import { useDndContext } from "../DndContext";
+import { useLatestSharedValue, useNodeRef } from "../hooks";
+import type { Data, NativeElement, UniqueIdentifier } from "../types";
+import { assert, isReanimatedSharedValue } from "../utils";
 
 export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?: boolean };
 

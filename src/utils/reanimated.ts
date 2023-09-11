@@ -6,8 +6,8 @@ import {
   type AnimationCallback,
   type WithSpringConfig,
 } from "react-native-reanimated";
-import type { SharedPoint } from "src/hooks";
-import type { AnyData } from "src/types";
+import type { SharedPoint } from "../hooks";
+import type { AnyData } from "../types";
 
 export const DEFAULT_SPRING_CONFIG: WithSpringConfig = {
   damping: 10, // Defines how the spring’s motion should be damped due to the forces of friction. Default 10.

@@ -19,14 +19,6 @@ import {
   type WithSpringConfig,
 } from "react-native-reanimated";
 import {
-  animatePointWithSpring,
-  applyOffset,
-  getDistance,
-  includesPoint,
-  overlapsRectangle,
-  Point,
-} from "src/utils";
-import {
   DndContext,
   type DndContextValue,
   type DraggableOptions,
@@ -37,6 +29,14 @@ import {
 } from "./DndContext";
 import { useSharedPoint } from "./hooks";
 import type { UniqueIdentifier } from "./types";
+import {
+  animatePointWithSpring,
+  applyOffset,
+  getDistance,
+  includesPoint,
+  overlapsRectangle,
+  Point,
+} from "./utils";
 
 export type DndProviderProps = {
   springConfig?: WithSpringConfig;

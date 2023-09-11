@@ -1,10 +1,10 @@
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
 import { runOnUI, useSharedValue } from "react-native-reanimated";
-import { useLatestSharedValue, useNodeRef } from "src/hooks";
-import { assert, isReanimatedSharedValue } from "src/utils";
 import { useDndContext } from "../DndContext";
+import { useLatestSharedValue, useNodeRef } from "../hooks";
 import { Data, NativeElement, UniqueIdentifier } from "../types";
+import { assert, isReanimatedSharedValue } from "../utils";
 import { useSharedPoint } from "./useSharedPoint";
 
 export type DraggableConstraints = {
