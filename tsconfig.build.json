@@ -3,7 +3,7 @@
   "compilerOptions": {
     "declaration": true,
     "resolveJsonModule": true,
-    "emitDeclarationOnly": true,
+    "module": "ESNext",
     "noEmit": false,
     "rootDir": "./src",
     "outDir": "./dist",

@@ -5,30 +5,23 @@
   "author": "Olivier Louvignes <olivier@mgcrea.io>",
   "repository": "github:mgcrea/react-native-dnd",
   "license": "MIT",
+  "type": "module",
   "main": "./dist/index.js",
-  "alt": "./dist-alt/index.js",
   "types": "./dist/index.d.ts",
   "files": [
-    "dist",
-    "dist-alt"
+    "dist"
   ],
   "scripts": {
     "start": "cd example; npm start",
     "dev": "cd example; npm run dev",
     "android": "cd example; npm run android",
     "ios": "cd example; npm run ios",
-    "build": "npm run build:source -- --delete-dir-on-start && npm run build:typings",
-    "build:alt": "rm -rf alt/; cp -rf dist/ dist-alt/; npm run build:source:alt",
-    "build:bundle": "tsup src/index.ts --format cjs --sourcemap --dts --clean",
-    "build:watch": "babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --ignore **/__tests__ src/ --watch",
-    "build:source": "babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist/ --ignore **/__tests__ src/",
-    "build:source:alt": "babel --verbose --source-maps --extensions .js,.ts,.tsx --out-dir dist-alt/ --ignore **/__tests__  --config-file ./babel.config.alt.js src/",
-    "build:typings": "tsc --project tsconfig.build.json --declaration",
+    "build": "rm -rf dist/*; tsc --project tsconfig.build.json",
+    "watch": "npm run build -- --watch",
     "prettify": "prettier --write src/ test/",
     "lint": "eslint src/ test/",
     "prettycheck": "prettier --check src/ test/",
     "typecheck": "tsc --noEmit",
-    "spec": "jest",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
     "prepublishOnly": "npm run build && npm run build:alt"
   },
@@ -64,7 +57,6 @@
     "react-native-haptic-feedback": "^2.0.3",
     "react-native-reanimated": "3.4.2",
     "react-test-renderer": "^18.2.0",
-    "tsup": "^7.2.0",
     "typescript": "^5.2.2"
   },
   "jest": {
