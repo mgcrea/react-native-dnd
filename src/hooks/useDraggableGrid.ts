@@ -59,7 +59,9 @@ export const useDraggableGrid = <ItemT extends GridItem>(
 ) => {
   // Compute initial order
   const initialOrder = useMemo(
-    () => initialOrderProp ?? items.map((item, index) => (idExtractor ? idExtractor(item, index) : item.id)),
+    () =>
+      initialOrderProp ??
+      items.map((item, index) => (idExtractor ? idExtractor(item, index) : item.id || item.key)),
     [idExtractor, items, initialOrderProp],
   );
   // Draggable related state
