@@ -5,66 +5,60 @@ import {
   DraggableProps,
   Droppable,
   DroppableProps,
-} from "@mgcrea/react-native-dnd";
-import React, { useState, type FunctionComponent } from "react";
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
-import { GestureHandlerRootView } from "react-native-gesture-handler";
-import { runOnJS, useSharedValue } from "react-native-reanimated";
+  useDraggableStyle,
+  useDroppableStyle,
+} from '@mgcrea/react-native-dnd/src';
+import React, {useState, type FunctionComponent} from 'react';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import Animated, {
+  runOnJS,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 export const BasicExample: FunctionComponent = () => {
   const [count, setCount] = useState(0);
-  const dynamicData = useSharedValue({ count: 0 });
+  const dynamicData = useSharedValue({count: 0});
 
   const onDragEnd = () => {
-    setCount((count) => count + 1);
-    // data.current = { ...data.current, count: data.current.count + 1 };
+    setCount(count => count + 1);
   };
 
-  const handleDragEnd: DndProviderProps["onDragEnd"] = ({ active, over }) => {
-    "worklet";
+  const handleDragEnd: DndProviderProps['onDragEnd'] = ({active, over}) => {
+    'worklet';
     if (over) {
-      console.log(`Current count is ${active.data.value.count}`);
-      dynamicData.value = { ...dynamicData.value, count: dynamicData.value.count + 1 };
+      const {count} = dynamicData.value;
+      console.log(`Current count is ${count}`);
+      Object.assign(dynamicData.value, {count});
       runOnJS(onDragEnd)();
     }
   };
 
-  const handleBegin: DndProviderProps["onBegin"] = () => {
-    "worklet";
-    console.log("onBegin");
+  const handleBegin: DndProviderProps['onBegin'] = () => {
+    'worklet';
+    console.log('onBegin');
   };
 
-  const handleFinalize: DndProviderProps["onFinalize"] = () => {
-    "worklet";
-    console.log("onFinalize");
-  };
-
-  const draggableStyle: DraggableProps["animatedStyleWorklet"] = (style, { isActive, isActing }) => {
-    "worklet";
-    return {
-      opacity: isActing ? 0.5 : 1,
-      backgroundColor: isActive ? "lightseagreen" : "seagreen",
-    };
-  };
-
-  const droppableStyle: DroppableProps["animatedStyleWorklet"] = (style, { isActive }) => {
-    "worklet";
-    return {
-      backgroundColor: isActive ? "lightsteelblue" : "steelblue",
-    };
+  const handleFinalize: DndProviderProps['onFinalize'] = () => {
+    'worklet';
+    console.log('onFinalize');
   };
 
   return (
     <SafeAreaView style={styles.container}>
       <GestureHandlerRootView>
-        <DndProvider onBegin={handleBegin} onFinalize={handleFinalize} onDragEnd={handleDragEnd}>
+        <DndProvider
+          onBegin={handleBegin}
+          onFinalize={handleFinalize}
+          onDragEnd={handleDragEnd}>
           <View style={styles.view}>
-            <Droppable id="drop" style={styles.box} animatedStyleWorklet={droppableStyle} activeOpacity={1}>
+            <MyDroppable id="drop">
               <Text style={styles.text}>DROP</Text>
-            </Droppable>
-            <Draggable id="drag" data={dynamicData} style={styles.box} animatedStyleWorklet={draggableStyle}>
+            </MyDroppable>
+            <MyDraggable id="drag" data={dynamicData}>
               <Text style={styles.text}>DRAG</Text>
-            </Draggable>
+            </MyDraggable>
             <Text testID="button">count is {count}</Text>
           </View>
         </DndProvider>
@@ -73,31 +67,80 @@ export const BasicExample: FunctionComponent = () => {
   );
 };
 
+const MyDraggable: FunctionComponent<DraggableProps> = ({
+  id,
+  ...otherProps
+}) => {
+  const animatedStyle = useDraggableStyle(id, ({isActive, isActing}) => {
+    'worklet';
+    return {
+      opacity: isActing ? 0.95 : 1,
+      backgroundColor: isActive ? 'lightseagreen' : 'seagreen',
+      transform: [{scale: withSpring(isActive ? 1.1 : 1)}],
+    };
+  });
+
+  return (
+    <Draggable id={id} {...otherProps}>
+      <Animated.View style={[styles.box, animatedStyle]}>
+        <Text style={styles.text}>DRAG</Text>
+      </Animated.View>
+    </Draggable>
+  );
+};
+
+const MyDroppable: FunctionComponent<DroppableProps> = ({
+  id,
+  ...otherProps
+}) => {
+  const animatedStyle = useDroppableStyle(id, ({isActive}) => {
+    'worklet';
+    return {
+      opacity: isActive ? 0.9 : 1,
+      backgroundColor: isActive ? 'steelblue' : 'teal',
+      transform: [{rotate: withSpring(isActive ? `-20deg` : `0deg`)}],
+    };
+  });
+
+  return (
+    <Droppable id={id} {...otherProps}>
+      <Animated.View style={[styles.box, animatedStyle]}>
+        <Text style={styles.text}>DROP</Text>
+      </Animated.View>
+    </Droppable>
+  );
+};
+
 const styles = StyleSheet.create({
   container: {
-    alignItems: "center",
-    justifyContent: "center",
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: 'linen',
     flex: 1,
   },
   view: {
-    alignItems: "center",
+    alignItems: 'center',
     marginTop: -128,
-    borderColor: "black",
+    borderColor: 'black',
     borderWidth: StyleSheet.hairlineWidth,
     borderRadius: 8,
     padding: 32,
   },
   box: {
     margin: 24,
-    padding: 24,
+    padding: 12,
     height: 96,
     width: 96,
     borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "darkseagreen",
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   text: {
-    color: "white",
+    color: 'white',
+    fontWeight: 'bold',
+    textShadowColor: 'rgba(0, 0, 0, .4)',
+    textShadowOffset: {width: 1, height: 1},
+    textShadowRadius: 14,
+    padding: 12,
   },
 });
