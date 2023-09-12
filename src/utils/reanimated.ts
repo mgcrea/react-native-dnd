@@ -97,6 +97,13 @@ export const animatePointWithSpring = (
   point.y.value = withSpring(toValueY, configY, waitForY);
 };
 
+export const moveArrayIndex = <T>(input: T[], from: number, to: number) => {
+  "worklet";
+  const output = input.slice();
+  output.splice(to, 0, output.splice(from, 1)[0]);
+  return output;
+};
+
 /*
 damping: 10
 mass: 1

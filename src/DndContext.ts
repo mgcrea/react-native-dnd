@@ -23,7 +23,10 @@ export type DndContextValue = {
   draggableActingId: SharedValue<Key | null>;
   droppableActiveId: SharedValue<Key | null>;
   draggableState: SharedValue<GestureEventPayload["state"]>;
+  draggableActiveOffset: SharedPoint;
+  draggableActingOffset: SharedPoint;
   draggableRestingOffset: SharedPoint;
+  draggableContentOffset: SharedPoint;
 };
 
 // @ts-expect-error ignore detached state

@@ -94,7 +94,9 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableActingId = useSharedValue<UniqueIdentifier | null>(null);
     const droppableActiveId = useSharedValue<UniqueIdentifier | null>(null);
     const draggableActiveOffset = useSharedPoint(0, 0);
+    const draggableActingOffset = useSharedPoint(0, 0);
     const draggableRestingOffset = useSharedPoint(0, 0);
+    const draggableContentOffset = useSharedPoint(0, 0);
     const draggableState = useSharedValue<GestureEventPayload["state"]>(0);
 
     const runFeedback = () => {
@@ -126,7 +128,10 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       draggableActingId,
       droppableActiveId,
       draggableState,
+      draggableActiveOffset,
+      draggableActingOffset,
       draggableRestingOffset,
+      draggableContentOffset,
     });
 
     useImperativeHandle(
@@ -157,8 +162,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           if (
             !isDisabled &&
             includesPoint(layout.value, {
-              x: x - offset.x.value,
-              y: y - offset.y.value,
+              x: x - offset.x.value + draggableContentOffset.x.value,
+              y: y - offset.y.value + draggableContentOffset.y.value,
             })
           ) {
             return id;
@@ -192,6 +197,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         timeout = setTimeout(() => {
           runOnUI(() => {
             "worklet";
+            debug && console.log(`draggableActiveId.value = ${id}`);
             draggableActiveId.value = id;
           })();
         }, delay);
@@ -216,6 +222,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           const activeId = findActiveLayoutId({ x, y });
           // Update shared state
           draggableActingId.value = activeId;
+          draggableActingOffset.x.value = x;
+          draggableActingOffset.y.value = y;
           // Check if an item was actually selected
           if (activeId !== null) {
             // Update activeId directly or with an optional delay
@@ -243,7 +251,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           }
         })
         .onUpdate((event) => {
-          const { state, translationX, translationY } = event;
+          const { state, translationX, translationY, x, y } = event;
           debug && console.log("update", { state, translationX, translationY });
           // Track current state for cancellation purposes
           draggableState.value = state;
@@ -266,6 +274,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
             // Ignore item-free interactions
             return;
           }
+          draggableActingOffset.x.value = x;
+          draggableActingOffset.y.value = y;
           // Update our active offset to pan the active item
           const activeOffset = offsets[activeId];
           activeOffset.x.value = translationX + draggableActiveOffset.x.value;

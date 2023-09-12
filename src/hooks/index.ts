@@ -2,6 +2,7 @@ export * from "./useActiveDragReaction";
 export * from "./useActiveDropReaction";
 export * from "./useDraggable";
 export * from "./useDraggableActiveId";
+export * from "./useDraggableGrid";
 export * from "./useDroppable";
 export * from "./useEvent";
 export * from "./useLatestSharedValue";
