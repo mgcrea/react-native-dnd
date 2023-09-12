@@ -20,6 +20,7 @@
     "watch": "npm run build -- --watch",
     "prettify": "prettier --write src/ test/",
     "lint": "eslint src/ test/",
+    "spec": "jest",
     "prettycheck": "prettier --check src/ test/",
     "typecheck": "tsc --noEmit",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
