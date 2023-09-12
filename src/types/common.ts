@@ -13,6 +13,6 @@ export type NativeElement = InstanceType<HostComponent<ViewProps>>;
 export type AnimatedStyle = ReturnType<typeof useAnimatedStyle>;
 export type AnimatedViewStyle = ReturnType<typeof useAnimatedStyle<AnimatedStyleProp<ViewStyle>>>;
 export type AnimatedStyleWorklet<T extends AnimatedStyle = AnimatedViewStyle> = (
-  style: T,
+  style: Readonly<T>,
   options: { isActive: boolean; isDisabled: boolean; isActing?: boolean },
-) => void;
+) => T;

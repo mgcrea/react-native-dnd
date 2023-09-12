@@ -1,4 +1,4 @@
-import { RefCallback, useRef } from "react";
+import { RefCallback, useMemo, useRef } from "react";
 import { LayoutRectangle, ViewStyle } from "react-native";
 import { runOnJS, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { DndProviderHandle, DndProviderProps } from "../DndProvider";
@@ -34,7 +34,7 @@ export type UseDraggableGridOptions<ItemT> = {
   gridWidth?: number;
   gridHeight?: number;
   gridMode?: GridMode;
-  keyExtractor?: ((item: ItemT, index: number) => string) | undefined;
+  idExtractor?: ((item: ItemT, index: number) => string) | undefined;
   onBegin?: DndProviderProps["onBegin"];
   onUpdate?: DndProviderProps["onUpdate"];
   onFinalize?: DndProviderProps["onFinalize"];
@@ -48,8 +48,8 @@ export const useDraggableGrid = <ItemT extends GridItem>(
     gridWidth = items.length,
     // gridHeight = 1,
     gridMode = GridMode.Row,
-    initialOrder = items.map((item, index) => (keyExtractor ? keyExtractor(item, index) : item.key)),
-    keyExtractor,
+    initialOrder: initialOrderProp,
+    idExtractor,
     onBegin: onBeginProp,
     onUpdate: onUpdateProp,
     onFinalize: onFinalizeProp,
@@ -57,6 +57,11 @@ export const useDraggableGrid = <ItemT extends GridItem>(
     onOrderChange,
   }: UseDraggableGridOptions<ItemT> = {},
 ) => {
+  // Compute initial order
+  const initialOrder = useMemo(
+    () => initialOrderProp ?? items.map((item, index) => (idExtractor ? idExtractor(item, index) : item.id)),
+    [idExtractor, items, initialOrderProp],
+  );
   // Draggable related state
   const draggableRef = useRef<DndProviderHandle | null>(null);
   const draggablePlaceholderIndex = useSharedValue(-1);
@@ -115,7 +120,9 @@ export const useDraggableGrid = <ItemT extends GridItem>(
     "worklet";
     const { value: gridWidth } = latestGridWidth;
     const { value: items } = latestItems;
-    const initIndex = items.findIndex(({ key }) => key === itemId);
+    const initIndex = items.findIndex((item, index) =>
+      idExtractor ? idExtractor(item, index) : item.id === itemId,
+    );
     const initRow = Math.floor(initIndex / gridWidth);
     const initCol = initIndex % gridWidth;
     const nextRow = Math.floor(index / gridWidth);
