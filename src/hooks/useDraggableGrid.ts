@@ -123,7 +123,7 @@ export const useDraggableGrid = <ItemT extends GridItem>(
     const { value: gridWidth } = latestGridWidth;
     const { value: items } = latestItems;
     const initIndex = items.findIndex((item, index) =>
-      idExtractor ? idExtractor(item, index) : item.id === itemId,
+      idExtractor ? idExtractor(item, index) : (item.id || item.key) === itemId,
     );
     const initRow = Math.floor(initIndex / gridWidth);
     const initCol = initIndex % gridWidth;
