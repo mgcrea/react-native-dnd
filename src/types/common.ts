@@ -1,5 +1,5 @@
 import type { HostComponent, ViewProps, ViewStyle } from "react-native";
-import type { AnimatedStyleProp, SharedValue, useAnimatedStyle } from "react-native-reanimated";
+import type { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 export type UniqueIdentifier = string | number;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -11,7 +11,7 @@ export type SharedData<T = AnyData> = SharedValue<T>;
 export type NativeElement = InstanceType<HostComponent<ViewProps>>;
 
 export type AnimatedStyle = ReturnType<typeof useAnimatedStyle>;
-export type AnimatedViewStyle = ReturnType<typeof useAnimatedStyle<AnimatedStyleProp<ViewStyle>>>;
+export type AnimatedViewStyle = ReturnType<typeof useAnimatedStyle<ViewStyle>>;
 export type AnimatedStyleWorklet<T extends AnimatedStyle = AnimatedViewStyle> = (
   style: Readonly<T>,
   options: { isActive: boolean; isDisabled: boolean; isActing?: boolean },

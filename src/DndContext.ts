@@ -1,4 +1,4 @@
-import { createContext, useContext, type Key, type RefObject } from "react";
+import { createContext, useContext, type RefObject } from "react";
 import type { LayoutRectangle, View } from "react-native";
 import type { GestureEventPayload } from "react-native-gesture-handler";
 import type { SharedValue } from "react-native-reanimated";
@@ -19,9 +19,9 @@ export type DndContextValue = {
   draggableOptions: SharedValue<DraggableOptions>;
   droppableOptions: SharedValue<DroppableOptions>;
   draggableOffsets: SharedValue<Offsets>;
-  draggableActiveId: SharedValue<Key | null>;
-  draggableActingId: SharedValue<Key | null>;
-  droppableActiveId: SharedValue<Key | null>;
+  draggableActiveId: SharedValue<UniqueIdentifier | null>;
+  draggableActingId: SharedValue<UniqueIdentifier | null>;
+  droppableActiveId: SharedValue<UniqueIdentifier | null>;
   draggableState: SharedValue<GestureEventPayload["state"]>;
   draggableActiveOffset: SharedPoint;
   draggableActingOffset: SharedPoint;

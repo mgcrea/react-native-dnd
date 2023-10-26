@@ -1,4 +1,4 @@
-import React, { forwardRef, Key, PropsWithChildren, useImperativeHandle, useMemo, useRef } from "react";
+import React, { forwardRef, PropsWithChildren, useImperativeHandle, useMemo, useRef } from "react";
 import { LayoutRectangle, StyleProp, View, ViewStyle } from "react-native";
 import {
   Gesture,
@@ -149,7 +149,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     );
 
     const panGesture = useMemo(() => {
-      const findActiveLayoutId = (point: Point): Key | null => {
+      const findActiveLayoutId = (point: Point): UniqueIdentifier | null => {
         "worklet";
         const { x, y } = point;
         const { value: layouts } = draggableLayouts;
@@ -172,7 +172,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         return null;
       };
 
-      const findDroppableLayoutId = (activeLayout: LayoutRectangle): Key | null => {
+      const findDroppableLayoutId = (activeLayout: LayoutRectangle): UniqueIdentifier | null => {
         "worklet";
         const { value: layouts } = droppableLayouts;
         const { value: options } = droppableOptions;
