@@ -32,7 +32,7 @@ export const DraggableFlatList = <T extends GridItem>({
 }: DraggableFlatListProps<T>): ReactElement => {
   const {
     draggableActiveId: activeId,
-    draggableActingId: actingId,
+    // draggableActingId: actingId,
     draggableContentOffset,
     draggableActiveOffset,
   } = useDndContext();
@@ -86,14 +86,14 @@ export const DraggableFlatList = <T extends GridItem>({
     }
   });
 
-  useAnimatedReaction(
-    () => actingId.value,
-    (next, prev) => {
-      console.log(`actingId: ${prev} -> ${next}}`);
-      console.log(`translationY.value=${draggableContentOffset.y.value}`);
-    },
-    [],
-  );
+  // useAnimatedReaction(
+  //   () => actingId.value,
+  //   (next, prev) => {
+  //     console.log(`actingId: ${prev} -> ${next}}`);
+  //     console.log(`translationY.value=${draggableContentOffset.y.value}`);
+  //   },
+  //   [],
+  // );
   useAnimatedReaction(
     () => activeId.value,
     (next, prev) => {
@@ -152,8 +152,8 @@ export const DraggableFlatListCellRenderer = function DraggableFlatListCellRende
   props: CellRendererProps<ItemT>,
 ) {
   const { item, index, children, style, ...rest } = props;
-  const { draggableActingId: actingId } = useDndContext();
-  const isActive = actingId.value === item.id;
+  const { draggablePendingId: pendingId, draggableActiveId: activeId } = useDndContext();
+  const isActive = [pendingId.value, activeId.value].includes(item.id);
 
   return (
     <View

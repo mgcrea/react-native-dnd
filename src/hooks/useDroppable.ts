@@ -13,7 +13,7 @@ export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?
  *
  * @function
  * @example
- * const { setNodeRef, setNodeLayout, activeId, draggableState } = useDroppable({ id: 'droppable-1' });
+ * const { setNodeRef, setNodeLayout, activeId, panGestureState } = useDroppable({ id: 'droppable-1' });
  *
  * @param {object} options - The options that define the behavior of the droppable component.
  * @param {string} options.id - A unique identifier for the droppable component.
@@ -24,10 +24,10 @@ export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?
  * @property {Function} setNodeRef - A function that can be used to set the ref of the droppable component.
  * @property {Function} setNodeLayout - A function that handles the layout event of the droppable component.
  * @property {string} activeId - The unique identifier of the currently active droppable component.
- * @property {object} draggableState - An object representing the current state of the draggable component within the context.
+ * @property {object} panGestureState - An object representing the current state of the draggable component within the context.
  */
 export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOptions) => {
-  const { droppableLayouts, droppableOptions, droppableActiveId, containerRef, draggableState } =
+  const { droppableLayouts, droppableOptions, droppableActiveId, containerRef, panGestureState } =
     useDndContext();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [node, setNodeRef] = useNodeRef<NativeElement, any>();
@@ -78,5 +78,5 @@ export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOp
     });
   };
 
-  return { setNodeRef, setNodeLayout: onLayout, activeId: droppableActiveId, draggableState };
+  return { setNodeRef, setNodeLayout: onLayout, activeId: droppableActiveId, panGestureState };
 };
