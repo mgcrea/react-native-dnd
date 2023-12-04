@@ -54,9 +54,10 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   const animatedStyle = useAnimatedStyle(() => {
     const isActive = state.value === "dragging";
     const isActing = state.value === "acting";
+    const zIndex = isActive ? 999 : isActing ? 998 : 1;
     const style = {
       opacity: isActive ? activeOpacity : 1,
-      zIndex: isActive ? 999 : 1,
+      zIndex,
       transform: [
         {
           translateX: offset.x.value,
