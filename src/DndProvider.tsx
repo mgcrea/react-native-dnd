@@ -20,6 +20,7 @@ import {
 } from "react-native-reanimated";
 import {
   DndContext,
+  DraggableStates,
   type DndContextValue,
   type DraggableOptions,
   type DroppableOptions,
@@ -90,14 +91,15 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableOptions = useSharedValue<DraggableOptions>({});
     const droppableOptions = useSharedValue<DroppableOptions>({});
     const draggableOffsets = useSharedValue<Offsets>({});
+    const draggableStates = useSharedValue<DraggableStates>({});
+    const draggablePendingId = useSharedValue<UniqueIdentifier | null>(null);
     const draggableActiveId = useSharedValue<UniqueIdentifier | null>(null);
-    const draggableActingId = useSharedValue<UniqueIdentifier | null>(null);
     const droppableActiveId = useSharedValue<UniqueIdentifier | null>(null);
     const draggableActiveOffset = useSharedPoint(0, 0);
     const draggableActingOffset = useSharedPoint(0, 0);
     const draggableRestingOffset = useSharedPoint(0, 0);
     const draggableContentOffset = useSharedPoint(0, 0);
-    const draggableState = useSharedValue<GestureEventPayload["state"]>(0);
+    const panGestureState = useSharedValue<GestureEventPayload["state"]>(0);
 
     const runFeedback = () => {
       if (hapticFeedback) {
@@ -124,10 +126,11 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       draggableOptions,
       droppableOptions,
       draggableOffsets,
+      draggableStates,
+      draggablePendingId,
       draggableActiveId,
-      draggableActingId,
       droppableActiveId,
-      draggableState,
+      panGestureState,
       draggableActiveOffset,
       draggableActingOffset,
       draggableRestingOffset,
@@ -188,7 +191,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
       // Helpers for delayed activation (eg. long press)
       let timeout: ReturnType<typeof setTimeout> | null = null;
-      const clearActiveId = () => {
+      const clearActiveIdTimeout = () => {
         if (timeout) {
           clearTimeout(timeout);
         }
@@ -199,6 +202,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
             "worklet";
             debug && console.log(`draggableActiveId.value = ${id}`);
             draggableActiveId.value = id;
+            draggableStates.value[id].value = "dragging";
           })();
         }, delay);
       };
@@ -213,34 +217,40 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           }
           // console.log("begin", { state, x, y });
           // Track current state for cancellation purposes
-          draggableState.value = state;
+          panGestureState.value = state;
           const { value: layouts } = draggableLayouts;
           const { value: offsets } = draggableOffsets;
           const { value: options } = draggableOptions;
-          const { value: lastActingId } = draggableActingId;
+          const { value: states } = draggableStates;
           // Find the active layout key under {x, y}
           const activeId = findActiveLayoutId({ x, y });
           // Update shared state
-          draggableActingId.value = activeId;
           draggableActingOffset.x.value = x;
           draggableActingOffset.y.value = y;
           // Check if an item was actually selected
           if (activeId !== null) {
             // Update activeId directly or with an optional delay
             const { activationDelay } = options[activeId];
-            activationDelay > 0
-              ? runOnJS(setActiveId)(activeId, activationDelay)
-              : (draggableActiveId.value = activeId);
+            if (activationDelay > 0) {
+              draggablePendingId.value = activeId;
+              draggableStates.value[activeId].value = "pending";
+              runOnJS(setActiveId)(activeId, activationDelay);
+            } else {
+              draggableActiveId.value = activeId;
+              draggableStates.value[activeId].value = "dragging";
+            }
             // Record any ongoing current offset as our initial offset for the gesture
             const activeOffset = offsets[activeId];
+            const { value: activeState } = states[activeId];
             draggableActiveOffset.x.value = activeOffset.x.value;
             draggableActiveOffset.y.value = activeOffset.y.value;
-            // Cancel the ongoing animation if we just reactivated the same item
-            if (activeId === lastActingId) {
+            // Cancel the ongoing animation if we just reactivated an acting/dragging item
+            if (["dragging", "acting"].includes(activeState)) {
               cancelAnimation(activeOffset.x);
               cancelAnimation(activeOffset.y);
               // If not we should reset the resting offset to the current offset value
-            } else {
+              // But only if the item is not currently still animating
+            } else if (activeState === "resting") {
               draggableRestingOffset.x.value = activeOffset.x.value;
               draggableRestingOffset.y.value = activeOffset.y.value;
             }
@@ -251,24 +261,26 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           }
         })
         .onUpdate((event) => {
+          // console.log(draggableStates.value);
           const { state, translationX, translationY, x, y } = event;
           debug && console.log("update", { state, translationX, translationY });
           // Track current state for cancellation purposes
-          draggableState.value = state;
+          panGestureState.value = state;
           const { value: activeId } = draggableActiveId;
-          const { value: actingId } = draggableActingId;
+          const { value: pendingId } = draggablePendingId;
           const { value: options } = draggableOptions;
           const { value: layouts } = draggableLayouts;
           const { value: offsets } = draggableOffsets;
+          // const { value: states } = draggableStates;
           if (activeId === null) {
             // Check if we are currently waiting for activation delay
-            if (actingId !== null) {
-              const { activationTolerance } = options[actingId];
+            if (pendingId !== null) {
+              const { activationTolerance } = options[pendingId];
               // Check if we've moved beyond the activation tolerance
               const distance = getDistance(translationX, translationY);
               if (distance > activationTolerance) {
-                runOnJS(clearActiveId)();
-                draggableActingId.value = null;
+                runOnJS(clearActiveIdTimeout)();
+                draggablePendingId.value = null;
               }
             }
             // Ignore item-free interactions
@@ -295,17 +307,18 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           const { state, velocityX, velocityY } = event;
           debug && console.log("finalize", { state, velocityX, velocityY });
           // Track current state for cancellation purposes
-          draggableState.value = state; // can be `FAILED` or `ENDED`
+          panGestureState.value = state; // can be `FAILED` or `ENDED`
           const { value: activeId } = draggableActiveId;
-          const { value: actingId } = draggableActingId;
+          const { value: pendingId } = draggablePendingId;
           const { value: layouts } = draggableLayouts;
           const { value: offsets } = draggableOffsets;
+          const { value: states } = draggableStates;
           // Ignore item-free interactions
           if (activeId === null) {
             // Check if we were currently waiting for activation delay
-            if (actingId !== null) {
-              runOnJS(clearActiveId)();
-              draggableActingId.value = null;
+            if (pendingId !== null) {
+              runOnJS(clearActiveIdTimeout)();
+              draggablePendingId.value = null;
             }
             return;
           }
@@ -332,6 +345,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           droppableActiveId.value = null;
           // Move back to initial position
           const activeOffset = offsets[activeId];
+          states[activeId].value = "acting";
           animatePointWithSpring(
             activeOffset,
             [draggableRestingOffset.x.value, draggableRestingOffset.y.value],
@@ -340,20 +354,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
               { ...springConfig, velocity: velocityY },
             ],
             () => {
-              // Cancel if we are interacting again with an item
-              if (
-                draggableState.value !== State.END &&
-                draggableState.value !== State.FAILED &&
-                draggableActingId.value !== null
-              ) {
-                return;
-              }
-              // Cancel if we are not the last interaction
-              if (draggableActingId.value !== activeId) {
-                return;
-              }
-              // Track active "acting" item as long as possible for handling consecutive interactions
-              draggableActingId.value = null;
+              states[activeId].value = "resting";
             },
           );
         })

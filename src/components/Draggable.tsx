@@ -1,10 +1,10 @@
 import React, { type FunctionComponent, type PropsWithChildren } from "react";
 import { type ViewProps } from "react-native";
-import Animated, { useAnimatedStyle, type AnimateProps } from "react-native-reanimated";
+import Animated, { useAnimatedProps, useAnimatedStyle, type AnimatedProps } from "react-native-reanimated";
 import { useDraggable, type DraggableConstraints, type UseDroppableOptions } from "../hooks";
 import type { AnimatedStyleWorklet } from "../types";
 
-export type DraggableProps = AnimateProps<ViewProps> &
+export type DraggableProps = AnimatedProps<ViewProps> &
   UseDroppableOptions &
   Partial<DraggableConstraints> & {
     animatedStyleWorklet?: AnimatedStyleWorklet;
@@ -43,7 +43,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   animatedStyleWorklet,
   ...otherProps
 }) => {
-  const { setNodeRef, setNodeLayout, activeId, actingId, offset } = useDraggable({
+  const { setNodeRef, setNodeLayout, offset, state } = useDraggable({
     id,
     data,
     disabled,
@@ -52,8 +52,8 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   });
 
   const animatedStyle = useAnimatedStyle(() => {
-    const isActive = activeId.value === id;
-    const isActing = actingId.value === id;
+    const isActive = state.value === "dragging";
+    const isActing = state.value === "acting";
     const style = {
       opacity: isActive ? activeOpacity : 1,
       zIndex: isActive ? 999 : 1,

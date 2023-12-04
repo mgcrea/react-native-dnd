@@ -4,9 +4,9 @@ import { useDndContext } from "../DndContext";
 import type { UniqueIdentifier } from "../types";
 
 export const useActiveDragReaction = (id: UniqueIdentifier, callback: (isActive: boolean) => void) => {
-  const { draggableActiveId: activeId, draggableState } = useDndContext();
+  const { draggableActiveId: activeId, panGestureState } = useDndContext();
   useAnimatedReaction(
-    () => activeId.value === id && ([State.BEGAN, State.ACTIVE] as State[]).includes(draggableState.value),
+    () => activeId.value === id && ([State.BEGAN, State.ACTIVE] as State[]).includes(panGestureState.value),
     (next, prev) => {
       if (next !== prev) {
         callback(next);

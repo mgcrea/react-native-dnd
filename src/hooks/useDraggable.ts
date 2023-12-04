@@ -1,7 +1,7 @@
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
 import { runOnUI, useSharedValue } from "react-native-reanimated";
-import { useDndContext } from "../DndContext";
+import { DraggableState, useDndContext } from "../DndContext";
 import { useLatestSharedValue, useNodeRef } from "../hooks";
 import { Data, NativeElement, UniqueIdentifier } from "../types";
 import { assert, isReanimatedSharedValue } from "../utils";
@@ -51,10 +51,11 @@ export const useDraggable = ({
     draggableLayouts,
     draggableOffsets,
     draggableOptions,
+    draggableStates,
     draggableActiveId,
-    draggableActingId,
+    draggablePendingId,
     containerRef,
-    draggableState,
+    panGestureState,
   } = useDndContext();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [node, setNodeRef] = useNodeRef<NativeElement, any>();
@@ -69,6 +70,9 @@ export const useDraggable = ({
     height: 0,
   });
   const offset = useSharedPoint(0, 0);
+  const state = useSharedValue<DraggableState>("resting");
+  // Register early to allow proper referencing in useDraggableStyle
+  draggableStates.value[id] = state;
 
   useLayoutEffect(() => {
     const runLayoutEffect = () => {
@@ -76,17 +80,19 @@ export const useDraggable = ({
       draggableLayouts.value[id] = layout;
       draggableOffsets.value[id] = offset;
       draggableOptions.value[id] = { id, data: sharedData, disabled, activationDelay, activationTolerance };
+      draggableStates.value[id] = state;
     };
     runOnUI(runLayoutEffect)();
     return () => {
-      const runLayoutEffect = () => {
+      const cleanupLayoutEffect = () => {
         "worklet";
         delete draggableLayouts.value[id];
         delete draggableOffsets.value[id];
         delete draggableOptions.value[id];
+        delete draggableStates.value[id];
       };
       // if(node && node.key === key)
-      runOnUI(runLayoutEffect)();
+      runOnUI(cleanupLayoutEffect)();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
@@ -113,11 +119,12 @@ export const useDraggable = ({
 
   return {
     offset,
+    state,
     setNodeRef,
     activeId: draggableActiveId,
-    actingId: draggableActingId,
+    pendingId: draggablePendingId,
     setNodeLayout: onLayout,
-    draggableState,
+    panGestureState,
     // setDisabled,
   };
 };

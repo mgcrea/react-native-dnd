@@ -74,7 +74,7 @@ const MyDraggable: FunctionComponent<DraggableProps> = ({
   const animatedStyle = useDraggableStyle(id, ({isActive, isActing}) => {
     'worklet';
     return {
-      opacity: isActing ? 0.95 : 1,
+      opacity: isActing ? 0.5 : 1,
       backgroundColor: isActive ? 'lightseagreen' : 'seagreen',
       transform: [{scale: withSpring(isActive ? 1.1 : 1)}],
     };
