@@ -1,11 +1,11 @@
 import { RefCallback, useMemo, useRef } from "react";
 import { LayoutRectangle, ViewStyle } from "react-native";
 import { runOnJS, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
-import { DndProviderHandle, DndProviderProps } from "../DndProvider";
-import { UniqueIdentifier } from "../types";
-import { applyOffset, centerPoint, includesPoint, moveArrayIndex } from "../utils";
-import { useLatestSharedValue } from "./useLatestSharedValue";
-import { SharedPoint } from "./useSharedPoint";
+import { DndProviderHandle, DndProviderProps } from "src/DndProvider";
+import { useLatestSharedValue } from "src/hooks/useLatestSharedValue";
+import { SharedPoint } from "src/hooks/useSharedPoint";
+import { UniqueIdentifier } from "src/types";
+import { applyOffset, centerPoint, includesPoint, moveArrayIndex } from "src/utils";
 
 export type GridItem = { id: UniqueIdentifier; [s: string]: unknown };
 
