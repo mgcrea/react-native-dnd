@@ -37,6 +37,7 @@ import {
   includesPoint,
   overlapsRectangle,
   Point,
+  Rectangle,
 } from "./utils";
 
 export type DndProviderProps = {
@@ -64,7 +65,7 @@ export type DndProviderProps = {
 
 export type DndProviderHandle = Pick<
   DndContextValue,
-  "draggableLayouts" | "draggableOffsets" | "draggableActiveId" | "draggableRestingOffset"
+  "draggableLayouts" | "draggableOffsets" | "draggableRestingOffsets" | "draggableActiveId"
 >;
 
 export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndProviderProps>>(
@@ -91,13 +92,13 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableOptions = useSharedValue<DraggableOptions>({});
     const droppableOptions = useSharedValue<DroppableOptions>({});
     const draggableOffsets = useSharedValue<Offsets>({});
+    const draggableRestingOffsets = useSharedValue<Offsets>({});
     const draggableStates = useSharedValue<DraggableStates>({});
     const draggablePendingId = useSharedValue<UniqueIdentifier | null>(null);
     const draggableActiveId = useSharedValue<UniqueIdentifier | null>(null);
     const droppableActiveId = useSharedValue<UniqueIdentifier | null>(null);
-    const draggableActiveOffset = useSharedPoint(0, 0);
-    const draggableActingOffset = useSharedPoint(0, 0);
-    const draggableRestingOffset = useSharedPoint(0, 0);
+    const draggableActiveLayout = useSharedValue<Rectangle | null>(null);
+    const draggableInitialOffset = useSharedPoint(0, 0);
     const draggableContentOffset = useSharedPoint(0, 0);
     const panGestureState = useSharedValue<GestureEventPayload["state"]>(0);
 
@@ -126,14 +127,14 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       draggableOptions,
       droppableOptions,
       draggableOffsets,
+      draggableRestingOffsets,
       draggableStates,
       draggablePendingId,
       draggableActiveId,
       droppableActiveId,
       panGestureState,
-      draggableActiveOffset,
-      draggableActingOffset,
-      draggableRestingOffset,
+      draggableInitialOffset,
+      draggableActiveLayout,
       draggableContentOffset,
     });
 
@@ -143,8 +144,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         return {
           draggableLayouts,
           draggableOffsets,
+          draggableRestingOffsets,
           draggableActiveId,
-          draggableRestingOffset,
         };
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -220,49 +221,58 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           panGestureState.value = state;
           const { value: layouts } = draggableLayouts;
           const { value: offsets } = draggableOffsets;
+          const { value: restingOffsets } = draggableRestingOffsets;
           const { value: options } = draggableOptions;
           const { value: states } = draggableStates;
+          // for (const [id, offset] of Object.entries(offsets)) {
+          //   console.log({ [id]: [offset.x.value, offset.y.value] });
+          // }
           // Find the active layout key under {x, y}
           const activeId = findActiveLayoutId({ x, y });
-          // Update shared state
-          draggableActingOffset.x.value = x;
-          draggableActingOffset.y.value = y;
           // Check if an item was actually selected
           if (activeId !== null) {
-            // Update activeId directly or with an optional delay
-            const { activationDelay } = options[activeId];
-            if (activationDelay > 0) {
-              draggablePendingId.value = activeId;
-              draggableStates.value[activeId].value = "pending";
-              runOnJS(setActiveId)(activeId, activationDelay);
-            } else {
-              draggableActiveId.value = activeId;
-              draggableStates.value[activeId].value = "dragging";
-            }
             // Record any ongoing current offset as our initial offset for the gesture
+            const activeLayout = layouts[activeId].value;
             const activeOffset = offsets[activeId];
+            const restingOffset = restingOffsets[activeId];
             const { value: activeState } = states[activeId];
-            draggableActiveOffset.x.value = activeOffset.x.value;
-            draggableActiveOffset.y.value = activeOffset.y.value;
+            draggableInitialOffset.x.value = activeOffset.x.value;
+            draggableInitialOffset.y.value = activeOffset.y.value;
             // Cancel the ongoing animation if we just reactivated an acting/dragging item
             if (["dragging", "acting"].includes(activeState)) {
               cancelAnimation(activeOffset.x);
               cancelAnimation(activeOffset.y);
               // If not we should reset the resting offset to the current offset value
               // But only if the item is not currently still animating
-            } else if (activeState === "resting") {
-              draggableRestingOffset.x.value = activeOffset.x.value;
-              draggableRestingOffset.y.value = activeOffset.y.value;
+            } else {
+              // active or pending
+              // Record current offset as our natural resting offset for the gesture
+              restingOffset.x.value = activeOffset.x.value;
+              restingOffset.y.value = activeOffset.y.value;
+            }
+            // Update activeId directly or with an optional delay
+            const { activationDelay } = options[activeId];
+            if (activationDelay > 0) {
+              draggablePendingId.value = activeId;
+              draggableStates.value[activeId].value = "pending";
+              runOnJS(setActiveId)(activeId, activationDelay);
+              // @TODO activeLayout
+            } else {
+              draggableActiveId.value = activeId;
+              draggableActiveLayout.value = applyOffset(activeLayout, {
+                x: activeOffset.x.value,
+                y: activeOffset.y.value,
+              });
+              draggableStates.value[activeId].value = "dragging";
             }
             if (onBegin) {
-              const activeLayout = layouts[activeId].value;
               onBegin(event, { activeId, activeLayout });
             }
           }
         })
         .onUpdate((event) => {
           // console.log(draggableStates.value);
-          const { state, translationX, translationY, x, y } = event;
+          const { state, translationX, translationY } = event;
           debug && console.log("update", { state, translationX, translationY });
           // Track current state for cancellation purposes
           panGestureState.value = state;
@@ -286,21 +296,19 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
             // Ignore item-free interactions
             return;
           }
-          draggableActingOffset.x.value = x;
-          draggableActingOffset.y.value = y;
           // Update our active offset to pan the active item
           const activeOffset = offsets[activeId];
-          activeOffset.x.value = translationX + draggableActiveOffset.x.value;
-          activeOffset.y.value = translationY + draggableActiveOffset.y.value;
+          activeOffset.x.value = draggableInitialOffset.x.value + translationX;
+          activeOffset.y.value = draggableInitialOffset.y.value + translationY;
           // Check potential droppable candidates
           const activeLayout = layouts[activeId].value;
-          const updatedLayout = applyOffset(activeLayout, {
+          draggableActiveLayout.value = applyOffset(activeLayout, {
             x: activeOffset.x.value,
             y: activeOffset.y.value,
           });
-          droppableActiveId.value = findDroppableLayoutId(updatedLayout);
+          droppableActiveId.value = findDroppableLayoutId(draggableActiveLayout.value);
           if (onUpdate) {
-            onUpdate(event, { activeId, activeLayout: updatedLayout });
+            onUpdate(event, { activeId, activeLayout: draggableActiveLayout.value });
           }
         })
         .onFinalize((event) => {
@@ -312,6 +320,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           const { value: pendingId } = draggablePendingId;
           const { value: layouts } = draggableLayouts;
           const { value: offsets } = draggableOffsets;
+          const { value: restingOffsets } = draggableRestingOffsets;
           const { value: states } = draggableStates;
           // Ignore item-free interactions
           if (activeId === null) {
@@ -345,16 +354,32 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           droppableActiveId.value = null;
           // Move back to initial position
           const activeOffset = offsets[activeId];
+          const restingOffset = restingOffsets[activeId];
           states[activeId].value = "acting";
+          const [targetX, targetY] = [restingOffset.x.value, restingOffset.y.value];
           animatePointWithSpring(
             activeOffset,
-            [draggableRestingOffset.x.value, draggableRestingOffset.y.value],
+            [targetX, targetY],
             [
               { ...springConfig, velocity: velocityX },
               { ...springConfig, velocity: velocityY },
             ],
-            () => {
+            ([finishedX, finishedY]) => {
+              // Cancel if we are interacting again with this item
+              if (
+                panGestureState.value !== State.END &&
+                panGestureState.value !== State.FAILED &&
+                states[activeId].value !== "acting"
+              ) {
+                return;
+              }
               states[activeId].value = "resting";
+              if (!finishedX || !finishedY) {
+                // console.log(`${activeId} did not finish to reach ${targetX.toFixed(2)} ${currentX}`);
+              }
+              // for (const [id, offset] of Object.entries(offsets)) {
+              //   console.log({ [id]: [offset.x.value.toFixed(2), offset.y.value.toFixed(2)] });
+              // }
             },
           );
         })

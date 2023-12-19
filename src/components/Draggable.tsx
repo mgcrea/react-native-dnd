@@ -1,6 +1,6 @@
 import React, { type FunctionComponent, type PropsWithChildren } from "react";
 import { type ViewProps } from "react-native";
-import Animated, { useAnimatedProps, useAnimatedStyle, type AnimatedProps } from "react-native-reanimated";
+import Animated, { useAnimatedStyle, withSpring, type AnimatedProps } from "react-native-reanimated";
 import { useDraggable, type DraggableConstraints, type UseDroppableOptions } from "../hooks";
 import type { AnimatedStyleWorklet } from "../types";
 
@@ -60,10 +60,16 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
       zIndex,
       transform: [
         {
-          translateX: offset.x.value,
+          // translateX: offset.x.value,
+          translateX: isActive
+            ? offset.x.value
+            : withSpring(offset.x.value, { damping: 100, stiffness: 1000 }),
         },
         {
-          translateY: offset.y.value,
+          // translateY: offset.y.value,
+          translateY: isActive
+            ? offset.y.value
+            : withSpring(offset.y.value, { damping: 100, stiffness: 1000 }),
         },
       ],
     };
@@ -71,7 +77,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
       Object.assign(style, animatedStyleWorklet(style, { isActive, isActing, isDisabled: !!disabled }));
     }
     return style;
-  }, [id, activeOpacity]);
+  }, [id, state, activeOpacity]);
 
   return (
     <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>

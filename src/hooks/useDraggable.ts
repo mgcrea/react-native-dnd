@@ -50,6 +50,7 @@ export const useDraggable = ({
   const {
     draggableLayouts,
     draggableOffsets,
+    draggableRestingOffsets,
     draggableOptions,
     draggableStates,
     draggableActiveId,
@@ -70,6 +71,7 @@ export const useDraggable = ({
     height: 0,
   });
   const offset = useSharedPoint(0, 0);
+  const restingOffset = useSharedPoint(0, 0);
   const state = useSharedValue<DraggableState>("resting");
   // Register early to allow proper referencing in useDraggableStyle
   draggableStates.value[id] = state;
@@ -79,6 +81,7 @@ export const useDraggable = ({
       "worklet";
       draggableLayouts.value[id] = layout;
       draggableOffsets.value[id] = offset;
+      draggableRestingOffsets.value[id] = restingOffset;
       draggableOptions.value[id] = { id, data: sharedData, disabled, activationDelay, activationTolerance };
       draggableStates.value[id] = state;
     };
@@ -88,6 +91,7 @@ export const useDraggable = ({
         "worklet";
         delete draggableLayouts.value[id];
         delete draggableOffsets.value[id];
+        delete draggableRestingOffsets.value[id];
         delete draggableOptions.value[id];
         delete draggableStates.value[id];
       };

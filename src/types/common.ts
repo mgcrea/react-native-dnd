@@ -2,6 +2,7 @@ import type { HostComponent, ViewProps, ViewStyle } from "react-native";
 import type { SharedValue, useAnimatedStyle } from "react-native-reanimated";
 
 export type UniqueIdentifier = string | number;
+export type ObjectWithId = { id: UniqueIdentifier; [s: string]: unknown };
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type AnyData = Record<string, any>;
 export type Data<T = AnyData> = T | SharedValue<T>;

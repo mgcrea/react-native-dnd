@@ -16,6 +16,25 @@ export type Rectangle = {
 };
 
 /**
+ * @summary Split a `Rectangle` in two
+ * @worklet
+ */
+export const splitLayout = (layout: Rectangle, axis: "x" | "y") => {
+  "worklet";
+  const { x, y, width, height } = layout;
+  if (axis === "x") {
+    return [
+      { x, y, width: width / 2, height },
+      { x: x + width / 2, y, width: width / 2, height },
+    ];
+  }
+  return [
+    { x, y, width, height: height / 2 },
+    { x, y: y + height / 2, width, height: height / 2 },
+  ];
+};
+
+/**
  * @summary Checks if a `Point` is included inside a `Rectangle`
  * @worklet
  */
@@ -28,7 +47,7 @@ export const includesPoint = (layout: Rectangle, { x, y }: Point, strict?: boole
 };
 
 /**
- * @summary Checks if a `Rectange` overlaps with another `Rectangle`
+ * @summary Checks if a `Rectangle` overlaps with another `Rectangle`
  * @worklet
  */
 export const overlapsRectangle = (layout: Rectangle, other: Rectangle) => {
@@ -37,7 +56,21 @@ export const overlapsRectangle = (layout: Rectangle, other: Rectangle) => {
     layout.x < other.x + other.width &&
     layout.x + layout.width > other.x &&
     layout.y < other.y + other.height &&
-    layout.y + layout.width > other.y
+    layout.y + layout.height > other.y
+  );
+};
+
+/**
+ * @summary Checks if a `Rectange` overlaps with another `Rectangle` with a margin
+ * @worklet
+ */
+export const overlapsRectangleBy = (layout: Rectangle, other: Rectangle, by: number) => {
+  "worklet";
+  return (
+    layout.x < other.x + other.width - by &&
+    layout.x + layout.width > other.x + by &&
+    layout.y < other.y + other.height - by &&
+    layout.y + layout.height > other.y + by
   );
 };
 
@@ -65,6 +98,26 @@ export const centerPoint = (layout: Rectangle): Point => {
     x: layout.x + layout.width / 2,
     y: layout.y + layout.height / 2,
   };
+};
+
+/**
+ * @summary Compute a center axis
+ * @worklet
+ */
+export const centerAxis = (layout: Rectangle, horizontal: boolean): number => {
+  "worklet";
+  return horizontal ? layout.x + layout.width / 2 : layout.y + layout.height / 2;
+};
+
+/**
+ * @summary Checks if a `Rectangle` overlaps with an axis
+ * @worklet
+ */
+export const overlapsAxis = (layout: Rectangle, axis: number, horizontal: boolean) => {
+  "worklet";
+  return horizontal
+    ? layout.x < axis && layout.x + layout.width > axis
+    : layout.y < axis && layout.y + layout.height > axis;
 };
 
 export const getDistance = (x: number, y: number): number => {

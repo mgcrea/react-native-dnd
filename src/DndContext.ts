@@ -21,15 +21,15 @@ export type DndContextValue = {
   draggableOptions: SharedValue<DraggableOptions>;
   droppableOptions: SharedValue<DroppableOptions>;
   draggableOffsets: SharedValue<Offsets>;
+  draggableRestingOffsets: SharedValue<Offsets>;
   draggableStates: SharedValue<DraggableStates>;
   draggablePendingId: SharedValue<UniqueIdentifier | null>;
   draggableActiveId: SharedValue<UniqueIdentifier | null>;
   droppableActiveId: SharedValue<UniqueIdentifier | null>;
-  panGestureState: SharedValue<GestureEventPayload["state"]>;
-  draggableActiveOffset: SharedPoint;
-  draggableActingOffset: SharedPoint;
-  draggableRestingOffset: SharedPoint;
+  draggableActiveLayout: SharedValue<LayoutRectangle | null>;
+  draggableInitialOffset: SharedPoint;
   draggableContentOffset: SharedPoint;
+  panGestureState: SharedValue<GestureEventPayload["state"]>;
 };
 
 // @ts-expect-error ignore detached state
