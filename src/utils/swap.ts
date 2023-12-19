@@ -1,10 +1,4 @@
-import {
-  centerAxis,
-  centerPoint,
-  includesPoint,
-  overlapsAxis,
-  type Rectangle,
-} from "@mgcrea/react-native-dnd";
+import { centerAxis, centerPoint, includesPoint, overlapsAxis, type Rectangle } from "./geometry";
 
 export const swapByItemCenterPoint = (activeLayout: Rectangle, itemLayout: Rectangle) => {
   "worklet";
