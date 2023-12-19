@@ -8,15 +8,15 @@ export type UseDraggableStackOptions = Pick<
   UseDraggableSortOptions,
   "initialOrder" | "onOrderChange" | "onOrderUpdate" | "shouldSwapWorklet"
 > & {
-  gap: number;
-  horizontal: boolean;
+  gap?: number;
+  horizontal?: boolean;
 };
 export const useDraggableStack = ({
   initialOrder,
   onOrderChange,
   onOrderUpdate,
-  gap,
-  horizontal,
+  gap = 0,
+  horizontal = false,
   shouldSwapWorklet,
 }: UseDraggableStackOptions) => {
   const { draggableActiveId, draggableOffsets, draggableRestingOffsets, draggableLayouts } = useDndContext();

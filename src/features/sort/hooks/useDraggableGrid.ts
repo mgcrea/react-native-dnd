@@ -8,7 +8,7 @@ export type UseDraggableGridOptions = Pick<
   UseDraggableSortOptions,
   "initialOrder" | "onOrderChange" | "onOrderUpdate" | "shouldSwapWorklet"
 > & {
-  gap: number;
+  gap?: number;
   size: number;
   direction: FlexStyle["flexDirection"];
 };
@@ -17,7 +17,7 @@ export const useDraggableGrid = ({
   initialOrder,
   onOrderChange,
   onOrderUpdate,
-  gap,
+  gap = 0,
   size,
   direction = "row",
   shouldSwapWorklet = swapByItemCenterPoint,
