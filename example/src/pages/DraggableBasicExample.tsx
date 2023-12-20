@@ -16,8 +16,9 @@ import Animated, {
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import {MyDraggableBox} from '../components';
 
-export const BasicExample: FunctionComponent = () => {
+export const DraggableBasicExample: FunctionComponent = () => {
   const [count, setCount] = useState(0);
   const dynamicData = useSharedValue({count: 0});
 
@@ -46,24 +47,20 @@ export const BasicExample: FunctionComponent = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView>
-        <DndProvider
-          onBegin={handleBegin}
-          onFinalize={handleFinalize}
-          onDragEnd={handleDragEnd}>
-          <View style={styles.view}>
-            <MyDroppable id="drop">
-              <Text style={styles.text}>DROP</Text>
-            </MyDroppable>
-            <MyDraggable id="drag" data={dynamicData}>
-              <Text style={styles.text}>DRAG</Text>
-            </MyDraggable>
-            <Text testID="button">count is {count}</Text>
-          </View>
-        </DndProvider>
-      </GestureHandlerRootView>
-    </SafeAreaView>
+    <View style={styles.container}>
+      <DndProvider
+        onBegin={handleBegin}
+        onFinalize={handleFinalize}
+        onDragEnd={handleDragEnd}>
+        <MyDroppable id="drop">
+          <Text style={styles.text}>DROP</Text>
+        </MyDroppable>
+        <MyDraggable id="drag" data={dynamicData}>
+          DRAG
+        </MyDraggable>
+        <Text testID="button">count is {count}</Text>
+      </DndProvider>
+    </View>
   );
 };
 
@@ -115,16 +112,11 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: 'linen',
-    flex: 1,
-  },
-  view: {
-    alignItems: 'center',
-    marginTop: -128,
     borderColor: 'black',
     borderWidth: StyleSheet.hairlineWidth,
-    borderRadius: 8,
+    borderRadius: 32,
     padding: 32,
+    backgroundColor: 'rgba(0,0,0,0.1)',
   },
   box: {
     margin: 24,
