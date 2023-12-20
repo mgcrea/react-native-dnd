@@ -6,7 +6,7 @@ import { useDraggableGrid, type UseDraggableGridOptions } from "../hooks/useDrag
 export type DraggableGridProps = Pick<ViewProps, "style"> &
   Pick<UseDraggableGridOptions, "onOrderChange" | "onOrderUpdate" | "shouldSwapWorklet"> & {
     direction?: FlexStyle["flexDirection"];
-    size?: number;
+    size: number;
     gap?: number;
   };
 
@@ -17,13 +17,12 @@ export const DraggableGrid: FunctionComponent<PropsWithChildren<DraggableGridPro
   onOrderChange,
   onOrderUpdate,
   shouldSwapWorklet,
-  size = 3,
+  size,
   style: styleProp,
 }) => {
   const initialOrder = useMemo(
     () =>
       Children.map(children, (child) => {
-        // console.log("in");
         if (React.isValidElement(child)) {
           return child.props.id;
         }
