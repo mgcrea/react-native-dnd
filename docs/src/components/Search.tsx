@@ -3,30 +3,29 @@
 // import Link from "next/link";
 // import Router from "next/router";
 import { useCallback, useEffect, useState } from "react";
-import { Link } from "./Link";
 import { SearchIcon } from "./icon";
 
-const docSearchConfig = {
-  // appId: process.env.NEXT_PUBLIC_DOCSEARCH_APP_ID,
-  // apiKey: process.env.NEXT_PUBLIC_DOCSEARCH_API_KEY,
-  // indexName: process.env.NEXT_PUBLIC_DOCSEARCH_INDEX_NAME,
-};
+// const docSearchConfig = {
+//   // appId: process.env.NEXT_PUBLIC_DOCSEARCH_APP_ID,
+//   // apiKey: process.env.NEXT_PUBLIC_DOCSEARCH_API_KEY,
+//   // indexName: process.env.NEXT_PUBLIC_DOCSEARCH_INDEX_NAME,
+// };
 
-function Hit({ hit, children }) {
-  return <Link href={hit.url}>{children}</Link>;
-}
+// function Hit({ hit, children }) {
+//   return <Link href={hit.url}>{children}</Link>;
+// }
 
 export function Search() {
-  let [isOpen, setIsOpen] = useState(false);
-  let [modifierKey, setModifierKey] = useState();
+  let [_isOpen, setIsOpen] = useState(false);
+  let [modifierKey, setModifierKey] = useState("");
 
   const onOpen = useCallback(() => {
     setIsOpen(true);
   }, [setIsOpen]);
 
-  const onClose = useCallback(() => {
-    setIsOpen(false);
-  }, [setIsOpen]);
+  // const onClose = useCallback(() => {
+  //   setIsOpen(false);
+  // }, [setIsOpen]);
 
   // useDocSearchKeyboardEvents({ isOpen, onOpen, onClose });
 
