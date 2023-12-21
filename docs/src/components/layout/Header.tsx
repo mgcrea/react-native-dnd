@@ -16,10 +16,10 @@ export const Header: FunctionComponent<HeaderProps> = ({ currentPage }) => {
   return (
     <header
       className={classNames(
-        "sticky top-0 z-50 flex h-20 flex-wrap items-center justify-between bg-white px-4 shadow-md shadow-slate-900/5 transition duration-500 dark:shadow-none sm:px-6 lg:px-8",
+        "sticky top-0 z-50 flex h-20 flex-wrap items-center justify-between bg-white px-4 shadow-md shadow-slate-900/5 transition duration-500 sm:px-6 lg:px-8 dark:shadow-none",
         isScrolled
           ? "dark:bg-slate-900/95 dark:backdrop-blur dark:[@supports(backdrop-filter:blur(0))]:bg-slate-900/75"
-          : "dark:bg-transparent"
+          : "dark:bg-transparent",
       )}
     >
       <div className="mr-6 flex lg:hidden">
@@ -36,7 +36,7 @@ export const Header: FunctionComponent<HeaderProps> = ({ currentPage }) => {
       <div className="relative flex justify-end gap-6 sm:gap-8 md:flex-grow">
         {/* <ThemeSelector className="relative z-10" /> */}
         <Link href={GITHUB_REPO_URL} aria-label="GitHub" target="_blank">
-          <GitHubIcon className="h-6 w-6 fill-slate-400 group-hover:fill-slate-500 dark:group-hover:fill-slate-300 md:h-8 md:w-8" />
+          <GitHubIcon className="h-6 w-6 fill-slate-400 group-hover:fill-slate-500 md:h-8 md:w-8 dark:group-hover:fill-slate-300" />
         </Link>
       </div>
     </header>

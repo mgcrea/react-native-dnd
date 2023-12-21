@@ -9,7 +9,7 @@ export const Link: FunctionComponent<PropsWithChildren<LinkProps>> = ({
   href: hrefProp,
   ...otherProps
 }) => {
-  const href = hrefProp?.startsWith("/") ? `${BASE_URL.slice(0, -1)}${hrefProp}` : hrefProp;
+  const href = hrefProp?.startsWith("/") ? `${BASE_URL}${hrefProp}` : hrefProp;
   return (
     <a href={href} {...otherProps}>
       {children}

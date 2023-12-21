@@ -1,6 +1,6 @@
 /** @jsxImportSource react */
 import { Popover, Transition } from "@headlessui/react";
-import { Fragment, FunctionComponent } from "react";
+import { Fragment, type FunctionComponent } from "react";
 import { CloseIcon, MenuIcon } from "../icon";
 import { Navigation } from "./Navigation";
 

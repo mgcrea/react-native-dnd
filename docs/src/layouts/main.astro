@@ -1,25 +1,24 @@
 ---
 import { Article, Header, Navigation } from "src/components/layout";
 import type { CollectionEntry } from "astro:content";
-import { NAVIGATION_ITEMS } from "src/config/navigation";
 import { BASE_URL, SITE } from "src/config/env";
 import "../styles/main.css";
 
 type Props = CollectionEntry<"docs">["data"];
 
-const data = Astro.props;
+const { title, description, dir, lang } = Astro.props;
 const currentPage = Astro.url.pathname.replace(BASE_URL, "/").replace(/\/$/, "");
 ---
 
-<html dir={data.dir} lang={data.lang}>
+<html dir={dir} lang={lang}>
   <head>
     <meta charset="utf-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width" />
-    <meta name="description" content={data.description} />
+    <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>
-      {`${data.title} 🚀 ${SITE.title}`}
+      {`${title} 🚀 ${SITE.title}`}
     </title>
   </head>
   <body>

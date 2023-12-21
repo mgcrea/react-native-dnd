@@ -1,7 +1,8 @@
 ---
 import { Code } from "astro/components";
-import type { Props as CodeProps } from "astro/components/Code.astro";
 import { CopyButton } from "./components/CopyButton";
+
+type CodeProps = Parameters<typeof Code>[0];
 
 interface Props {
   code: string;

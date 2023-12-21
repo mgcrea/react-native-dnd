@@ -2,7 +2,7 @@ import { getCollection } from "astro:content";
 
 const docs = await getCollection("docs");
 
-const SECTIONS_ORDER = ["guides", "hooks", "providers", "components", "utils"];
+const SECTIONS_ORDER = ["guides", "providers", "components", "hooks", "utils"];
 
 export type NavigationItem = {
   title: string;
@@ -23,7 +23,7 @@ const docsBySection = docs.reduce<Record<string, NavigationItem[]>>((soFar, entr
 }, {});
 
 export const NAVIGATION_ITEMS = Object.entries(docsBySection).sort(([a], [b]) =>
-  SECTIONS_ORDER.indexOf(a) < SECTIONS_ORDER.indexOf(b) ? -1 : 1
+  SECTIONS_ORDER.indexOf(a) < SECTIONS_ORDER.indexOf(b) ? -1 : 1,
 );
 
 NAVIGATION_ITEMS.forEach(([_, items]) => {

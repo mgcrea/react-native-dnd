@@ -1,12 +1,11 @@
 import mdx from "@astrojs/mdx";
-import preact from "@astrojs/preact";
-import prefetch from "@astrojs/prefetch";
 import react from "@astrojs/react";
 import tailwind from "@astrojs/tailwind";
-import AutoImport from "astro-auto-import";
-import MDXCodeBlocks, { mdxCodeBlockAutoImport } from "astro-mdx-code-blocks";
 import { defineConfig } from "astro/config";
+import preact from "@astrojs/preact";
 import rehypeExternalLinks from "rehype-external-links";
+import MDXCodeBlocks, { mdxCodeBlockAutoImport } from "astro-mdx-code-blocks";
+import AutoImport from "astro-auto-import";
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,15 +31,12 @@ export default defineConfig({
       imports: [mdxCodeBlockAutoImport("src/components/markdown/CodeBlock.astro")],
     }),
     react(),
-    preact(),
     tailwind({
-      config: {
-        applyBaseStyles: false,
-      },
+      applyBaseStyles: false,
     }),
     MDXCodeBlocks(),
     mdx(),
-    prefetch(),
+    preact(),
   ],
   site: `https://mgcrea.github.io`,
   base: "/react-native-dnd",

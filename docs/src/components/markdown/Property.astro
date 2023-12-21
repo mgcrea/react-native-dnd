@@ -17,9 +17,7 @@ const { name, type, optional, defaultValue } = Astro.props;
     <dt class="sr-only">Type</dt>
     <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
       <span class="text-zinc-300 dark:text-zinc-600">:</span>{type}{
-        optional ? (
-          <span class="text-zinc-400 dark:text-zinc-500">?</span>
-        ) : null
+        optional ? <span class="text-zinc-400 dark:text-zinc-500">?</span> : null
       }
     </dd>
     {
