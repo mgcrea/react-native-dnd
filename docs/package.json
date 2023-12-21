@@ -29,6 +29,7 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
+    "astro-auto-import": "^0.4.2",
     "astro-mdx-code-blocks": "^0.0.6",
     "clsx": "^2.0.0",
     "prettier-plugin-astro": "^0.12.2",
