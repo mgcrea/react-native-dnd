@@ -11,12 +11,14 @@ import {
   type Rectangle,
 } from "../../../utils";
 
+export type ShouldSwapWorklet = (activeLayout: Rectangle, itemLayout: Rectangle) => boolean;
+
 export type UseDraggableSortOptions = {
   initialOrder?: UniqueIdentifier[];
   horizontal?: boolean;
-  onOrderChange?: (value: UniqueIdentifier[]) => void;
+  onOrderChange?: (order: UniqueIdentifier[]) => void;
   onOrderUpdate?: (nextOrder: UniqueIdentifier[], prevOrder: UniqueIdentifier[]) => void;
-  shouldSwapWorklet?: (activeLayout: Rectangle, itemLayout: Rectangle) => boolean;
+  shouldSwapWorklet?: ShouldSwapWorklet;
 };
 
 export const useDraggableSort = ({

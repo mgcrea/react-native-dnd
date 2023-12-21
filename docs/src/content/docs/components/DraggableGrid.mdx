@@ -1,0 +1,94 @@
+---
+title: "DraggableGrid"
+---
+
+# {frontmatter.title}
+
+`DraggableGrid` enables you to easily create a grid of sortable draggable components.
+
+It is built on top of the [useDragableGrid](./../hooks/usedraggablegrid) hook.
+
+This component does not handle variable sized items for now (all items must have the same size).
+
+## Usage
+
+```tsx
+import {
+  DndProvider,
+  type ObjectWithId,
+  Draggable,
+  DraggableGrid,
+  DraggableGridProps,
+} from "@mgcrea/react-native-dnd/src";
+import { type FunctionComponent } from "react";
+import { StyleSheet, Text, View } from "react-native";
+
+const GRID_SIZE = 3;
+const items: string[] = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
+const data = items.map((letter, index) => ({
+  id: `${index}-${letter}`,
+  value: letter,
+})) satisfies ObjectWithId[];
+
+export const DraggableGridExample: FunctionComponent = () => {
+  const onGridOrderChange: DraggableGridProps["onOrderChange"] = (value) => {
+    console.log("onGridOrderChange", value);
+  };
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.title}>DraggableGrid{"\n"}Example</Text>
+      <DndProvider>
+        <DraggableGrid direction="row" size={GRID_SIZE} style={styles.grid} onOrderChange={onGridOrderChange}>
+          {data.map((item) => (
+            <Draggable key={item.id} id={item.id} style={styles.draggable}>
+              <Text style={styles.text}>{item.value}</Text>
+            </Draggable>
+          ))}
+        </DraggableGrid>
+      </DndProvider>
+    </View>
+  );
+};
+```
+
+## Props
+
+The `DraggableGrid` component accepts the following props:
+
+---
+
+<Properties>
+  <Property name="direction" type="FlexStyle['flexDirection']" optional defaultValue={`row`}>
+    The direction of the grid. Can be either `row` or `column`, `row-reverse` or `column-reverse`. Default is
+    `row`.
+  </Property>
+  <Property name="size" type="number">
+    The size of the grid accross it's main axis. For example, if the direction is `row`, this is the number of
+    columns in the grid. If the direction is `column`, this is the number of rows in the grid.
+  </Property>
+  <Property name="gap" type="number" optional defaultValue={`0`}>
+    The gap between items in the grid. Default is `0`.
+  </Property>
+  <Property name="style" type="ViewStyle" optional>
+    An optional style object to apply custom styles to the container View.
+  </Property>
+  <Property name="onOrderChange" type="(order: UniqueIdentifier[]) => void" optional>
+    An optional function that is called when the order of the items in the grid changes after a drag & sort
+    operation. The function receives an array of the item ids in the new order.
+  </Property>
+  <Property
+    name="onOrderUpdate"
+    type="(nextOrder: UniqueIdentifier[], prevOrder: UniqueIdentifier[]) => void"
+    optional
+  >
+    An optional function that is called every time the order of the items in the grid changes during a drag &
+    sort operation. The function receives an array of the item ids in the new order, and an array of the item
+    ids in the previous order.
+  </Property>
+  <Property name="shouldSwapWorklet" type="ShouldSwapWorklet" optional>
+    An optional function that can be used to override the default behavior of when to swap items. The function
+    receives the following arguments: `(activeLayout: Rectangle, itemLayout: Rectangle) => boolean`. The
+    function should return `true` if the items should be swapped, or `false` if they should not be swapped.
+  </Property>
+</Properties>

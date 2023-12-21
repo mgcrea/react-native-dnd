@@ -7,8 +7,9 @@ import {
   DraggableStack,
   type DraggableStackProps,
 } from '@mgcrea/react-native-dnd/src';
-const letters = ['🤓', '🤖🤖', '👻👻👻', '👾👾👾👾'];
-const data = letters.map((letter, index) => ({
+
+const items = ['🤓', '🤖🤖', '👻👻👻', '👾👾👾👾'];
+const data = items.map((letter, index) => ({
   value: letter,
   id: `${index}-${letter}`,
 })) satisfies ObjectWithId[];

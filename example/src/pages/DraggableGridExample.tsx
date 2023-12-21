@@ -4,21 +4,20 @@ import {
   Draggable,
   DraggableGrid,
   DraggableGridProps,
-  swapByItemCenterPoint,
 } from '@mgcrea/react-native-dnd/src';
 import {type FunctionComponent} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 
 const GRID_SIZE = 3;
-const chars: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const data = chars.map((letter, index) => ({
-  value: letter,
+const items: string[] = ['1', '2', '3', '4', '5', '6', '7', '8', '9'];
+const data = items.map((letter, index) => ({
   id: `${index}-${letter}`,
+  value: letter,
 })) satisfies ObjectWithId[];
 
 export const DraggableGridExample: FunctionComponent = () => {
-  const onStackOrderChange: DraggableGridProps['onOrderChange'] = value => {
-    console.log('onStackOrderChange', value);
+  const onGridOrderChange: DraggableGridProps['onOrderChange'] = value => {
+    console.log('onGridOrderChange', value);
   };
 
   return (
@@ -29,11 +28,10 @@ export const DraggableGridExample: FunctionComponent = () => {
           direction="row"
           size={GRID_SIZE}
           style={styles.grid}
-          onOrderChange={onStackOrderChange}
-          shouldSwapWorklet={swapByItemCenterPoint}>
-          {data.map(letter => (
-            <Draggable key={letter.id} id={letter.id} style={styles.draggable}>
-              <Text style={styles.text}>{letter.value}</Text>
+          onOrderChange={onGridOrderChange}>
+          {data.map(item => (
+            <Draggable key={item.id} id={item.id} style={styles.draggable}>
+              <Text style={styles.text}>{item.value}</Text>
             </Draggable>
           ))}
         </DraggableGrid>
