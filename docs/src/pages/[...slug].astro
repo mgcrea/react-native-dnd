@@ -25,5 +25,5 @@ const { Content } = await page.render();
 ---
 
 <MainLayout {...page.data}>
-  <Content components={components} />
+  <Content components={{...components, AutoImportedCodeBlock: components.CodeBlock}} />
 </MainLayout>

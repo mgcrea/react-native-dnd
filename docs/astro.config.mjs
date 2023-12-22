@@ -4,8 +4,7 @@ import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 import preact from "@astrojs/preact";
 import rehypeExternalLinks from "rehype-external-links";
-import MDXCodeBlocks, { mdxCodeBlockAutoImport } from "astro-mdx-code-blocks";
-import AutoImport from "astro-auto-import";
+import MDXCodeBlocks from "astro-mdx-code-blocks";
 
 // https://astro.build/config
 export default defineConfig({
@@ -27,16 +26,13 @@ export default defineConfig({
     },
   },
   integrations: [
-    AutoImport({
-      imports: [mdxCodeBlockAutoImport("src/components/markdown/CodeBlock.astro")],
-    }),
-    react(),
     tailwind({
       applyBaseStyles: false,
     }),
-    MDXCodeBlocks(),
     mdx(),
+    react(),
     preact(),
+    MDXCodeBlocks(),
   ],
   site: `https://mgcrea.github.io`,
   base: "/react-native-dnd",

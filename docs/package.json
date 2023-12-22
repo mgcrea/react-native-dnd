@@ -11,15 +11,15 @@
     "astro": "astro"
   },
   "dependencies": {
-    "@astrojs/check": "^0.3.3",
-    "@astrojs/mdx": "^2.0.1",
+    "@astrojs/check": "^0.3.4",
+    "@astrojs/mdx": "^2.0.2",
     "@astrojs/preact": "^3.0.1",
-    "@astrojs/react": "^3.0.7",
-    "@astrojs/tailwind": "^5.0.3",
+    "@astrojs/react": "^3.0.8",
+    "@astrojs/tailwind": "^5.0.4",
     "@headlessui/react": "^1.7.17",
     "@types/react": "^18.2.45",
     "@types/react-dom": "^18.2.18",
-    "astro": "^4.0.6",
+    "astro": "^4.0.7",
     "preact": "^10.19.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
@@ -29,7 +29,6 @@
   },
   "devDependencies": {
     "@tailwindcss/typography": "^0.5.10",
-    "astro-auto-import": "^0.4.2",
     "astro-mdx-code-blocks": "^0.0.6",
     "clsx": "^2.0.0",
     "prettier-plugin-astro": "^0.12.2",
