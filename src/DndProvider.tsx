@@ -52,7 +52,7 @@ export type DndProviderProps = {
   ) => void;
   onUpdate?: (
     event: GestureUpdateEvent<PanGestureHandlerEventPayload>,
-    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
+    meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle; droppableActiveId: UniqueIdentifier },
   ) => void;
   onFinalize?: (
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
@@ -308,7 +308,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           });
           droppableActiveId.value = findDroppableLayoutId(draggableActiveLayout.value);
           if (onUpdate) {
-            onUpdate(event, { activeId, activeLayout: draggableActiveLayout.value });
+            onUpdate(event, { activeId, activeLayout: draggableActiveLayout.value, droppableActiveId: droppableActiveId.value });
           }
         })
         .onFinalize((event) => {
