@@ -60,6 +60,7 @@ export type DndProviderProps = {
   ) => void;
   hapticFeedback?: HapticFeedbackTypes;
   style?: StyleProp<ViewStyle>;
+  simultaneousHandlers?: React.Ref<any> | React.Ref<any>[];
   debug?: boolean;
 };
 
@@ -82,6 +83,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       onUpdate,
       onFinalize,
       style,
+      simultaneousHandlers,
       debug,
     },
     ref,
@@ -404,7 +406,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
     return (
       <DndContext.Provider value={contextValue.current}>
-        <GestureDetector gesture={panGesture}>
+        <GestureDetector gesture={panGesture} simultaneousHandlers={simultaneousHandlers}>
           <View ref={containerRef} collapsable={false} style={style} testID="view">
             {children}
           </View>
