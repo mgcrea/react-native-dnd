@@ -31,7 +31,6 @@
     "react": ">=17",
     "react-native": ">=0.70",
     "react-native-gesture-handler": ">=2",
-    "react-native-haptic-feedback": ">=2",
     "react-native-reanimated": ">=3"
   },
   "devDependencies": {

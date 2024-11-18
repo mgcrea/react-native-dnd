@@ -9,7 +9,6 @@ import {
   PanGestureHandlerEventPayload,
   State,
 } from "react-native-gesture-handler";
-import ReactNativeHapticFeedback, { HapticFeedbackTypes } from "react-native-haptic-feedback";
 import {
   cancelAnimation,
   runOnJS,
@@ -58,7 +57,7 @@ export type DndProviderProps = {
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
     meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
   ) => void;
-  hapticFeedback?: HapticFeedbackTypes;
+  onFeedback?: () => void;
   style?: StyleProp<ViewStyle>;
   debug?: boolean;
 };
@@ -76,7 +75,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       minDistance = 0,
       activationDelay = 0,
       disabled,
-      hapticFeedback,
+      onFeedback,
       onDragEnd,
       onBegin,
       onUpdate,
@@ -102,11 +101,6 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableContentOffset = useSharedPoint(0, 0);
     const panGestureState = useSharedValue<GestureEventPayload["state"]>(0);
 
-    const runFeedback = () => {
-      if (hapticFeedback) {
-        ReactNativeHapticFeedback.trigger(hapticFeedback);
-      }
-    };
     useAnimatedReaction(
       () => draggableActiveId.value,
       (next, prev) => {
@@ -114,7 +108,9 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           // runOnJS(setActiveId)(next);
         }
         if (next !== null) {
-          runOnJS(runFeedback)();
+          if (onFeedback) {
+            runOnJS(onFeedback)();
+          }
         }
       },
       [],
