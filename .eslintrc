@@ -1,4 +1,0 @@
-{
-  "extends": ["@mgcrea/react-native"],
-  "root": true
-}
