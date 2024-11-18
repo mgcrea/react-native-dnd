@@ -40,8 +40,8 @@ export const App: FunctionComponent = () => {
   <Property name="disabled" type="boolean" optional defaultValue={`false`}>
     An optional boolean value to disable the Drag and Drop functionality globally. Default is `false`.
   </Property>
-  <Property name="hapticFeedback" type="HapticFeedbackTypes" optional>
-    An optional haptic feedback type to trigger when a draggable item becomes active.
+  <Property name="onFeedback" type="function" optional>
+    A callback function to provide feedback (eg. haptic) when a draggable item becomes active.
   </Property>
   <Property name="onDragEnd" type="function" optional>
     A callback function to be called when a drag event ends. It receives an object with `active` and `over`
