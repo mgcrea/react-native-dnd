@@ -28,52 +28,58 @@ describe("<DndProvider />", () => {
     ]);
 
     expect(view).toMatchInlineSnapshot(`
-      <View>
-        <View
-          collapsable={false}
-          testID="view"
-        >
-          <View
-            onLayout={[Function]}
-            style={
-              [
-                undefined,
-                {
-                  "opacity": 1,
-                },
-              ]
-            }
-          >
-            <Text>
-              DROP
-            </Text>
-          </View>
-          <View
-            onLayout={[Function]}
-            style={
-              [
-                undefined,
-                {
-                  "opacity": 1,
-                  "transform": [
-                    {
-                      "translateX": 0,
-                    },
-                    {
-                      "translateY": 0,
-                    },
-                  ],
-                  "zIndex": 1,
-                },
-              ]
-            }
-          >
-            <Text>
-              DRAG
-            </Text>
-          </View>
-        </View>
-      </View>
+     <View
+       style={
+         {
+           "flex": 1,
+         }
+       }
+     >
+       <View
+         collapsable={false}
+         testID="view"
+       >
+         <View
+           onLayout={[Function]}
+           style={
+             [
+               undefined,
+               {
+                 "opacity": 1,
+               },
+             ]
+           }
+         >
+           <Text>
+             DROP
+           </Text>
+         </View>
+         <View
+           onLayout={[Function]}
+           style={
+             [
+               undefined,
+               {
+                 "opacity": 1,
+                 "transform": [
+                   {
+                     "translateX": 0,
+                   },
+                   {
+                     "translateY": 0,
+                   },
+                 ],
+                 "zIndex": 1,
+               },
+             ]
+           }
+         >
+           <Text>
+             DRAG
+           </Text>
+         </View>
+       </View>
+     </View>
     `);
     // await fireEvent.press(screen.getByTestId("button"));
     // await fireEvent.press(screen.getByTestId("button"));

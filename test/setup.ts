@@ -4,5 +4,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 
 import "@testing-library/jest-native/extend-expect";
-require("react-native-reanimated/lib/module/reanimated2/jestUtils").setUpTests();
+require("react-native-reanimated").setUpTests();
+
 jest.mock("react-native-reanimated", () => require("react-native-reanimated/mock"));
