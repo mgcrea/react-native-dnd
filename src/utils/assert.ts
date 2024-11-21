@@ -7,7 +7,7 @@ class AssertionError extends Error {
     public expected: unknown = "true",
     public operator = "==",
   ) {
-    super(message || `${actual} ${operator} ${expected}`);
+    super(message || `${String(actual)} ${operator} ${String(expected)}`);
     Object.setPrototypeOf(this, new.target.prototype);
   }
 }

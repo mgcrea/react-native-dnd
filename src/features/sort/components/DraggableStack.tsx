@@ -21,12 +21,11 @@ export const DraggableStack: FunctionComponent<PropsWithChildren<DraggableStackP
   const initialOrder = useMemo(
     () =>
       Children.map(children, (child) => {
-        // console.log("in");
         if (React.isValidElement(child)) {
-          return child.props.id;
+          return (child.props as { id?: UniqueIdentifier }).id;
         }
         return null;
-      })?.filter(Boolean) as UniqueIdentifier[],
+      })?.filter(Boolean),
     [children],
   );
 

@@ -141,4 +141,5 @@ export const floorLayout = ({ x, y, width, height }: LayoutRectangle) => {
  * @returns {boolean} Whether the value is a `Reanimated` shared value
  */
 export const isReanimatedSharedValue = (value: unknown): value is SharedValue<AnyData> =>
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   typeof value === "object" && (value as { _isReanimatedSharedValue: boolean })?._isReanimatedSharedValue;

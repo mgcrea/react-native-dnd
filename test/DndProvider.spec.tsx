@@ -5,7 +5,7 @@ import { fireGestureHandler, getByGestureTestId } from "react-native-gesture-han
 import { DndProvider, Draggable, Droppable } from "../src";
 
 describe("<DndProvider />", () => {
-  test("basic example", async () => {
+  test("basic example", () => {
     const view = render(
       <GestureHandlerRootView>
         <DndProvider>

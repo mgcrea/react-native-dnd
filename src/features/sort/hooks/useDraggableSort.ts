@@ -55,6 +55,7 @@ export const useDraggableSort = ({
       if (itemId === activeId) {
         continue;
       }
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (!layouts[itemId]) {
         console.warn(`Unexpected missing layout ${itemId} in layouts!`);
         continue;

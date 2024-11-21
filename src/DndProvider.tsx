@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
+
 import React, { forwardRef, PropsWithChildren, useImperativeHandle, useMemo, useRef } from "react";
 import { LayoutRectangle, StyleProp, View, ViewStyle } from "react-native";
 import {
@@ -369,6 +371,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
               ) {
                 return;
               }
+              // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
               if (states[activeId]) {
                 states[activeId].value = "resting";
               }

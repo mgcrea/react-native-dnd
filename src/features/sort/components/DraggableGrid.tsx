@@ -24,10 +24,10 @@ export const DraggableGrid: FunctionComponent<PropsWithChildren<DraggableGridPro
     () =>
       Children.map(children, (child) => {
         if (React.isValidElement(child)) {
-          return child.props.id;
+          return (child.props as { id?: UniqueIdentifier }).id;
         }
         return null;
-      })?.filter(Boolean) as UniqueIdentifier[],
+      })?.filter(Boolean),
     [children],
   );
 

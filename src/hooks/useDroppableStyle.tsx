@@ -14,6 +14,7 @@ export const useDroppableStyle = <StyleT extends AnimatedStyle>(
   const { droppableActiveId: activeId, droppableOptions: options } = useDndContext();
   return useAnimatedStyle<StyleT>(() => {
     const isActive = activeId.value === id;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const isDisabled = !options.value[id]?.disabled;
     return callback({ isActive, isDisabled });
   }, []);

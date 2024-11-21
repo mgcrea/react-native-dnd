@@ -12,6 +12,7 @@ export const useNodeRef = <T, U = T>(onChange?: NodeChangeHandler<T>) => {
   const setNodeRef = useCallback(
     (element: U | null) => {
       if (element !== nodeRef.current) {
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
         onChangeHandler?.(element, nodeRef.current);
       }
       nodeRef.current = element as T;

@@ -8,7 +8,6 @@ export type AnyData = Record<string, any>;
 export type Data<T = AnyData> = T | SharedValue<T>;
 export type SharedData<T = AnyData> = SharedValue<T>;
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type NativeElement = InstanceType<HostComponent<ViewProps>>;
 
 export type AnimatedStyle = ReturnType<typeof useAnimatedStyle>;

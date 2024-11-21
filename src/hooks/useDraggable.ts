@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-dynamic-delete */
+
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
 import { runOnUI, useSharedValue } from "react-native-reanimated";

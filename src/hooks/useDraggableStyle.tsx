@@ -16,7 +16,9 @@ export const useDraggableStyle = <StyleT extends AnimatedStyle>(
   const state = states.value[id];
   return useAnimatedStyle<StyleT>(() => {
     const isActive = activeId.value === id;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const isActing = state?.value === "acting";
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     const isDisabled = !options.value[id]?.disabled;
     return callback({ isActive, isActing, isDisabled });
   }, [id, state]);
