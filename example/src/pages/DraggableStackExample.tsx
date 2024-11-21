@@ -6,7 +6,7 @@ import {
   Draggable,
   DraggableStack,
   type DraggableStackProps,
-} from '@mgcrea/react-native-dnd/src';
+} from '@mgcrea/react-native-dnd';
 
 const items = ['🤓', '🤖🤖', '👻👻👻', '👾👾👾👾'];
 const data = items.map((letter, index) => ({

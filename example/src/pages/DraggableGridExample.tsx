@@ -4,7 +4,7 @@ import {
   Draggable,
   DraggableGrid,
   DraggableGridProps,
-} from '@mgcrea/react-native-dnd/src';
+} from '@mgcrea/react-native-dnd';
 import {type FunctionComponent} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 

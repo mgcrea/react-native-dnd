@@ -59,7 +59,7 @@ export type DndProviderProps = {
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
     meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
   ) => void;
-  onFeedback?: () => void;
+  onActivation?: (next: UniqueIdentifier | null, prev: UniqueIdentifier | null) => void;
   style?: StyleProp<ViewStyle>;
   debug?: boolean;
 };
@@ -77,7 +77,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       minDistance = 0,
       activationDelay = 0,
       disabled,
-      onFeedback,
+      onActivation,
       onDragEnd,
       onBegin,
       onUpdate,
@@ -106,12 +106,9 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     useAnimatedReaction(
       () => draggableActiveId.value,
       (next, prev) => {
-        if (next !== prev) {
-          // runOnJS(setActiveId)(next);
-        }
         if (next !== null) {
-          if (onFeedback) {
-            runOnJS(onFeedback)();
+          if (onActivation) {
+            runOnJS(onActivation)(next, prev);
           }
         }
       },
