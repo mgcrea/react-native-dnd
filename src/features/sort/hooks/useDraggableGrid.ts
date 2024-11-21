@@ -1,6 +1,6 @@
 import { type FlexStyle } from "react-native";
 import { useAnimatedReaction } from "react-native-reanimated";
-import { swapByItemCenterPoint } from "../../../utils";
+import { doesCenterOverlap } from "../../../utils";
 import { useDndContext } from "./../../../DndContext";
 import { useDraggableSort, type UseDraggableSortOptions } from "./useDraggableSort";
 
@@ -20,7 +20,7 @@ export const useDraggableGrid = ({
   gap = 0,
   size,
   direction = "row",
-  shouldSwapWorklet = swapByItemCenterPoint,
+  shouldSwapWorklet = doesCenterOverlap,
 }: UseDraggableGridOptions) => {
   const { draggableActiveId, draggableOffsets, draggableRestingOffsets, draggableLayouts } = useDndContext();
   const horizontal = ["row", "row-reverse"].includes(direction);

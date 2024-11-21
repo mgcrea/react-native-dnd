@@ -23,7 +23,7 @@
     "lint": "eslint src/ test/",
     "spec": "jest",
     "prettycheck": "prettier --check src/ test/",
-    "typecheck": "tsc --noEmit",
+    "check": "tsc --noEmit",
     "test": "npm run typecheck && npm run spec && npm run lint && npm run prettycheck",
     "prepublishOnly": "npm run build"
   },

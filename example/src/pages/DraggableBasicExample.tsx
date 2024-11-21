@@ -7,16 +7,14 @@ import {
   DroppableProps,
   useDraggableStyle,
   useDroppableStyle,
-} from '@mgcrea/react-native-dnd/src';
+} from '@mgcrea/react-native-dnd';
 import React, {useState, type FunctionComponent} from 'react';
-import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import Animated, {
   runOnJS,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
-import {MyDraggableBox} from '../components';
 
 export const DraggableBasicExample: FunctionComponent = () => {
   const [count, setCount] = useState(0);
@@ -47,7 +45,7 @@ export const DraggableBasicExample: FunctionComponent = () => {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <DndProvider
         onBegin={handleBegin}
         onFinalize={handleFinalize}
@@ -60,7 +58,7 @@ export const DraggableBasicExample: FunctionComponent = () => {
         </MyDraggable>
         <Text testID="button">count is {count}</Text>
       </DndProvider>
-    </View>
+    </SafeAreaView>
   );
 };
 

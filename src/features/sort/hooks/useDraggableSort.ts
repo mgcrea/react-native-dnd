@@ -6,12 +6,17 @@ import {
   applyOffset,
   arraysEqual,
   centerAxis,
+  type Direction,
   moveArrayIndex,
   overlapsAxis,
   type Rectangle,
 } from "../../../utils";
 
-export type ShouldSwapWorklet = (activeLayout: Rectangle, itemLayout: Rectangle) => boolean;
+export type ShouldSwapWorklet = (
+  activeLayout: Rectangle,
+  itemLayout: Rectangle,
+  direction: Direction,
+) => boolean;
 
 export type UseDraggableSortOptions = {
   initialOrder?: UniqueIdentifier[];
@@ -29,6 +34,7 @@ export const useDraggableSort = ({
   shouldSwapWorklet,
 }: UseDraggableSortOptions) => {
   const { draggableActiveId, draggableActiveLayout, draggableOffsets, draggableLayouts } = useDndContext();
+  const direction = horizontal ? "horizontal" : "vertical";
 
   const draggablePlaceholderIndex = useSharedValue(-1);
   const draggableLastOrder = useSharedValue<UniqueIdentifier[]>(initialOrder);
@@ -59,7 +65,7 @@ export const useDraggableSort = ({
       });
 
       if (shouldSwapWorklet) {
-        if (shouldSwapWorklet(activeLayout, itemLayout)) {
+        if (shouldSwapWorklet(activeLayout, itemLayout, direction)) {
           // console.log(`Found placeholder index ${itemIndex} using custom shouldSwapWorklet!`);
           return itemIndex;
         }
@@ -67,8 +73,8 @@ export const useDraggableSort = ({
       }
 
       // Default to center axis
-      const itemCenterAxis = centerAxis(itemLayout, horizontal);
-      if (overlapsAxis(activeLayout, itemCenterAxis, horizontal)) {
+      const itemCenterAxis = centerAxis(itemLayout, direction);
+      if (overlapsAxis(activeLayout, itemCenterAxis, direction)) {
         return itemIndex;
       }
     }

@@ -15,6 +15,8 @@ export type Rectangle = {
   height: number;
 };
 
+export type Direction = "horizontal" | "vertical";
+
 /**
  * @summary Split a `Rectangle` in two
  * @worklet
@@ -104,18 +106,18 @@ export const centerPoint = (layout: Rectangle): Point => {
  * @summary Compute a center axis
  * @worklet
  */
-export const centerAxis = (layout: Rectangle, horizontal: boolean): number => {
+export const centerAxis = (layout: Rectangle, direction: Direction): number => {
   "worklet";
-  return horizontal ? layout.x + layout.width / 2 : layout.y + layout.height / 2;
+  return direction === "horizontal" ? layout.x + layout.width / 2 : layout.y + layout.height / 2;
 };
 
 /**
  * @summary Checks if a `Rectangle` overlaps with an axis
  * @worklet
  */
-export const overlapsAxis = (layout: Rectangle, axis: number, horizontal: boolean) => {
+export const overlapsAxis = (layout: Rectangle, axis: number, direction: Direction) => {
   "worklet";
-  return horizontal
+  return direction === "horizontal"
     ? layout.x < axis && layout.x + layout.width > axis
     : layout.y < axis && layout.y + layout.height > axis;
 };

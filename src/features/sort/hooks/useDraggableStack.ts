@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { useAnimatedReaction } from "react-native-reanimated";
 import { useDndContext } from "../../../DndContext";
-import { swapByItemHorizontalAxis, swapByItemVerticalAxis } from "../../../utils";
+import { doesOverlapOnAxis } from "../../../utils";
 import { useDraggableSort, type UseDraggableSortOptions } from "./useDraggableSort";
 
 export type UseDraggableStackOptions = Pick<
@@ -23,9 +23,8 @@ export const useDraggableStack = ({
   const axis = horizontal ? "x" : "y";
   const size = horizontal ? "width" : "height";
   const worklet = useMemo(
-    () =>
-      shouldSwapWorklet ? shouldSwapWorklet : horizontal ? swapByItemHorizontalAxis : swapByItemVerticalAxis,
-    [horizontal, shouldSwapWorklet],
+    () => (shouldSwapWorklet ? shouldSwapWorklet : doesOverlapOnAxis),
+    [shouldSwapWorklet],
   );
 
   const { draggablePlaceholderIndex, draggableSortOrder } = useDraggableSort({
