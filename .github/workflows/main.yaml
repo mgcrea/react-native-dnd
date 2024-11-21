@@ -31,10 +31,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Lint 🔍
         run: pnpm run lint
-      - name: Prettier 🔍
-        run: pnpm run prettycheck
       - name: TypeScript 🔍
-        run: pnpm run typecheck
+        run: pnpm run check
       - name: Vitest 🔍
         run: pnpm run spec
   build:
