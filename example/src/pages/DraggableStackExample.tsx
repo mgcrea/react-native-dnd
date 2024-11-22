@@ -1,12 +1,20 @@
-import React, {useState, type FunctionComponent} from 'react';
-import {Button, StyleSheet, Text, View} from 'react-native';
 import {
   DndProvider,
-  type ObjectWithId,
   Draggable,
   DraggableStack,
+  UniqueIdentifier,
   type DraggableStackProps,
+  type ObjectWithId,
 } from '@mgcrea/react-native-dnd/src';
+import React, {useCallback, useState, type FunctionComponent} from 'react';
+import {Button, StyleSheet, Text, View} from 'react-native';
+import {configureReanimatedLogger} from 'react-native-reanimated';
+
+// This is the default configuration
+configureReanimatedLogger({
+  // level: ReanimatedLogLevel.warn,
+  strict: false, // Reanimated runs in strict mode by default
+});
 
 const items = ['🤓', '🤖🤖', '👻👻👻', '👾👾👾👾'];
 const data = items.map((letter, index) => ({
@@ -15,14 +23,22 @@ const data = items.map((letter, index) => ({
 })) satisfies ObjectWithId[];
 
 export const DraggableStackExample: FunctionComponent = () => {
-  const onStackOrderChange: DraggableStackProps['onOrderChange'] = value => {
-    console.log('onStackOrderChange', value);
-  };
+  const [items, setItems] = useState(data);
+  const [fontSize, setFontSize] = useState(32);
+
+  const onStackOrderChange: DraggableStackProps['onOrderChange'] = useCallback(
+    (order: UniqueIdentifier[]) => {
+      console.log('onStackOrderChange', order);
+      setTimeout(() => {
+        // setItems(items => order.map(id => items.find(item => item.id === id)!));
+        // setFontSize(fontSize => fontSize + 1);
+      }, 1000);
+    },
+    [],
+  );
   const onStackOrderUpdate: DraggableStackProps['onOrderUpdate'] = value => {
     console.log('onStackOrderUpdate', value);
   };
-
-  const [items, setItems] = useState(data);
 
   return (
     <View style={styles.container}>
@@ -39,33 +55,49 @@ export const DraggableStackExample: FunctionComponent = () => {
               key={letter.id}
               id={letter.id}
               style={[styles.draggable]}>
-              <Text style={styles.text}>{letter.value}</Text>
+              <Text style={[styles.text, {fontSize}]}>{letter.value}</Text>
             </Draggable>
           ))}
         </DraggableStack>
       </DndProvider>
-      <Button
-        title="Add"
-        onPress={() => {
-          setItems(prevItems => {
-            const randomIndex = 2; //Math.floor(Math.random() * prevItems.length);
-            prevItems.splice(randomIndex, 0, {
-              value: '🤪',
-              id: `${prevItems.length}-🤪`,
+      <View style={{flexDirection: 'row'}}>
+        <Button
+          title="Add"
+          onPress={() => {
+            setItems(prevItems => {
+              const randomIndex = 2; //Math.floor(Math.random() * prevItems.length);
+              prevItems.splice(randomIndex, 0, {
+                value: '🤪',
+                id: `${prevItems.length}-🤪`,
+              });
+              return prevItems.slice();
             });
-            return prevItems.slice();
-          });
-        }}
-      />
-      <Button
-        title="Delete"
-        onPress={() => {
-          setItems(prevItems => {
-            const randomIndex = Math.floor(Math.random() * prevItems.length);
-            return prevItems.filter((_, index) => index !== randomIndex);
-          });
-        }}
-      />
+          }}
+        />
+        <Button
+          title="Delete"
+          onPress={() => {
+            setItems(prevItems => {
+              const randomIndex = Math.floor(Math.random() * prevItems.length);
+              return prevItems.filter((_, index) => index !== randomIndex);
+            });
+          }}
+        />
+
+        <Button
+          title="Plus"
+          onPress={() => {
+            setFontSize(prevFontSize => prevFontSize + 1);
+          }}
+        />
+
+        <Button
+          title="Minus"
+          onPress={() => {
+            setFontSize(prevFontSize => prevFontSize - 1);
+          }}
+        />
+      </View>
     </View>
   );
 };
@@ -93,7 +125,6 @@ const styles = StyleSheet.create({
   },
   draggable: {
     backgroundColor: 'seagreen',
-    opacity: 0.5,
     height: 100,
     borderColor: 'rgba(0,0,0,0.2)',
     borderWidth: 1,

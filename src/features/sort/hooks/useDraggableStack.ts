@@ -1,7 +1,8 @@
-import { useMemo } from "react";
+import { useCallback } from "react";
 import { useAnimatedReaction } from "react-native-reanimated";
 import { useDndContext } from "../../../DndContext";
-import { doesOverlapOnAxis } from "../../../utils";
+import { UniqueIdentifier } from "../../../types";
+import { arraysEqual, doesOverlapOnAxis } from "../../../utils";
 import { useDraggableSort, type UseDraggableSortOptions } from "./useDraggableSort";
 
 export type UseDraggableStackOptions = Pick<
@@ -17,41 +18,117 @@ export const useDraggableStack = ({
   onOrderUpdate,
   gap = 0,
   horizontal = false,
-  shouldSwapWorklet,
+  shouldSwapWorklet = doesOverlapOnAxis,
 }: UseDraggableStackOptions) => {
-  const { draggableActiveId, draggableOffsets, draggableRestingOffsets, draggableLayouts } = useDndContext();
+  const {
+    draggableIds,
+    draggableStates,
+    draggableActiveId,
+    draggableOffsets,
+    draggableRestingOffsets,
+    draggableLayouts,
+  } = useDndContext();
   const axis = horizontal ? "x" : "y";
   const size = horizontal ? "width" : "height";
-  const worklet = useMemo(
-    () => (shouldSwapWorklet ? shouldSwapWorklet : doesOverlapOnAxis),
-    [shouldSwapWorklet],
-  );
 
   const { draggablePlaceholderIndex, draggableSortOrder } = useDraggableSort({
     horizontal,
     initialOrder,
     onOrderChange,
     onOrderUpdate,
-    shouldSwapWorklet: worklet,
+    shouldSwapWorklet,
   });
+
+  const computeOffsetsForItem = useCallback(
+    (id: UniqueIdentifier) => {
+      "worklet";
+      const size = horizontal ? "width" : "height";
+      const { value: layouts } = draggableLayouts;
+      const { value: sortOrder } = draggableSortOrder;
+
+      const nextIndex = sortOrder.findIndex((itemId) => itemId === id);
+      const prevIndex = initialOrder.findIndex((itemId) => itemId === id);
+
+      let offset = 0;
+      // Accumulate the directional offset for the current item accross its siblings in the stack
+      for (let nextSiblingIndex = 0; nextSiblingIndex < sortOrder.length; nextSiblingIndex++) {
+        const siblingId = sortOrder[nextSiblingIndex];
+        // Skip the current item
+        if (siblingId === id) {
+          continue;
+        }
+        const prevSiblingIndex = initialOrder.findIndex((itemId) => itemId === siblingId);
+        // Accummulate the directional offset for the active item
+        if (nextSiblingIndex < nextIndex && prevSiblingIndex > prevIndex) {
+          // console.log(
+          //   `> ${siblingId} has moved to the left of ${id} (${prevSiblingIndex} -> ${nextSiblingIndex})`,
+          // );
+          offset += layouts[siblingId].value[size] + gap;
+        } else if (nextSiblingIndex > nextIndex && prevSiblingIndex < prevIndex) {
+          // console.log(
+          //   `> ${siblingId} has moved to the right of ${id} (${prevSiblingIndex} -> ${nextSiblingIndex})`,
+          // );
+          offset -= layouts[siblingId].value[size] + gap;
+        }
+      }
+      return offset;
+    },
+    [draggableLayouts, draggableSortOrder, gap, horizontal, initialOrder],
+  );
+
+  const refreshOffsets = useCallback(() => {
+    "worklet";
+    requestAnimationFrame(() => {
+      const axis = horizontal ? "x" : "y";
+      const { value: states } = draggableStates;
+      const { value: offsets } = draggableOffsets;
+      const { value: restingOffsets } = draggableRestingOffsets;
+      const { value: sortOrder } = draggableSortOrder;
+      for (const itemId of sortOrder) {
+        // Can happen if we are asked to refresh the offsets before the layouts are available
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (!offsets[itemId]) {
+          continue;
+        }
+        states[itemId].value = "sleeping";
+        offsets[itemId][axis].value = computeOffsetsForItem(itemId);
+        restingOffsets[itemId][axis].value = offsets[itemId][axis].value;
+      }
+      requestAnimationFrame(() => {
+        for (const itemId of sortOrder) {
+          // Can happen if we are asked to refresh the offsets before the layouts are available
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+          if (!offsets[itemId]) {
+            continue;
+          }
+          states[itemId].value = "resting";
+        }
+      });
+    });
+  }, [
+    computeOffsetsForItem,
+    draggableOffsets,
+    draggableRestingOffsets,
+    draggableSortOrder,
+    draggableStates,
+    horizontal,
+  ]);
 
   // Track items being added or removed from the stack
   useAnimatedReaction(
-    () => draggableSortOrder.value,
-    (nextOrder, prevOrder) => {
+    () => draggableIds.value,
+    (next, prev) => {
       // Ignore initial reaction
-      if (prevOrder === null) {
+      if (prev === null) {
         return;
       }
-      // Ignore same size stacks
-      if (nextOrder.length === prevOrder.length) {
+      if (arraysEqual(next, prev)) {
         return;
       }
-
-      const { value: layouts } = draggableLayouts;
-      const { value: offsets } = draggableOffsets;
+      // Refresh all offsets
+      refreshOffsets();
     },
-    [],
+    [initialOrder],
   );
 
   // Track sort order changes and update the offsets
@@ -66,6 +143,7 @@ export const useDraggableStack = ({
       const { value: layouts } = draggableLayouts;
       const { value: offsets } = draggableOffsets;
       const { value: restingOffsets } = draggableRestingOffsets;
+
       if (!activeId) {
         return;
       }
@@ -83,7 +161,6 @@ export const useDraggableStack = ({
         if (itemId === activeId) {
           continue;
         }
-        // @TODO grid x,y
 
         // Skip items that haven't changed position
         const prevIndex = prevOrder.findIndex((id) => id === itemId);
@@ -111,5 +188,5 @@ export const useDraggableStack = ({
     [horizontal],
   );
 
-  return { draggablePlaceholderIndex, draggableSortOrder };
+  return { draggablePlaceholderIndex, draggableSortOrder, refreshOffsets };
 };

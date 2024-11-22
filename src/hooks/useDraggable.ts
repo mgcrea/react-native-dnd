@@ -2,11 +2,11 @@
 
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
-import { measure, runOnUI, useSharedValue } from "react-native-reanimated";
+import { measure, runOnUI, useAnimatedRef, useSharedValue } from "react-native-reanimated";
 import { DraggableState, useDndContext } from "../DndContext";
-import { useLatestSharedValue, useNodeRef } from "../hooks";
-import { Data, NativeElement, UniqueIdentifier } from "../types";
-import { assert, isReanimatedSharedValue } from "../utils";
+import { useLatestSharedValue } from "../hooks";
+import { Data, UniqueIdentifier } from "../types";
+import { getLayoutFromMeasurement, isReanimatedSharedValue } from "../utils";
 import { useSharedPoint } from "./useSharedPoint";
 
 export type DraggableConstraints = {
@@ -58,12 +58,10 @@ export const useDraggable = ({
     draggableStates,
     draggableActiveId,
     draggablePendingId,
-    containerRef,
+    // containerRef,
     panGestureState,
   } = useDndContext();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [node, setNodeRef] = useNodeRef<NativeElement, any>();
-  // const key = useUniqueId("Draggable");
+  const animatedRef = useAnimatedRef();
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const sharedData = isReanimatedSharedValue(data) ? data : useLatestSharedValue(data);
 
@@ -82,26 +80,45 @@ export const useDraggable = ({
   useLayoutEffect(() => {
     const runLayoutEffect = () => {
       "worklet";
-      if (draggableIds.value.includes(id)) {
-        throw new Error(`Duplicate draggable id found: ${id}`);
-      }
-      // draggableIds.value = [...draggableIds.value, id]; // We have to wait for layout
-      draggableLayouts.value[id] = layout;
-      draggableOffsets.value[id] = offset;
-      draggableRestingOffsets.value[id] = restingOffset;
-      draggableOptions.value[id] = { id, data: sharedData, disabled, activationDelay, activationTolerance };
-      draggableStates.value[id] = state;
+      // Wait for the layout to be available by requesting two consecutive animation frames
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          draggableLayouts.value[id] = layout;
+          // Try to recover the layout from the ref if it's not available yet
+          if (layout.value.width === 0 || layout.value.height === 0) {
+            const measurement = measure(animatedRef);
+            if (measurement !== null) {
+              layout.value = getLayoutFromMeasurement(measurement);
+            }
+          }
+          draggableOffsets.value[id] = offset;
+          draggableRestingOffsets.value[id] = restingOffset;
+          draggableOptions.value[id] = {
+            id,
+            data: sharedData,
+            disabled,
+            activationDelay,
+            activationTolerance,
+          };
+          draggableStates.value[id] = state;
+          draggableIds.value = [...draggableIds.value, id];
+        });
+      });
     };
+
     runOnUI(runLayoutEffect)();
+
     return () => {
       const cleanupLayoutEffect = () => {
         "worklet";
-        delete draggableLayouts.value[id];
-        delete draggableOffsets.value[id];
-        delete draggableRestingOffsets.value[id];
-        delete draggableOptions.value[id];
-        delete draggableStates.value[id];
-        draggableIds.value = draggableIds.value.filter((draggableId) => draggableId !== id);
+        requestAnimationFrame(() => {
+          delete draggableLayouts.value[id];
+          delete draggableOffsets.value[id];
+          delete draggableRestingOffsets.value[id];
+          delete draggableOptions.value[id];
+          delete draggableStates.value[id];
+          draggableIds.value = draggableIds.value.filter((draggableId) => draggableId !== id);
+        });
       };
       // if(node && node.key === key)
       runOnUI(cleanupLayoutEffect)();
@@ -110,16 +127,14 @@ export const useDraggable = ({
   }, [id]);
 
   const onLayout: ViewProps["onLayout"] = () => {
-    assert(containerRef.current);
-    node.current?.measureLayout(containerRef.current, (x, y, width, height) => {
-      runOnUI(() => {
-        layout.value = { x, y, width, height };
-        // Only add the draggable once the layout is available
-        if (!draggableIds.value.includes(id)) {
-          draggableIds.value = [...draggableIds.get(), id];
-        }
-      })();
-    });
+    // console.log(`onLayout: ${id}`);
+    runOnUI(() => {
+      const measurement = measure(animatedRef);
+      if (measurement === null) {
+        return;
+      }
+      layout.value = getLayoutFromMeasurement(measurement);
+    })();
   };
 
   // const setDisabled = useCallback(
@@ -138,7 +153,7 @@ export const useDraggable = ({
   return {
     offset,
     state,
-    setNodeRef,
+    animatedRef,
     activeId: draggableActiveId,
     pendingId: draggablePendingId,
     setNodeLayout: onLayout,

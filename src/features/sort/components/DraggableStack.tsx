@@ -1,6 +1,7 @@
-import React, { Children, useMemo, type FunctionComponent, type PropsWithChildren } from "react";
-import { View, type FlexStyle, type ViewProps } from "react-native";
-import type { UniqueIdentifier } from "../../../types";
+import React, { useEffect, useMemo, type FunctionComponent, type PropsWithChildren } from "react";
+import { type FlexStyle, type ViewProps } from "react-native";
+import Animated, { runOnUI } from "react-native-reanimated";
+import { useChildrenIds } from "../../../hooks";
 import { useDraggableStack, type UseDraggableStackOptions } from "../hooks/useDraggableStack";
 
 export type DraggableStackProps = Pick<ViewProps, "style"> &
@@ -18,16 +19,7 @@ export const DraggableStack: FunctionComponent<PropsWithChildren<DraggableStackP
   shouldSwapWorklet,
   style: styleProp,
 }) => {
-  const initialOrder = useMemo(
-    () =>
-      Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
-          return (child.props as { id?: UniqueIdentifier }).id;
-        }
-        return null;
-      })?.filter(Boolean),
-    [children],
-  );
+  const initialOrder = useChildrenIds(children);
 
   const style = useMemo(
     () =>
@@ -43,7 +35,7 @@ export const DraggableStack: FunctionComponent<PropsWithChildren<DraggableStackP
 
   const horizontal = ["row", "row-reverse"].includes(style.flexDirection);
 
-  useDraggableStack({
+  const { refreshOffsets } = useDraggableStack({
     gap: style.gap,
     horizontal,
     initialOrder,
@@ -52,5 +44,10 @@ export const DraggableStack: FunctionComponent<PropsWithChildren<DraggableStackP
     shouldSwapWorklet,
   });
 
-  return <View style={style}>{children}</View>;
+  useEffect(() => {
+    // Refresh offsets when children change
+    runOnUI(refreshOffsets)();
+  }, [initialOrder, refreshOffsets]);
+
+  return <Animated.View style={style}>{children}</Animated.View>;
 };

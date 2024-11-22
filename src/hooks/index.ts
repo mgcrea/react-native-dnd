@@ -1,5 +1,6 @@
 export * from "./useActiveDragReaction";
 export * from "./useActiveDropReaction";
+export * from "./useChildrenIds";
 export * from "./useDraggable";
 export * from "./useDraggableActiveId";
 export * from "./useDraggableStyle";

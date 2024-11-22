@@ -2,7 +2,6 @@ import {
   DndProvider,
   DndProviderProps,
   doesOverlapHorizontally,
-  doesOverlapVertically,
   Draggable,
   DraggableProps,
   Droppable,
@@ -26,11 +25,14 @@ export const DraggableBasicExample: FunctionComponent = () => {
     setCount(count => count + 1);
   };
 
-  const handleDragEnd: DndProviderProps['onDragEnd'] = ({active, over}) => {
+  const handleDragEnd: DndProviderProps['onDragEnd'] = ({
+    active: _active,
+    over,
+  }) => {
     'worklet';
     if (over) {
       console.log(`Current count is ${count}`);
-      runOnJS(setCount)(2);
+      runOnJS(onDragEnd)();
     }
   };
 
@@ -44,11 +46,12 @@ export const DraggableBasicExample: FunctionComponent = () => {
     console.log('onFinalize');
   };
 
-  const shouldDropWorklet = (active, item) => {
+  const shouldDropWorklet: DndProviderProps['shouldDropWorklet'] = (
+    active,
+    item,
+  ) => {
     'worklet';
     return doesOverlapHorizontally(active, item);
-    console.log({active, item});
-    return false;
   };
 
   return (

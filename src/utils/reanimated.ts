@@ -1,5 +1,6 @@
 import { LayoutRectangle } from "react-native";
 import {
+  MeasuredDimensions,
   SharedValue,
   withSpring,
   type AnimatableValue,
@@ -143,3 +144,13 @@ export const floorLayout = ({ x, y, width, height }: LayoutRectangle) => {
 export const isReanimatedSharedValue = (value: unknown): value is SharedValue<AnyData> =>
   // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   typeof value === "object" && (value as { _isReanimatedSharedValue: boolean })?._isReanimatedSharedValue;
+
+export const getLayoutFromMeasurement = (measurement: MeasuredDimensions): LayoutRectangle => {
+  "worklet";
+  return {
+    x: measurement.x,
+    y: measurement.y,
+    width: measurement.width,
+    height: measurement.height,
+  };
+};

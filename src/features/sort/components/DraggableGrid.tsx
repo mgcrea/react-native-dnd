@@ -1,6 +1,6 @@
-import React, { Children, useMemo, type FunctionComponent, type PropsWithChildren } from "react";
+import React, { useMemo, type FunctionComponent, type PropsWithChildren } from "react";
 import { View, type FlexStyle, type ViewProps } from "react-native";
-import type { UniqueIdentifier } from "../../../types";
+import { useChildrenIds } from "../../../hooks";
 import { useDraggableGrid, type UseDraggableGridOptions } from "../hooks/useDraggableGrid";
 
 export type DraggableGridProps = Pick<ViewProps, "style"> &
@@ -20,16 +20,7 @@ export const DraggableGrid: FunctionComponent<PropsWithChildren<DraggableGridPro
   size,
   style: styleProp,
 }) => {
-  const initialOrder = useMemo(
-    () =>
-      Children.map(children, (child) => {
-        if (React.isValidElement(child)) {
-          return (child.props as { id?: UniqueIdentifier }).id;
-        }
-        return null;
-      })?.filter(Boolean),
-    [children],
-  );
+  const initialOrder = useChildrenIds(children);
 
   const style = useMemo(
     () =>

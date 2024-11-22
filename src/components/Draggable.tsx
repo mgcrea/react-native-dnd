@@ -43,7 +43,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   animatedStyleWorklet,
   ...otherProps
 }) => {
-  const { setNodeRef, setNodeLayout, offset, state } = useDraggable({
+  const { animatedRef, setNodeLayout, offset, state } = useDraggable({
     id,
     data,
     disabled,
@@ -52,6 +52,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   });
 
   const animatedStyle = useAnimatedStyle(() => {
+    const isSleeping = state.value === "sleeping"; // Should not animate if sleeping
     const isActive = state.value === "dragging";
     const isActing = state.value === "acting";
     const zIndex = isActive ? 999 : isActing ? 998 : 1;
@@ -61,15 +62,17 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
       transform: [
         {
           // translateX: offset.x.value,
-          translateX: isActive
-            ? offset.x.value
-            : withSpring(offset.x.value, { damping: 100, stiffness: 1000 }),
+          translateX:
+            isActive || isSleeping
+              ? offset.x.value
+              : withSpring(offset.x.value, { damping: 100, stiffness: 1000 }),
         },
         {
           // translateY: offset.y.value,
-          translateY: isActive
-            ? offset.y.value
-            : withSpring(offset.y.value, { damping: 100, stiffness: 1000 }),
+          translateY:
+            isActive || isSleeping
+              ? offset.y.value
+              : withSpring(offset.y.value, { damping: 100, stiffness: 1000 }),
         },
       ],
     };
@@ -80,7 +83,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   }, [id, state, activeOpacity]);
 
   return (
-    <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
+    <Animated.View ref={animatedRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
       {children}
     </Animated.View>
   );

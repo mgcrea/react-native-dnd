@@ -18,7 +18,7 @@ export type ShouldSwapWorklet = (
 ) => boolean;
 
 export type UseDraggableSortOptions = {
-  initialOrder?: UniqueIdentifier[];
+  initialOrder: UniqueIdentifier[];
   horizontal?: boolean;
   onOrderChange?: (order: UniqueIdentifier[]) => void;
   onOrderUpdate?: (nextOrder: UniqueIdentifier[], prevOrder: UniqueIdentifier[]) => void;
@@ -27,7 +27,7 @@ export type UseDraggableSortOptions = {
 
 export const useDraggableSort = ({
   horizontal = false,
-  initialOrder = [],
+  initialOrder,
   onOrderChange,
   onOrderUpdate,
   shouldSwapWorklet = doesOverlapOnAxis,
@@ -93,16 +93,24 @@ export const useDraggableSort = ({
       const layouts = draggableLayouts.get();
       const addedIds = next.filter((id) => !prev.includes(id));
       addedIds.forEach((id) => {
-        const index = Object.entries(layouts)
-          .sort(([, a], [, b]) => a.get()[horizontal ? "x" : "y"] - b.get()[horizontal ? "x" : "y"])
-          .findIndex(([key]) => key === id);
+        const positionEntries = Object.entries(layouts).map<[UniqueIdentifier, number]>(([key, layout]) => [
+          key,
+          layout.get()[horizontal ? "x" : "y"],
+        ]);
+        positionEntries.sort((a, b) => a[1] - b[1]);
+        const index = positionEntries.findIndex(([key]) => key === id);
         const nextOrder = draggableSortOrder.value.slice();
         nextOrder.splice(index, 0, id);
         // draggableLastOrder.value = draggableSortOrder.value.slice();
         draggableSortOrder.value = nextOrder;
       });
+
+      // Broadcast the order change to the parent component
+      if (onOrderChange && (removedIds.length > 0 || addedIds.length > 0)) {
+        runOnJS(onOrderChange)(draggableSortOrder.value);
+      }
     },
-    [],
+    [onOrderChange],
   );
 
   // Track active layout changes and update the placeholder index
