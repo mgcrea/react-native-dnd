@@ -60,6 +60,7 @@ export type DndProviderProps = {
     meta: { activeId: UniqueIdentifier; activeLayout: LayoutRectangle },
   ) => void;
   onActivation?: (next: UniqueIdentifier | null, prev: UniqueIdentifier | null) => void;
+  shouldDropWorklet?: (activeLayout: LayoutRectangle, itemLayout: LayoutRectangle) => boolean;
   style?: StyleProp<ViewStyle>;
   debug?: boolean;
 };
@@ -82,6 +83,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       onBegin,
       onUpdate,
       onFinalize,
+      shouldDropWorklet = overlapsRectangle,
       style,
       debug,
     },
@@ -178,7 +180,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         for (const [id, layout] of Object.entries(layouts)) {
           // console.log({ [id]: floorLayout(layout.value) });
           const isDisabled = options[id].disabled;
-          if (!isDisabled && overlapsRectangle(activeLayout, layout.value)) {
+          if (!isDisabled && shouldDropWorklet(activeLayout, layout.value)) {
             return id;
           }
         }

@@ -14,10 +14,10 @@ export const doesOverlapOnAxis = (activeLayout: Rectangle, itemLayout: Rectangle
 
 export const doesOverlapHorizontally = (activeLayout: Rectangle, itemLayout: Rectangle) => {
   "worklet";
-  return doesOverlapOnAxis(activeLayout, itemLayout, "horizontal");
+  return doesOverlapOnAxis(activeLayout, itemLayout, "vertical");
 };
 
 export const doesOverlapVertically = (activeLayout: Rectangle, itemLayout: Rectangle) => {
   "worklet";
-  return doesOverlapOnAxis(activeLayout, itemLayout, "vertical");
+  return doesOverlapOnAxis(activeLayout, itemLayout, "horizontal");
 };

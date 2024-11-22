@@ -1,13 +1,15 @@
 import {
   DndProvider,
   DndProviderProps,
+  doesOverlapHorizontally,
+  doesOverlapVertically,
   Draggable,
   DraggableProps,
   Droppable,
   DroppableProps,
   useDraggableStyle,
   useDroppableStyle,
-} from '@mgcrea/react-native-dnd';
+} from '@mgcrea/react-native-dnd/src';
 import React, {useState, type FunctionComponent} from 'react';
 import {SafeAreaView, StyleSheet, Text} from 'react-native';
 import Animated, {
@@ -27,10 +29,8 @@ export const DraggableBasicExample: FunctionComponent = () => {
   const handleDragEnd: DndProviderProps['onDragEnd'] = ({active, over}) => {
     'worklet';
     if (over) {
-      const {count} = dynamicData.value;
       console.log(`Current count is ${count}`);
-      Object.assign(dynamicData.value, {count});
-      runOnJS(onDragEnd)();
+      runOnJS(setCount)(2);
     }
   };
 
@@ -44,12 +44,20 @@ export const DraggableBasicExample: FunctionComponent = () => {
     console.log('onFinalize');
   };
 
+  const shouldDropWorklet = (active, item) => {
+    'worklet';
+    return doesOverlapHorizontally(active, item);
+    console.log({active, item});
+    return false;
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <DndProvider
         onBegin={handleBegin}
         onFinalize={handleFinalize}
-        onDragEnd={handleDragEnd}>
+        onDragEnd={handleDragEnd}
+        shouldDropWorklet={shouldDropWorklet}>
         <MyDroppable id="drop">
           <Text style={styles.text}>DROP</Text>
         </MyDroppable>
