@@ -40,8 +40,9 @@ export const App: FunctionComponent = () => {
   <Property name="disabled" type="boolean" optional defaultValue={`false`}>
     An optional boolean value to disable the Drag and Drop functionality globally. Default is `false`.
   </Property>
-  <Property name="onFeedback" type="function" optional>
-    A callback function to provide feedback (eg. haptic) when a draggable item becomes active.
+  <Property name="onActivation" type="function" optional>
+    A callback function that is called when a draggable item becomes active. Can be used to trigger haptic
+    feedback.
   </Property>
   <Property name="onDragEnd" type="function" optional>
     A callback function to be called when a drag event ends. It receives an object with `active` and `over`
@@ -62,6 +63,11 @@ export const App: FunctionComponent = () => {
     A callback function to be called when a drag event is finalized. It receives the gesture event and an
     object with `activeId` and `activeLayout` properties representing the active draggable item's ID and
     updated layout, respectively.
+  </Property>
+  <Property name="shouldDropWorklet" type="worklet function" optional>
+    A worklet callback function to be called on gesture update to determine if the active draggable item can be
+    dropped on a droppable item. It receives the active Rectangle layout and a potentially droppable Rectangle
+    layout
   </Property>
   <Property name="style" type="StyleProp<ViewStyle>" optional>
     An optional style object to apply custom styles to the DndProvider component.
