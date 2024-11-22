@@ -1,6 +1,6 @@
 import { centerAxis, centerPoint, Direction, includesPoint, overlapsAxis, type Rectangle } from "./geometry";
 
-export const doesCenterOverlap = (activeLayout: Rectangle, itemLayout: Rectangle) => {
+export const doesCenterPointOverlap = (activeLayout: Rectangle, itemLayout: Rectangle) => {
   "worklet";
   const itemCenterPoint = centerPoint(itemLayout);
   return includesPoint(activeLayout, itemCenterPoint);
