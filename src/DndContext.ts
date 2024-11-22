@@ -16,6 +16,8 @@ export type DraggableStates = Record<UniqueIdentifier, SharedValue<DraggableStat
 
 export type DndContextValue = {
   containerRef: RefObject<View>;
+  draggableIds: SharedValue<UniqueIdentifier[]>;
+  droppableIds: SharedValue<UniqueIdentifier[]>;
   draggableLayouts: SharedValue<Layouts>;
   droppableLayouts: SharedValue<Layouts>;
   draggableOptions: SharedValue<DraggableOptions>;

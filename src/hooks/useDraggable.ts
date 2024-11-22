@@ -2,7 +2,7 @@
 
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
-import { runOnUI, useSharedValue } from "react-native-reanimated";
+import { measure, runOnUI, useSharedValue } from "react-native-reanimated";
 import { DraggableState, useDndContext } from "../DndContext";
 import { useLatestSharedValue, useNodeRef } from "../hooks";
 import { Data, NativeElement, UniqueIdentifier } from "../types";
@@ -50,6 +50,7 @@ export const useDraggable = ({
   activationTolerance = Infinity,
 }: UseDraggableOptions) => {
   const {
+    draggableIds,
     draggableLayouts,
     draggableOffsets,
     draggableRestingOffsets,
@@ -81,6 +82,10 @@ export const useDraggable = ({
   useLayoutEffect(() => {
     const runLayoutEffect = () => {
       "worklet";
+      if (draggableIds.value.includes(id)) {
+        throw new Error(`Duplicate draggable id found: ${id}`);
+      }
+      // draggableIds.value = [...draggableIds.value, id]; // We have to wait for layout
       draggableLayouts.value[id] = layout;
       draggableOffsets.value[id] = offset;
       draggableRestingOffsets.value[id] = restingOffset;
@@ -96,6 +101,7 @@ export const useDraggable = ({
         delete draggableRestingOffsets.value[id];
         delete draggableOptions.value[id];
         delete draggableStates.value[id];
+        draggableIds.value = draggableIds.value.filter((draggableId) => draggableId !== id);
       };
       // if(node && node.key === key)
       runOnUI(cleanupLayoutEffect)();
@@ -106,7 +112,13 @@ export const useDraggable = ({
   const onLayout: ViewProps["onLayout"] = () => {
     assert(containerRef.current);
     node.current?.measureLayout(containerRef.current, (x, y, width, height) => {
-      layout.value = { x, y, width, height };
+      runOnUI(() => {
+        layout.value = { x, y, width, height };
+        // Only add the draggable once the layout is available
+        if (!draggableIds.value.includes(id)) {
+          draggableIds.value = [...draggableIds.get(), id];
+        }
+      })();
     });
   };
 

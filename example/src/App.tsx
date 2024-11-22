@@ -9,9 +9,9 @@ export const App: FunctionComponent = () => {
   return (
     <SafeAreaView style={styles.container}>
       <GestureHandlerRootView>
-        <DraggableBasicExample />
+        {/* <DraggableBasicExample /> */}
         {/* <DraggableGridExample /> */}
-        {/* <DraggableStackExample /> */}
+        <DraggableStackExample />
       </GestureHandlerRootView>
     </SafeAreaView>
   );

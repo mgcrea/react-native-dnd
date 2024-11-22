@@ -90,6 +90,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     ref,
   ) {
     const containerRef = useRef<View | null>(null);
+    const draggableIds = useSharedValue<UniqueIdentifier[]>([]);
+    const droppableIds = useSharedValue<UniqueIdentifier[]>([]);
     const draggableLayouts = useSharedValue<Layouts>({});
     const droppableLayouts = useSharedValue<Layouts>({});
     const draggableOptions = useSharedValue<DraggableOptions>({});
@@ -105,20 +107,10 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableContentOffset = useSharedPoint(0, 0);
     const panGestureState = useSharedValue<GestureEventPayload["state"]>(0);
 
-    useAnimatedReaction(
-      () => draggableActiveId.value,
-      (next, prev) => {
-        if (next !== null) {
-          if (onActivation) {
-            runOnJS(onActivation)(next, prev);
-          }
-        }
-      },
-      [],
-    );
-
     const contextValue = useRef<DndContextValue>({
       containerRef,
+      draggableIds,
+      droppableIds,
       draggableLayouts,
       droppableLayouts,
       draggableOptions,
@@ -146,6 +138,19 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
         };
       },
       // eslint-disable-next-line react-hooks/exhaustive-deps
+      [],
+    );
+
+    // Handle activation changes
+    useAnimatedReaction(
+      () => draggableActiveId.value,
+      (next, prev) => {
+        if (next !== null) {
+          if (onActivation) {
+            runOnJS(onActivation)(next, prev);
+          }
+        }
+      },
       [],
     );
 

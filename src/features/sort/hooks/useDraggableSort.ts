@@ -5,10 +5,9 @@ import type { UniqueIdentifier } from "../../../types";
 import {
   applyOffset,
   arraysEqual,
-  centerAxis,
   type Direction,
+  doesOverlapOnAxis,
   moveArrayIndex,
-  overlapsAxis,
   type Rectangle,
 } from "../../../utils";
 
@@ -31,9 +30,10 @@ export const useDraggableSort = ({
   initialOrder = [],
   onOrderChange,
   onOrderUpdate,
-  shouldSwapWorklet,
+  shouldSwapWorklet = doesOverlapOnAxis,
 }: UseDraggableSortOptions) => {
-  const { draggableActiveId, draggableActiveLayout, draggableOffsets, draggableLayouts } = useDndContext();
+  const { draggableIds, draggableActiveId, draggableActiveLayout, draggableOffsets, draggableLayouts } =
+    useDndContext();
   const direction = horizontal ? "horizontal" : "vertical";
 
   const draggablePlaceholderIndex = useSharedValue(-1);
@@ -65,24 +65,45 @@ export const useDraggableSort = ({
         y: offsets[itemId].y.value,
       });
 
-      if (shouldSwapWorklet) {
-        if (shouldSwapWorklet(activeLayout, itemLayout, direction)) {
-          // console.log(`Found placeholder index ${itemIndex} using custom shouldSwapWorklet!`);
-          return itemIndex;
-        }
-        continue;
-      }
-
-      // Default to center axis
-      const itemCenterAxis = centerAxis(itemLayout, direction);
-      if (overlapsAxis(activeLayout, itemCenterAxis, direction)) {
+      if (shouldSwapWorklet(activeLayout, itemLayout, direction)) {
+        // console.log(`Found placeholder index ${itemIndex} using custom shouldSwapWorklet!`);
         return itemIndex;
       }
+      continue;
     }
     // Fallback to current index
-    // console.log(`Fallback to current index ${activeIndex}`);
     return activeIndex;
   };
+
+  // Track added/removed draggable items and update the sort order
+  useAnimatedReaction(
+    () => draggableIds.value,
+    (next, prev) => {
+      if (prev === null || prev.length === 0) {
+        return;
+      }
+
+      // Handle removed draggable items
+      const removedIds = prev.filter((id) => !next.includes(id));
+      if (removedIds.length > 0) {
+        draggableSortOrder.value = draggableSortOrder.get().filter((itemId) => !removedIds.includes(itemId));
+      }
+
+      // Handle added draggable items by inserting them at the correct index
+      const layouts = draggableLayouts.get();
+      const addedIds = next.filter((id) => !prev.includes(id));
+      addedIds.forEach((id) => {
+        const index = Object.entries(layouts)
+          .sort(([, a], [, b]) => a.get()[horizontal ? "x" : "y"] - b.get()[horizontal ? "x" : "y"])
+          .findIndex(([key]) => key === id);
+        const nextOrder = draggableSortOrder.value.slice();
+        nextOrder.splice(index, 0, id);
+        // draggableLastOrder.value = draggableSortOrder.value.slice();
+        draggableSortOrder.value = nextOrder;
+      });
+    },
+    [],
+  );
 
   // Track active layout changes and update the placeholder index
   useAnimatedReaction(

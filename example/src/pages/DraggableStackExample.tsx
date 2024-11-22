@@ -1,12 +1,12 @@
-import React, {type FunctionComponent} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import React, {useState, type FunctionComponent} from 'react';
+import {Button, StyleSheet, Text, View} from 'react-native';
 import {
   DndProvider,
   type ObjectWithId,
   Draggable,
   DraggableStack,
   type DraggableStackProps,
-} from '@mgcrea/react-native-dnd';
+} from '@mgcrea/react-native-dnd/src';
 
 const items = ['🤓', '🤖🤖', '👻👻👻', '👾👾👾👾'];
 const data = items.map((letter, index) => ({
@@ -22,6 +22,8 @@ export const DraggableStackExample: FunctionComponent = () => {
     console.log('onStackOrderUpdate', value);
   };
 
+  const [items, setItems] = useState(data);
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>DraggableStack Example</Text>
@@ -32,7 +34,7 @@ export const DraggableStackExample: FunctionComponent = () => {
           style={styles.stack}
           onOrderChange={onStackOrderChange}
           onOrderUpdate={onStackOrderUpdate}>
-          {data.map(letter => (
+          {items.map(letter => (
             <Draggable
               key={letter.id}
               id={letter.id}
@@ -42,6 +44,28 @@ export const DraggableStackExample: FunctionComponent = () => {
           ))}
         </DraggableStack>
       </DndProvider>
+      <Button
+        title="Add"
+        onPress={() => {
+          setItems(prevItems => {
+            const randomIndex = 2; //Math.floor(Math.random() * prevItems.length);
+            prevItems.splice(randomIndex, 0, {
+              value: '🤪',
+              id: `${prevItems.length}-🤪`,
+            });
+            return prevItems.slice();
+          });
+        }}
+      />
+      <Button
+        title="Delete"
+        onPress={() => {
+          setItems(prevItems => {
+            const randomIndex = Math.floor(Math.random() * prevItems.length);
+            return prevItems.filter((_, index) => index !== randomIndex);
+          });
+        }}
+      />
     </View>
   );
 };
@@ -69,6 +93,7 @@ const styles = StyleSheet.create({
   },
   draggable: {
     backgroundColor: 'seagreen',
+    opacity: 0.5,
     height: 100,
     borderColor: 'rgba(0,0,0,0.2)',
     borderWidth: 1,

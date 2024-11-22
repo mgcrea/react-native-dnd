@@ -35,6 +35,25 @@ export const useDraggableStack = ({
     shouldSwapWorklet: worklet,
   });
 
+  // Track items being added or removed from the stack
+  useAnimatedReaction(
+    () => draggableSortOrder.value,
+    (nextOrder, prevOrder) => {
+      // Ignore initial reaction
+      if (prevOrder === null) {
+        return;
+      }
+      // Ignore same size stacks
+      if (nextOrder.length === prevOrder.length) {
+        return;
+      }
+
+      const { value: layouts } = draggableLayouts;
+      const { value: offsets } = draggableOffsets;
+    },
+    [],
+  );
+
   // Track sort order changes and update the offsets
   useAnimatedReaction(
     () => draggableSortOrder.value,
