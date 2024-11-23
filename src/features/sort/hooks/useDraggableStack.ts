@@ -57,6 +57,11 @@ export const useDraggableStack = ({
         if (siblingId === id) {
           continue;
         }
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+        if (!layouts[siblingId]) {
+          // Can happen if some items are being removed from the stack
+          continue;
+        }
         const prevSiblingIndex = initialOrder.findIndex((itemId) => itemId === siblingId);
         // Accummulate the directional offset for the active item
         if (nextSiblingIndex < nextIndex && prevSiblingIndex > prevIndex) {
