@@ -41,6 +41,10 @@ Modern and easy-to-use drag&drop library for react-native.
 
 Check the [**Documentation**](https://mgcrea.github.io/react-native-dnd/) for usage details.
 
+## Sponsors
+
+If you need a specific feature or want to speed up the development of this library, you can sponsor me on [GitHub Sponsors](https://github.com/sponsors/mgcrea). Feel free to reach out to me if you have any questions.
+
 ## Demo
 
 ![demo](./.github/assets/demo.gif)
