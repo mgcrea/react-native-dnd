@@ -4,6 +4,13 @@ import {DraggableGridExample} from './pages/DraggableGridExample';
 import {DraggableStackExample} from './pages/DraggableStackExample';
 import {DraggableBasicExample} from './pages/DraggableBasicExample';
 import {SafeAreaView, StyleSheet} from 'react-native';
+import {configureReanimatedLogger} from 'react-native-reanimated';
+
+// This is the default configuration
+configureReanimatedLogger({
+  // level: ReanimatedLogLevel.warn,
+  strict: false, // Reanimated runs in strict mode by default
+});
 
 export const App: FunctionComponent = () => {
   return (

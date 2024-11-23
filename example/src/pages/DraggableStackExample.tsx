@@ -2,19 +2,14 @@ import {
   DndProvider,
   Draggable,
   DraggableStack,
-  UniqueIdentifier,
+  type DraggableStackHandle,
+  type UniqueIdentifier,
   type DraggableStackProps,
   type ObjectWithId,
 } from '@mgcrea/react-native-dnd/src';
 import React, {useCallback, useState, type FunctionComponent} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
-import {configureReanimatedLogger} from 'react-native-reanimated';
-
-// This is the default configuration
-configureReanimatedLogger({
-  // level: ReanimatedLogLevel.warn,
-  strict: false, // Reanimated runs in strict mode by default
-});
+import {runOnUI} from 'react-native-reanimated';
 
 const items = ['🤓', '🤖🤖', '👻👻👻', '👾👾👾👾'];
 const data = items.map((letter, index) => ({
@@ -25,13 +20,13 @@ const data = items.map((letter, index) => ({
 export const DraggableStackExample: FunctionComponent = () => {
   const [items, setItems] = useState(data);
   const [fontSize, setFontSize] = useState(32);
+  const ref = React.useRef<DraggableStackHandle>(null);
 
   const onStackOrderChange: DraggableStackProps['onOrderChange'] = useCallback(
     (order: UniqueIdentifier[]) => {
       console.log('onStackOrderChange', order);
       setTimeout(() => {
         // setItems(items => order.map(id => items.find(item => item.id === id)!));
-        // setFontSize(fontSize => fontSize + 1);
       }, 1000);
     },
     [],
@@ -49,7 +44,8 @@ export const DraggableStackExample: FunctionComponent = () => {
           gap={10}
           style={styles.stack}
           onOrderChange={onStackOrderChange}
-          onOrderUpdate={onStackOrderUpdate}>
+          onOrderUpdate={onStackOrderUpdate}
+          ref={ref}>
           {items.map(letter => (
             <Draggable
               key={letter.id}
@@ -85,16 +81,24 @@ export const DraggableStackExample: FunctionComponent = () => {
         />
 
         <Button
-          title="Plus"
+          title="Increase size"
           onPress={() => {
             setFontSize(prevFontSize => prevFontSize + 1);
+            if (ref.current) {
+              const {refreshOffsets} = ref.current;
+              runOnUI(refreshOffsets)();
+            }
           }}
         />
 
         <Button
-          title="Minus"
+          title="Decrease size"
           onPress={() => {
             setFontSize(prevFontSize => prevFontSize - 1);
+            if (ref.current) {
+              const {refreshOffsets} = ref.current;
+              runOnUI(refreshOffsets)();
+            }
           }}
         />
       </View>

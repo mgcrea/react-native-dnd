@@ -1,4 +1,11 @@
-import React, { useEffect, useMemo, type FunctionComponent, type PropsWithChildren } from "react";
+import React, {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useMemo,
+  type FunctionComponent,
+  type PropsWithChildren,
+} from "react";
 import { type FlexStyle, type ViewProps } from "react-native";
 import Animated, { runOnUI } from "react-native-reanimated";
 import { useChildrenIds } from "../../../hooks";
@@ -10,44 +17,57 @@ export type DraggableStackProps = Pick<ViewProps, "style"> &
     gap?: number;
   };
 
-export const DraggableStack: FunctionComponent<PropsWithChildren<DraggableStackProps>> = ({
-  children,
-  direction = "row",
-  gap = 0,
-  onOrderChange,
-  onOrderUpdate,
-  shouldSwapWorklet,
-  style: styleProp,
-}) => {
-  const initialOrder = useChildrenIds(children);
+export type DraggableStackHandle = Pick<ReturnType<typeof useDraggableStack>, "refreshOffsets">;
 
-  const style = useMemo(
-    () =>
-      Object.assign(
-        {
-          flexDirection: direction,
-          gap,
-        },
-        styleProp,
-      ),
-    [gap, direction, styleProp],
-  );
+export const DraggableStack = forwardRef<DraggableStackHandle, PropsWithChildren<DraggableStackProps>>(
+  function DraggableStack(
+    {
+      children,
+      direction = "row",
+      gap = 0,
+      onOrderChange,
+      onOrderUpdate,
+      shouldSwapWorklet,
+      style: styleProp,
+    },
+    ref,
+  ) {
+    const initialOrder = useChildrenIds(children);
 
-  const horizontal = ["row", "row-reverse"].includes(style.flexDirection);
+    const style = useMemo(
+      () =>
+        Object.assign(
+          {
+            flexDirection: direction,
+            gap,
+          },
+          styleProp,
+        ),
+      [gap, direction, styleProp],
+    );
 
-  const { refreshOffsets } = useDraggableStack({
-    gap: style.gap,
-    horizontal,
-    initialOrder,
-    onOrderChange,
-    onOrderUpdate,
-    shouldSwapWorklet,
-  });
+    const horizontal = ["row", "row-reverse"].includes(style.flexDirection);
 
-  useEffect(() => {
-    // Refresh offsets when children change
-    runOnUI(refreshOffsets)();
-  }, [initialOrder, refreshOffsets]);
+    const { refreshOffsets } = useDraggableStack({
+      gap: style.gap,
+      horizontal,
+      initialOrder,
+      onOrderChange,
+      onOrderUpdate,
+      shouldSwapWorklet,
+    });
 
-  return <Animated.View style={style}>{children}</Animated.View>;
-};
+    useImperativeHandle(ref, () => {
+      return {
+        refreshOffsets,
+      };
+    }, [refreshOffsets]);
+
+    useEffect(() => {
+      // Refresh offsets when children change
+      runOnUI(refreshOffsets)();
+    }, [initialOrder, refreshOffsets]);
+
+    return <Animated.View style={style}>{children}</Animated.View>;
+  },
+);
