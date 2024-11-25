@@ -86,16 +86,16 @@ export const useDraggableSort = ({
       // Handle removed draggable items
       const removedIds = prev.filter((id) => !next.includes(id));
       if (removedIds.length > 0) {
-        draggableSortOrder.value = draggableSortOrder.get().filter((itemId) => !removedIds.includes(itemId));
+        draggableSortOrder.value = draggableSortOrder.value.filter((itemId) => !removedIds.includes(itemId));
       }
 
       // Handle added draggable items by inserting them at the correct index
-      const layouts = draggableLayouts.get();
+      const layouts = draggableLayouts.value;
       const addedIds = next.filter((id) => !prev.includes(id));
       addedIds.forEach((id) => {
         const positionEntries = Object.entries(layouts).map<[UniqueIdentifier, number]>(([key, layout]) => [
           key,
-          layout.get()[horizontal ? "x" : "y"],
+          layout.value[horizontal ? "x" : "y"],
         ]);
         positionEntries.sort((a, b) => a[1] - b[1]);
         const index = positionEntries.findIndex(([key]) => key === id);
