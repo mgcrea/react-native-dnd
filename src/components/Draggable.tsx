@@ -63,14 +63,14 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
         {
           // translateX: offset.x.value,
           translateX:
-            isActive || isSleeping
+            isActive || isSleeping || isActing
               ? offset.x.value
               : withSpring(offset.x.value, { damping: 100, stiffness: 1000 }),
         },
         {
           // translateY: offset.y.value,
           translateY:
-            isActive || isSleeping
+            isActive || isSleeping || isActing
               ? offset.y.value
               : withSpring(offset.y.value, { damping: 100, stiffness: 1000 }),
         },
