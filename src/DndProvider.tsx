@@ -216,7 +216,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
       const panGesture = Gesture.Pan()
         .onBegin((event) => {
-          const { state, x, y } = event;
+          const { state, absoluteX: x, absoluteY: y } = event;
           debug && console.log("begin", { state, x, y });
           // Gesture is globally disabled
           if (disabled) {

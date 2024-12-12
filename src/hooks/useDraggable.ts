@@ -2,11 +2,17 @@
 
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
-import { measure, runOnUI, useAnimatedRef, useSharedValue } from "react-native-reanimated";
+import {
+  measure,
+  runOnUI,
+  useAnimatedReaction,
+  useAnimatedRef,
+  useSharedValue,
+} from "react-native-reanimated";
 import { DraggableState, useDndContext } from "../DndContext";
 import { useLatestSharedValue } from "../hooks";
 import { Data, UniqueIdentifier } from "../types";
-import { getLayoutFromMeasurement, isReanimatedSharedValue } from "../utils";
+import { getLayoutFromMeasurement, isReanimatedSharedValue, updateLayoutValue, waitForLayout } from "../utils";
 import { useSharedPoint } from "./useSharedPoint";
 
 export type DraggableConstraints = {
@@ -81,28 +87,24 @@ export const useDraggable = ({
     const runLayoutEffect = () => {
       "worklet";
       // Wait for the layout to be available by requesting two consecutive animation frames
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          draggableLayouts.value[id] = layout;
-          // Try to recover the layout from the ref if it's not available yet
-          if (layout.value.width === 0 || layout.value.height === 0) {
-            const measurement = measure(animatedRef);
-            if (measurement !== null) {
-              layout.value = getLayoutFromMeasurement(measurement);
-            }
-          }
-          draggableOffsets.value[id] = offset;
-          draggableRestingOffsets.value[id] = restingOffset;
-          draggableOptions.value[id] = {
-            id,
-            data: sharedData,
-            disabled,
-            activationDelay,
-            activationTolerance,
-          };
-          draggableStates.value[id] = state;
-          draggableIds.value = [...draggableIds.value, id];
-        });
+      waitForLayout(() => {
+        // Try to recover the layout from the ref if it's not available yet
+        if (layout.value.width === 0 || layout.value.height === 0) {
+          // console.log(`Recovering layout for ${id} from ref`);
+          updateLayoutValue(layout, animatedRef);
+        }
+        draggableLayouts.value[id] = layout;
+        draggableOffsets.value[id] = offset;
+        draggableRestingOffsets.value[id] = restingOffset;
+        draggableStates.value[id] = state;
+        draggableIds.value = [...draggableIds.value, id];
+        draggableOptions.value[id] = {
+          id,
+          data: sharedData,
+          disabled,
+          activationDelay,
+          activationTolerance,
+        };
       });
     };
 
@@ -120,35 +122,27 @@ export const useDraggable = ({
           draggableIds.value = draggableIds.value.filter((draggableId) => draggableId !== id);
         });
       };
-      // if(node && node.key === key)
       runOnUI(cleanupLayoutEffect)();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const onLayout: ViewProps["onLayout"] = () => {
-    // console.log(`onLayout: ${id}`);
-    runOnUI(() => {
-      const measurement = measure(animatedRef);
-      if (measurement === null) {
-        return;
-      }
-      layout.value = getLayoutFromMeasurement(measurement);
-    })();
+  const onLayout: ViewProps["onLayout"] = (_event) => {
+    // console.log(`onLayout: ${id}`, event.nativeEvent.layout);
+    runOnUI(updateLayoutValue)(layout, animatedRef);
   };
 
-  // const setDisabled = useCallback(
-  //   (disabled: boolean) => {
-  //     const updateDisabled = () => {
-  //       "worklet";
-  //       console.log("disabled", disabled);
-  //       draggableOptions.value[id] = { ...draggableOptions.value[id], disabled };
-  //     };
-  //     runOnUI(updateDisabled)();
-  //   },
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  //   [id]
-  // );
+  // Track disabled prop changes
+  useAnimatedReaction(
+    () => disabled,
+    (next, prev) => {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (next !== prev && draggableOptions.value[id]) {
+        draggableOptions.value[id].disabled = disabled;
+      }
+    },
+    [disabled],
+  );
 
   return {
     offset,

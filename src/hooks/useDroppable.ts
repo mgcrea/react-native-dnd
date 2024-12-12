@@ -2,11 +2,11 @@
 
 import { useLayoutEffect } from "react";
 import { type LayoutRectangle, type ViewProps } from "react-native";
-import { runOnUI, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
+import { runOnUI, useAnimatedReaction, useAnimatedRef, useSharedValue } from "react-native-reanimated";
 import { useDndContext } from "../DndContext";
-import { useLatestSharedValue, useNodeRef } from "../hooks";
-import type { Data, NativeElement, UniqueIdentifier } from "../types";
-import { assert, isReanimatedSharedValue } from "../utils";
+import { useLatestSharedValue } from "../hooks";
+import type { Data, UniqueIdentifier } from "../types";
+import { isReanimatedSharedValue, updateLayoutValue, waitForLayout } from "../utils";
 
 export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?: boolean };
 
@@ -29,11 +29,8 @@ export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?
  * @property {object} panGestureState - An object representing the current state of the draggable component within the context.
  */
 export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOptions) => {
-  const { droppableLayouts, droppableOptions, droppableActiveId, containerRef, panGestureState } =
-    useDndContext();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [node, setNodeRef] = useNodeRef<NativeElement, any>();
-  //            ^?
+  const { droppableLayouts, droppableOptions, droppableActiveId, panGestureState } = useDndContext();
+  const animatedRef = useAnimatedRef();
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const sharedData = isReanimatedSharedValue(data) ? data : useLatestSharedValue(data);
 
@@ -44,41 +41,52 @@ export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOp
     height: 0,
   });
 
+  useLayoutEffect(() => {
+    const runLayoutEffect = () => {
+      "worklet";
+      waitForLayout(() => {
+        // Try to recover the layout from the ref if it's not available yet
+        if (layout.value.width === 0 || layout.value.height === 0) {
+          console.log(`Recovering layout for ${id} from ref`);
+          updateLayoutValue(layout, animatedRef);
+        }
+        droppableLayouts.value[id] = layout;
+        // Options
+        droppableOptions.value[id] = { id, data: sharedData, disabled };
+      });
+    };
+
+    runOnUI(runLayoutEffect)();
+
+    return () => {
+      const cleanupLayoutEffect = () => {
+        "worklet";
+        requestAnimationFrame(() => {
+          delete droppableLayouts.value[id];
+          delete droppableOptions.value[id];
+        });
+      };
+      runOnUI(cleanupLayoutEffect)();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
+
+  const onLayout: ViewProps["onLayout"] = (_event) => {
+    // console.log(`onLayout: ${id}`, event.nativeEvent.layout);
+    updateLayoutValue(layout, animatedRef);
+  };
+
+  // Track disabled prop changes
   useAnimatedReaction(
     () => disabled,
     (next, prev) => {
-      if (next !== prev) {
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      if (next !== prev && droppableOptions.value[id]) {
         droppableOptions.value[id].disabled = disabled;
       }
     },
     [disabled],
   );
 
-  useLayoutEffect(() => {
-    const runLayoutEffect = () => {
-      "worklet";
-      droppableLayouts.value[id] = layout;
-      droppableOptions.value[id] = { id, data: sharedData, disabled };
-    };
-    runOnUI(runLayoutEffect)();
-    return () => {
-      const runLayoutEffect = () => {
-        "worklet";
-        delete droppableLayouts.value[id];
-        delete droppableOptions.value[id];
-      };
-      // if(node && node.key === key)
-      runOnUI(runLayoutEffect)();
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const onLayout: ViewProps["onLayout"] = () => {
-    assert(containerRef.current);
-    node.current?.measureLayout(containerRef.current, (x, y, width, height) => {
-      layout.value = { x, y, width, height };
-    });
-  };
-
-  return { setNodeRef, setNodeLayout: onLayout, activeId: droppableActiveId, panGestureState };
+  return { animatedRef, setNodeLayout: onLayout, activeId: droppableActiveId, panGestureState };
 };

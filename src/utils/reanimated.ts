@@ -1,10 +1,14 @@
-import { LayoutRectangle } from "react-native";
+import { type Component } from "react";
+import { type LayoutRectangle } from "react-native";
 import {
-  MeasuredDimensions,
-  SharedValue,
+  measure,
+  runOnUI,
   withSpring,
   type AnimatableValue,
+  type AnimatedRef,
   type AnimationCallback,
+  type MeasuredDimensions,
+  type SharedValue,
   type WithSpringConfig,
 } from "react-native-reanimated";
 import type { SharedPoint } from "../hooks";
@@ -148,9 +152,59 @@ export const isReanimatedSharedValue = (value: unknown): value is SharedValue<An
 export const getLayoutFromMeasurement = (measurement: MeasuredDimensions): LayoutRectangle => {
   "worklet";
   return {
-    x: measurement.x,
-    y: measurement.y,
+    x: measurement.pageX,
+    y: measurement.pageY,
     width: measurement.width,
     height: measurement.height,
   };
 };
+
+export const updateLayoutValue = (
+  layout: SharedValue<LayoutRectangle>,
+  animatedRef: AnimatedRef<Component>,
+) => {
+  "worklet";
+  const measurement = measure(animatedRef);
+  if (measurement === null) {
+    return;
+  }
+  layout.value = getLayoutFromMeasurement(measurement);
+};
+
+export const waitForLayout = (fn: (lastTime: number, time: number) => void) => {
+  "worklet";
+  let lastTime = 0;
+
+  function loop() {
+    requestAnimationFrame((time) => {
+      if (lastTime > 0) {
+        fn(lastTime, time);
+        return;
+      }
+      lastTime = time;
+      requestAnimationFrame(loop);
+    });
+  }
+
+  loop();
+};
+
+/*
+
+function loopAnimationFrame(fn: (lastTime: number, time: number) => void) {
+  let lastTime = 0;
+
+  function loop() {
+    requestAnimationFrame((time) => {
+      if (lastTime > 0) {
+        fn(lastTime, time);
+      }
+      lastTime = time;
+      requestAnimationFrame(loop);
+    });
+  }
+
+  loop();
+}
+
+*/
