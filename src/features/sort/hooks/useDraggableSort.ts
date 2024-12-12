@@ -109,7 +109,7 @@ export const useDraggableSort = ({
         runOnJS(onOrderChange)(draggableSortOrder.value);
       }
     },
-    [onOrderChange],
+    [childrenIds, onOrderChange],
   );
 
   // Track active layout changes and update the placeholder index
