@@ -21,12 +21,6 @@ export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?
  * @param {string} options.id - A unique identifier for the droppable component.
  * @param {object} [options.data={}] - Optional data associated with the droppable component.
  * @param {boolean} [options.disabled=false] - A flag that indicates whether the droppable component is disabled.
- *
- * @returns {object} Returns an object with properties and methods related to the droppable component.
- * @property {Function} setNodeRef - A function that can be used to set the ref of the droppable component.
- * @property {Function} setNodeLayout - A function that handles the layout event of the droppable component.
- * @property {string} activeId - The unique identifier of the currently active droppable component.
- * @property {object} panGestureState - An object representing the current state of the draggable component within the context.
  */
 export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOptions) => {
   const { droppableLayouts, droppableOptions, droppableActiveId, panGestureState } = useDndContext();
@@ -47,7 +41,7 @@ export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOp
       waitForLayout(() => {
         // Try to recover the layout from the ref if it's not available yet
         if (layout.value.width === 0 || layout.value.height === 0) {
-          console.log(`Recovering layout for ${id} from ref`);
+          // console.log(`Recovering layout for ${id} from ref`);
           updateLayoutValue(layout, animatedRef);
         }
         droppableLayouts.value[id] = layout;

@@ -2,17 +2,11 @@
 
 import { useLayoutEffect } from "react";
 import { LayoutRectangle, ViewProps } from "react-native";
-import {
-  measure,
-  runOnUI,
-  useAnimatedReaction,
-  useAnimatedRef,
-  useSharedValue,
-} from "react-native-reanimated";
+import { runOnUI, useAnimatedReaction, useAnimatedRef, useSharedValue } from "react-native-reanimated";
 import { DraggableState, useDndContext } from "../DndContext";
 import { useLatestSharedValue } from "../hooks";
 import { Data, UniqueIdentifier } from "../types";
-import { getLayoutFromMeasurement, isReanimatedSharedValue, updateLayoutValue, waitForLayout } from "../utils";
+import { isReanimatedSharedValue, updateLayoutValue, waitForLayout } from "../utils";
 import { useSharedPoint } from "./useSharedPoint";
 
 export type DraggableConstraints = {
@@ -39,14 +33,6 @@ export type UseDraggableOptions = Partial<DraggableConstraints> & {
  * @param {boolean} [options.disabled=false] - A flag that indicates whether the draggable component is disabled.
  * @param {number} [options.activationDelay=0] - A number representing the duration, in milliseconds, that this draggable item needs to be held for before allowing a drag to start.
  * @param {number} [options.activationTolerance=Infinity] - A number representing the distance, in points, of motion that is tolerated before the drag operation is aborted.
- *
- * @returns {object} Returns an object with properties and methods related to the draggable component.
- * @property {object} offset - An object representing the current offset of the draggable component.
- * @property {Function} setNodeRef - A function that can be used to set the ref of the draggable component.
- * @property {string} activeId - The unique identifier of the currently active draggable component.
- * @property {string} actingId - The unique identifier of the currently interacti draggable component.
- * @property {Function} setNodeLayout - A function that handles the layout event of the draggable component.
- * @property {object} draggableState - An object representing the current state of the draggable component.
  */
 export const useDraggable = ({
   id,

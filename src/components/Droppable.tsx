@@ -38,7 +38,7 @@ export const Droppable: FunctionComponent<PropsWithChildren<DroppableProps>> = (
   animatedStyleWorklet,
   ...otherProps
 }) => {
-  const { setNodeRef, setNodeLayout, activeId } = useDroppable({
+  const { animatedRef, setNodeLayout, activeId } = useDroppable({
     id,
     disabled,
     data,
@@ -56,7 +56,7 @@ export const Droppable: FunctionComponent<PropsWithChildren<DroppableProps>> = (
   }, [id, activeOpacity]);
 
   return (
-    <Animated.View ref={setNodeRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
+    <Animated.View ref={animatedRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
       {children}
     </Animated.View>
   );
