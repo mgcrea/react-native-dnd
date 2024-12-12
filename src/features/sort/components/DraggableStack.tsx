@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useEffect,
-  useImperativeHandle,
-  useMemo,
-  type FunctionComponent,
-  type PropsWithChildren,
-} from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useMemo, type PropsWithChildren } from "react";
 import { type FlexStyle, type ViewProps } from "react-native";
 import Animated, { runOnUI } from "react-native-reanimated";
 import { useChildrenIds } from "../../../hooks";

@@ -20,7 +20,7 @@ export const DraggableGrid: FunctionComponent<PropsWithChildren<DraggableGridPro
   size,
   style: styleProp,
 }) => {
-  const initialOrder = useChildrenIds(children);
+  const childrenIds = useChildrenIds(children);
 
   const style = useMemo(
     () =>
@@ -38,7 +38,7 @@ export const DraggableGrid: FunctionComponent<PropsWithChildren<DraggableGridPro
   useDraggableGrid({
     direction: style.flexDirection,
     gap: style.gap,
-    initialOrder,
+    childrenIds,
     onOrderChange,
     onOrderUpdate,
     shouldSwapWorklet,

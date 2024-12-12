@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { LayoutRectangle } from "react-native";
 import { runOnJS, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { useDndContext } from "../../../DndContext";
