@@ -16,6 +16,7 @@ const data = items.map((letter, index) => ({
   value: letter,
   id: `${index}-${letter}`,
 })) satisfies ObjectWithId[];
+let id = items.length;
 
 export const DraggableStackExample: FunctionComponent = () => {
   const [items, setItems] = useState(data);
@@ -62,9 +63,10 @@ export const DraggableStackExample: FunctionComponent = () => {
           onPress={() => {
             setItems(prevItems => {
               const randomIndex = 2; //Math.floor(Math.random() * prevItems.length);
+              id++;
               prevItems.splice(randomIndex, 0, {
                 value: '🤪',
-                id: `${prevItems.length}-🤪`,
+                id: `${id}-🤪`,
               });
               return prevItems.slice();
             });
@@ -109,13 +111,22 @@ export const DraggableStackExample: FunctionComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    // alignItems: 'stretch',
+    // justifyContent: 'st',
+    flexDirection: 'column',
+  },
+  view: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'flex-end',
+    backgroundColor: 'rgba(255,0,255,0.1)',
+    flexGrow: 1,
   },
   stack: {
     backgroundColor: 'rgba(0,0,0,0.1)',
     alignItems: 'center',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
+    // flexGrow: 1,
     padding: 32,
     borderRadius: 32,
   },

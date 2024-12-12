@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 
-import { useLayoutEffect } from "react";
-import { LayoutRectangle, ViewProps } from "react-native";
-import { runOnUI, useAnimatedReaction, useAnimatedRef, useSharedValue } from "react-native-reanimated";
+import { useLayoutEffect, useMemo, useRef } from "react";
+import { LayoutRectangle, View, ViewProps } from "react-native";
+import { runOnUI, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { DraggableState, useDndContext } from "../DndContext";
-import { useLatestSharedValue } from "../hooks";
+import { useEvent, useLatestSharedValue } from "../hooks";
 import { Data, UniqueIdentifier } from "../types";
-import { isReanimatedSharedValue, updateLayoutValue, waitForLayout } from "../utils";
+import { isReanimatedSharedValue } from "../utils";
 import { useSharedPoint } from "./useSharedPoint";
 
 export type DraggableConstraints = {
@@ -42,7 +42,6 @@ export const useDraggable = ({
   activationTolerance = Infinity,
 }: UseDraggableOptions) => {
   const {
-    draggableIds,
     draggableLayouts,
     draggableOffsets,
     draggableRestingOffsets,
@@ -50,10 +49,11 @@ export const useDraggable = ({
     draggableStates,
     draggableActiveId,
     draggablePendingId,
-    // containerRef,
+    containerRef,
     panGestureState,
   } = useDndContext();
-  const animatedRef = useAnimatedRef();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const ref = useRef<View>(null!);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const sharedData = isReanimatedSharedValue(data) ? data : useLatestSharedValue(data);
 
@@ -72,18 +72,11 @@ export const useDraggable = ({
   useLayoutEffect(() => {
     const runLayoutEffect = () => {
       "worklet";
-      // Wait for the layout to be available by requesting two consecutive animation frames
-      waitForLayout(() => {
-        // Try to recover the layout from the ref if it's not available yet
-        if (layout.value.width === 0 || layout.value.height === 0) {
-          // console.log(`Recovering layout for ${id} from ref`);
-          updateLayoutValue(layout, animatedRef);
-        }
+      requestAnimationFrame(() => {
         draggableLayouts.value[id] = layout;
         draggableOffsets.value[id] = offset;
         draggableRestingOffsets.value[id] = restingOffset;
         draggableStates.value[id] = state;
-        draggableIds.value = [...draggableIds.value, id];
         draggableOptions.value[id] = {
           id,
           data: sharedData,
@@ -105,7 +98,6 @@ export const useDraggable = ({
           delete draggableRestingOffsets.value[id];
           delete draggableOptions.value[id];
           delete draggableStates.value[id];
-          draggableIds.value = draggableIds.value.filter((draggableId) => draggableId !== id);
         });
       };
       runOnUI(cleanupLayoutEffect)();
@@ -113,10 +105,15 @@ export const useDraggable = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const onLayout: ViewProps["onLayout"] = (_event) => {
-    // console.log(`onLayout: ${id}`, event.nativeEvent.layout);
-    runOnUI(updateLayoutValue)(layout, animatedRef);
-  };
+  const onLayout: ViewProps["onLayout"] = useEvent((_event) => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!ref.current || !containerRef.current) {
+      return;
+    }
+    ref.current.measureLayout(containerRef.current, (x, y, width, height) => {
+      layout.value = { x, y, width, height };
+    });
+  });
 
   // Track disabled prop changes
   useAnimatedReaction(
@@ -130,14 +127,21 @@ export const useDraggable = ({
     [disabled],
   );
 
+  const props = useMemo(
+    () => ({
+      ref,
+      onLayout,
+    }),
+    [onLayout],
+  );
+
   return {
     offset,
     state,
-    animatedRef,
     activeId: draggableActiveId,
     pendingId: draggablePendingId,
     setNodeLayout: onLayout,
     panGestureState,
-    // setDisabled,
+    props,
   };
 };

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-dynamic-delete */
 
-import { useLayoutEffect } from "react";
-import { type LayoutRectangle, type ViewProps } from "react-native";
-import { runOnUI, useAnimatedReaction, useAnimatedRef, useSharedValue } from "react-native-reanimated";
+import { useLayoutEffect, useMemo, useRef } from "react";
+import { View, type LayoutRectangle, type ViewProps } from "react-native";
+import { runOnUI, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { useDndContext } from "../DndContext";
-import { useLatestSharedValue } from "../hooks";
+import { useEvent, useLatestSharedValue } from "../hooks";
 import type { Data, UniqueIdentifier } from "../types";
-import { isReanimatedSharedValue, updateLayoutValue, waitForLayout } from "../utils";
+import { isReanimatedSharedValue } from "../utils";
 
 export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?: boolean };
 
@@ -23,8 +23,10 @@ export type UseDroppableOptions = { id: UniqueIdentifier; data?: Data; disabled?
  * @param {boolean} [options.disabled=false] - A flag that indicates whether the droppable component is disabled.
  */
 export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOptions) => {
-  const { droppableLayouts, droppableOptions, droppableActiveId, panGestureState } = useDndContext();
-  const animatedRef = useAnimatedRef();
+  const { containerRef, droppableLayouts, droppableOptions, droppableActiveId, panGestureState } =
+    useDndContext();
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const ref = useRef<View>(null!);
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const sharedData = isReanimatedSharedValue(data) ? data : useLatestSharedValue(data);
 
@@ -38,16 +40,8 @@ export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOp
   useLayoutEffect(() => {
     const runLayoutEffect = () => {
       "worklet";
-      waitForLayout(() => {
-        // Try to recover the layout from the ref if it's not available yet
-        if (layout.value.width === 0 || layout.value.height === 0) {
-          // console.log(`Recovering layout for ${id} from ref`);
-          updateLayoutValue(layout, animatedRef);
-        }
-        droppableLayouts.value[id] = layout;
-        // Options
-        droppableOptions.value[id] = { id, data: sharedData, disabled };
-      });
+      droppableLayouts.value[id] = layout;
+      droppableOptions.value[id] = { id, data: sharedData, disabled };
     };
 
     runOnUI(runLayoutEffect)();
@@ -65,10 +59,15 @@ export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOp
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  const onLayout: ViewProps["onLayout"] = (_event) => {
-    // console.log(`onLayout: ${id}`, event.nativeEvent.layout);
-    updateLayoutValue(layout, animatedRef);
-  };
+  const onLayout: ViewProps["onLayout"] = useEvent(() => {
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!ref.current || !containerRef.current) {
+      return;
+    }
+    ref.current.measureLayout(containerRef.current, (x, y, width, height) => {
+      layout.value = { x, y, width, height };
+    });
+  });
 
   // Track disabled prop changes
   useAnimatedReaction(
@@ -82,5 +81,13 @@ export const useDroppable = ({ id, data = {}, disabled = false }: UseDroppableOp
     [disabled],
   );
 
-  return { animatedRef, setNodeLayout: onLayout, activeId: droppableActiveId, panGestureState };
+  const props = useMemo(
+    () => ({
+      ref,
+      onLayout,
+    }),
+    [onLayout],
+  );
+
+  return { props, activeId: droppableActiveId, panGestureState };
 };

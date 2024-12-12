@@ -15,9 +15,7 @@ export type DraggableState = "resting" | "pending" | "dragging" | "dropping" | "
 export type DraggableStates = Record<UniqueIdentifier, SharedValue<DraggableState>>;
 
 export type DndContextValue = {
-  containerRef: RefObject<View>;
-  draggableIds: SharedValue<UniqueIdentifier[]>;
-  droppableIds: SharedValue<UniqueIdentifier[]>;
+  containerRef: RefObject<View>; // AnimatedRef<Component>;
   draggableLayouts: SharedValue<Layouts>;
   droppableLayouts: SharedValue<Layouts>;
   draggableOptions: SharedValue<DraggableOptions>;

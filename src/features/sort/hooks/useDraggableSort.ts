@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { LayoutRectangle } from "react-native";
 import { runOnJS, useAnimatedReaction, useSharedValue } from "react-native-reanimated";
 import { useDndContext } from "../../../DndContext";
@@ -18,7 +19,7 @@ export type ShouldSwapWorklet = (
 ) => boolean;
 
 export type UseDraggableSortOptions = {
-  initialOrder: UniqueIdentifier[];
+  childrenIds: UniqueIdentifier[];
   horizontal?: boolean;
   onOrderChange?: (order: UniqueIdentifier[]) => void;
   onOrderUpdate?: (nextOrder: UniqueIdentifier[], prevOrder: UniqueIdentifier[]) => void;
@@ -27,18 +28,17 @@ export type UseDraggableSortOptions = {
 
 export const useDraggableSort = ({
   horizontal = false,
-  initialOrder,
+  childrenIds,
   onOrderChange,
   onOrderUpdate,
   shouldSwapWorklet = doesOverlapOnAxis,
 }: UseDraggableSortOptions) => {
-  const { draggableIds, draggableActiveId, draggableActiveLayout, draggableOffsets, draggableLayouts } =
-    useDndContext();
+  const { draggableActiveId, draggableActiveLayout, draggableOffsets, draggableLayouts } = useDndContext();
   const direction = horizontal ? "horizontal" : "vertical";
 
   const draggablePlaceholderIndex = useSharedValue(-1);
-  const draggableLastOrder = useSharedValue<UniqueIdentifier[]>(initialOrder);
-  const draggableSortOrder = useSharedValue<UniqueIdentifier[]>(initialOrder);
+  const draggableLastOrder = useSharedValue<UniqueIdentifier[]>(childrenIds);
+  const draggableSortOrder = useSharedValue<UniqueIdentifier[]>(childrenIds);
 
   // Core placeholder index logic
   const findPlaceholderIndex = (activeLayout: LayoutRectangle): number => {
@@ -77,7 +77,7 @@ export const useDraggableSort = ({
 
   // Track added/removed draggable items and update the sort order
   useAnimatedReaction(
-    () => draggableIds.value,
+    () => childrenIds,
     (next, prev) => {
       if (prev === null || prev.length === 0) {
         return;
@@ -131,11 +131,15 @@ export const useDraggableSort = ({
         draggablePlaceholderIndex.value = -1;
         return;
       }
+      // Only track our own children
+      if (!childrenIds.includes(nextActiveId)) {
+        return;
+      }
       // const axis = direction === "row" ? "x" : "y";
       // const delta = prevActiveLayout !== null ? nextActiveLayout[axis] - prevActiveLayout[axis] : 0;
       draggablePlaceholderIndex.value = findPlaceholderIndex(nextActiveLayout);
     },
-    [],
+    [childrenIds],
   );
 
   // Track placeholder index changes and update the sort order

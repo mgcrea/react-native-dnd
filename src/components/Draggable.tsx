@@ -43,7 +43,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   animatedStyleWorklet,
   ...otherProps
 }) => {
-  const { animatedRef, setNodeLayout, offset, state } = useDraggable({
+  const { props, offset, state } = useDraggable({
     id,
     data,
     disabled,
@@ -83,7 +83,7 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
   }, [id, state, activeOpacity]);
 
   return (
-    <Animated.View ref={animatedRef} onLayout={setNodeLayout} style={[style, animatedStyle]} {...otherProps}>
+    <Animated.View {...props} style={[style, animatedStyle]} {...otherProps}>
       {children}
     </Animated.View>
   );

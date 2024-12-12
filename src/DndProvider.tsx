@@ -94,8 +94,6 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     ref,
   ) {
     const containerRef = useRef<View | null>(null);
-    const draggableIds = useSharedValue<UniqueIdentifier[]>([]);
-    const droppableIds = useSharedValue<UniqueIdentifier[]>([]);
     const draggableLayouts = useSharedValue<Layouts>({});
     const droppableLayouts = useSharedValue<Layouts>({});
     const draggableOptions = useSharedValue<DraggableOptions>({});
@@ -113,8 +111,6 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
     const contextValue = useRef<DndContextValue>({
       containerRef,
-      draggableIds,
-      droppableIds,
       draggableLayouts,
       droppableLayouts,
       draggableOptions,
@@ -216,7 +212,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
       const panGesture = Gesture.Pan()
         .onBegin((event) => {
-          const { state, absoluteX: x, absoluteY: y } = event;
+          const { state, x, y } = event;
           debug && console.log("begin", { state, x, y });
           // Gesture is globally disabled
           if (disabled) {

@@ -7,33 +7,27 @@ import { useDraggableSort, type UseDraggableSortOptions } from "./useDraggableSo
 
 export type UseDraggableStackOptions = Pick<
   UseDraggableSortOptions,
-  "initialOrder" | "onOrderChange" | "onOrderUpdate" | "shouldSwapWorklet"
+  "childrenIds" | "onOrderChange" | "onOrderUpdate" | "shouldSwapWorklet"
 > & {
   gap?: number;
   horizontal?: boolean;
 };
 export const useDraggableStack = ({
-  initialOrder,
+  childrenIds,
   onOrderChange,
   onOrderUpdate,
   gap = 0,
   horizontal = false,
   shouldSwapWorklet = doesOverlapOnAxis,
 }: UseDraggableStackOptions) => {
-  const {
-    draggableIds,
-    draggableStates,
-    draggableActiveId,
-    draggableOffsets,
-    draggableRestingOffsets,
-    draggableLayouts,
-  } = useDndContext();
+  const { draggableStates, draggableActiveId, draggableOffsets, draggableRestingOffsets, draggableLayouts } =
+    useDndContext();
   const axis = horizontal ? "x" : "y";
   const size = horizontal ? "width" : "height";
 
   const { draggablePlaceholderIndex, draggableSortOrder } = useDraggableSort({
     horizontal,
-    initialOrder,
+    childrenIds,
     onOrderChange,
     onOrderUpdate,
     shouldSwapWorklet,
@@ -47,7 +41,7 @@ export const useDraggableStack = ({
       const { value: sortOrder } = draggableSortOrder;
 
       const nextIndex = sortOrder.findIndex((itemId) => itemId === id);
-      const prevIndex = initialOrder.findIndex((itemId) => itemId === id);
+      const prevIndex = childrenIds.findIndex((itemId) => itemId === id);
 
       let offset = 0;
       // Accumulate the directional offset for the current item accross its siblings in the stack
@@ -62,7 +56,7 @@ export const useDraggableStack = ({
           // Can happen if some items are being removed from the stack
           continue;
         }
-        const prevSiblingIndex = initialOrder.findIndex((itemId) => itemId === siblingId);
+        const prevSiblingIndex = childrenIds.findIndex((itemId) => itemId === siblingId);
         // Accummulate the directional offset for the active item
         if (nextSiblingIndex < nextIndex && prevSiblingIndex > prevIndex) {
           // console.log(
@@ -78,7 +72,7 @@ export const useDraggableStack = ({
       }
       return offset;
     },
-    [draggableLayouts, draggableSortOrder, gap, horizontal, initialOrder],
+    [draggableLayouts, draggableSortOrder, gap, horizontal, childrenIds],
   );
 
   const refreshOffsets = useCallback(() => {
@@ -121,7 +115,7 @@ export const useDraggableStack = ({
 
   // Track items being added or removed from the stack
   useAnimatedReaction(
-    () => draggableIds.value,
+    () => childrenIds,
     (next, prev) => {
       // Ignore initial reaction
       if (prev === null) {
@@ -133,7 +127,7 @@ export const useDraggableStack = ({
       // Refresh all offsets
       refreshOffsets();
     },
-    [initialOrder],
+    [childrenIds],
   );
 
   // Track sort order changes and update the offsets

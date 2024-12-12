@@ -32,7 +32,7 @@ export const DraggableStack = forwardRef<DraggableStackHandle, PropsWithChildren
     },
     ref,
   ) {
-    const initialOrder = useChildrenIds(children);
+    const childrenIds = useChildrenIds(children);
 
     const style = useMemo(
       () =>
@@ -51,7 +51,7 @@ export const DraggableStack = forwardRef<DraggableStackHandle, PropsWithChildren
     const { refreshOffsets } = useDraggableStack({
       gap: style.gap,
       horizontal,
-      initialOrder,
+      childrenIds,
       onOrderChange,
       onOrderUpdate,
       shouldSwapWorklet,
@@ -66,7 +66,7 @@ export const DraggableStack = forwardRef<DraggableStackHandle, PropsWithChildren
     useEffect(() => {
       // Refresh offsets when children change
       runOnUI(refreshOffsets)();
-    }, [initialOrder, refreshOffsets]);
+    }, [childrenIds, refreshOffsets]);
 
     return <Animated.View style={style}>{children}</Animated.View>;
   },
