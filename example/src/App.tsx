@@ -1,11 +1,8 @@
 import React, {type FunctionComponent} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-// import {DraggableGridExample as DraggableExample} from './pages/DraggableGridExample';
-import {DraggableStackExample as DraggableExample} from './pages/DraggableStackExample';
-import {DraggableBasicExample} from './pages/DraggableBasicExample';
+import {DraggableStackExample} from './pages/DraggableStackExample';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import {configureReanimatedLogger} from 'react-native-reanimated';
-import HomeScreen from './pages/OtherExample';
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -17,9 +14,7 @@ export const App: FunctionComponent = () => {
   return (
     <SafeAreaView style={styles.container}>
       <GestureHandlerRootView>
-        {/* <DraggableBasicExample /> */}
-        {/* <DraggableGridExample /> */}
-        <HomeScreen />
+        <DraggableStackExample />
       </GestureHandlerRootView>
     </SafeAreaView>
   );
