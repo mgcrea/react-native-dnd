@@ -5,6 +5,7 @@ import {DraggableStackExample as DraggableExample} from './pages/DraggableStackE
 import {DraggableBasicExample} from './pages/DraggableBasicExample';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import {configureReanimatedLogger} from 'react-native-reanimated';
+import HomeScreen from './pages/OtherExample';
 
 // This is the default configuration
 configureReanimatedLogger({
@@ -18,7 +19,7 @@ export const App: FunctionComponent = () => {
       <GestureHandlerRootView>
         {/* <DraggableBasicExample /> */}
         {/* <DraggableGridExample /> */}
-        <DraggableExample />
+        <HomeScreen />
       </GestureHandlerRootView>
     </SafeAreaView>
   );

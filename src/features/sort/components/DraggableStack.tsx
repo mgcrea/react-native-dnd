@@ -41,7 +41,7 @@ export const DraggableStack = forwardRef<DraggableStackHandle, PropsWithChildren
 
     const horizontal = ["row", "row-reverse"].includes(style.flexDirection);
 
-    const { refreshOffsets } = useDraggableStack({
+    const { refreshOffsets, resetSortOrder } = useDraggableStack({
       gap: style.gap,
       horizontal,
       childrenIds,
@@ -53,8 +53,9 @@ export const DraggableStack = forwardRef<DraggableStackHandle, PropsWithChildren
     useImperativeHandle(ref, () => {
       return {
         refreshOffsets,
+        resetSortOrder,
       };
-    }, [refreshOffsets]);
+    }, [refreshOffsets, resetSortOrder]);
 
     useEffect(() => {
       // Refresh offsets when children change

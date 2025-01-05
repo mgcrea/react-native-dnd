@@ -113,6 +113,13 @@ export const useDraggableStack = ({
     horizontal,
   ]);
 
+  const resetSortOrder = useCallback(() => {
+    // Reset the expected sort order
+    draggableSortOrder.value = childrenIds.slice();
+    // Refresh all offsets
+    refreshOffsets();
+  }, [childrenIds, draggableSortOrder, refreshOffsets]);
+
   // Track items being added or removed from the stack
   useAnimatedReaction(
     () => childrenIds,
@@ -125,7 +132,7 @@ export const useDraggableStack = ({
         return;
       }
       // Reset the expected sort order
-      draggableSortOrder.value = next;
+      // draggableSortOrder.value = next;
       // Refresh all offsets
       refreshOffsets();
     },
@@ -189,5 +196,5 @@ export const useDraggableStack = ({
     [horizontal],
   );
 
-  return { draggablePlaceholderIndex, draggableSortOrder, refreshOffsets };
+  return { draggablePlaceholderIndex, draggableSortOrder, resetSortOrder, refreshOffsets };
 };
