@@ -1,7 +1,7 @@
 import React, {type FunctionComponent} from 'react';
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
-import {DraggableGridExample} from './pages/DraggableGridExample';
-import {DraggableStackExample} from './pages/DraggableStackExample';
+// import {DraggableGridExample as DraggableExample} from './pages/DraggableGridExample';
+import {DraggableStackExample as DraggableExample} from './pages/DraggableStackExample';
 import {DraggableBasicExample} from './pages/DraggableBasicExample';
 import {SafeAreaView, StyleSheet} from 'react-native';
 import {configureReanimatedLogger} from 'react-native-reanimated';
@@ -18,7 +18,7 @@ export const App: FunctionComponent = () => {
       <GestureHandlerRootView>
         {/* <DraggableBasicExample /> */}
         {/* <DraggableGridExample /> */}
-        <DraggableStackExample />
+        <DraggableExample />
       </GestureHandlerRootView>
     </SafeAreaView>
   );

@@ -7,7 +7,7 @@ import {
   type DraggableStackProps,
   type ObjectWithId,
 } from '@mgcrea/react-native-dnd/src';
-import React, {useCallback, useState, type FunctionComponent} from 'react';
+import React, {useState, type FunctionComponent} from 'react';
 import {Button, StyleSheet, Text, View} from 'react-native';
 import {runOnUI} from 'react-native-reanimated';
 
@@ -23,15 +23,11 @@ export const DraggableStackExample: FunctionComponent = () => {
   const [fontSize, setFontSize] = useState(32);
   const ref = React.useRef<DraggableStackHandle>(null);
 
-  const onStackOrderChange: DraggableStackProps['onOrderChange'] = useCallback(
-    (order: UniqueIdentifier[]) => {
-      console.log('onStackOrderChange', order);
-      setTimeout(() => {
-        // setItems(items => order.map(id => items.find(item => item.id === id)!));
-      }, 1000);
-    },
-    [],
-  );
+  const onStackOrderChange: DraggableStackProps['onOrderChange'] = (
+    order: UniqueIdentifier[],
+  ) => {
+    console.log('onStackOrderChange', order);
+  };
   const onStackOrderUpdate: DraggableStackProps['onOrderUpdate'] = value => {
     console.log('onStackOrderUpdate', value);
   };
@@ -47,9 +43,9 @@ export const DraggableStackExample: FunctionComponent = () => {
           onOrderChange={onStackOrderChange}
           onOrderUpdate={onStackOrderUpdate}
           ref={ref}>
-          {items.map(letter => (
+          {items.map((letter, index) => (
             <Draggable
-              key={letter.id}
+              key={`${letter.id}-${index}`}
               id={letter.id}
               style={[styles.draggable]}>
               <Text style={[styles.text, {fontSize}]}>{letter.value}</Text>
@@ -57,7 +53,7 @@ export const DraggableStackExample: FunctionComponent = () => {
           ))}
         </DraggableStack>
       </DndProvider>
-      <View style={{flexDirection: 'row'}}>
+      <View style={styles.actions}>
         <Button
           title="Add"
           onPress={() => {
@@ -103,6 +99,21 @@ export const DraggableStackExample: FunctionComponent = () => {
             }
           }}
         />
+
+        <Button
+          title="Reorder"
+          onPress={() => {
+            setItems(items => {
+              const nextItems = items.slice().reverse();
+              console.log({nextItems});
+              return nextItems;
+            });
+            // if (ref.current) {
+            //   const {refreshOffsets} = ref.current;
+            //   runOnUI(refreshOffsets)();
+            // }
+          }}
+        />
       </View>
     </View>
   );
@@ -111,24 +122,29 @@ export const DraggableStackExample: FunctionComponent = () => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    // alignItems: 'stretch',
-    // justifyContent: 'st',
+    alignItems: 'stretch',
+    justifyContent: 'center',
     flexDirection: 'column',
-  },
-  view: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'flex-end',
-    backgroundColor: 'rgba(255,0,255,0.1)',
-    flexGrow: 1,
+    overflow: 'hidden',
   },
   stack: {
     backgroundColor: 'rgba(0,0,0,0.1)',
     alignItems: 'center',
     justifyContent: 'center',
     // flexGrow: 1,
+    margin: 32,
     padding: 32,
     borderRadius: 32,
+  },
+  draggable: {
+    backgroundColor: 'seagreen',
+    borderColor: 'rgba(0,0,0,0.2)',
+    borderWidth: 1,
+    overflow: 'hidden',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 32,
+    paddingVertical: 8,
   },
   title: {
     color: '#555',
@@ -138,20 +154,17 @@ const styles = StyleSheet.create({
     top: 10,
     left: 10,
   },
-  draggable: {
-    backgroundColor: 'seagreen',
-    height: 100,
-    borderColor: 'rgba(0,0,0,0.2)',
-    borderWidth: 1,
-    overflow: 'hidden',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 32,
-  },
   text: {
-    color: 'white',
-    fontWeight: 'bold',
     fontSize: 32,
     padding: 16,
+  },
+  actions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
   },
 });
