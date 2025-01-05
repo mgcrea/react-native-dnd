@@ -61,14 +61,12 @@ export const Draggable: FunctionComponent<PropsWithChildren<DraggableProps>> = (
       zIndex,
       transform: [
         {
-          // translateX: offset.x.value,
           translateX:
             isActive || isSleeping || isActing
               ? offset.x.value
               : withSpring(offset.x.value, { damping: 100, stiffness: 1000 }),
         },
         {
-          // translateY: offset.y.value,
           translateY:
             isActive || isSleeping || isActing
               ? offset.y.value
