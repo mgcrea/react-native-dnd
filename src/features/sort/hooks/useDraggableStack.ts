@@ -131,8 +131,6 @@ export const useDraggableStack = ({
       if (arraysEqual(next, prev)) {
         return;
       }
-      // Reset the expected sort order
-      // draggableSortOrder.value = next;
       // Refresh all offsets
       refreshOffsets();
     },
