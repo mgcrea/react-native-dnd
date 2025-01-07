@@ -110,6 +110,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableActiveLayout = useSharedValue<Rectangle | null>(null);
     const draggableInitialOffset = useSharedPoint(0, 0);
     const draggableContentOffset = useSharedPoint(0, 0);
+    const scrollOffset = useSharedPoint(0, 0);
     const panGestureState = useSharedValue<GestureEventPayload["state"]>(0);
 
     const contextValue = useRef<DndContextValue>({
@@ -128,6 +129,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       draggableInitialOffset,
       draggableActiveLayout,
       draggableContentOffset,
+      scrollOffset,
     });
 
     useImperativeHandle(
@@ -171,8 +173,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           if (
             !isDisabled &&
             includesPoint(layout.value, {
-              x: x - offset.x.value + draggableContentOffset.x.value,
-              y: y - offset.y.value + draggableContentOffset.y.value,
+              x: x - offset.x.value + draggableContentOffset.x.value + scrollOffset.x.value,
+              y: y - offset.y.value + draggableContentOffset.y.value + scrollOffset.y.value,
             })
           ) {
             return id;
