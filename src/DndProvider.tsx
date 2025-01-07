@@ -11,6 +11,7 @@ import {
   PanGestureHandlerEventPayload,
   State,
 } from "react-native-gesture-handler";
+import type { TouchAction } from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
 import {
   cancelAnimation,
   runOnJS,
@@ -46,6 +47,7 @@ export type DndProviderProps = {
   activationDelay?: number;
   minDistance?: number;
   disabled?: boolean;
+  touchAction?: TouchAction;
   onDragEnd?: (ev: { active: ItemOptions; over: ItemOptions | null }) => void;
   onBegin?: (
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
@@ -82,6 +84,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       minDistance = 0,
       activationDelay = 0,
       disabled,
+      touchAction,
       onActivation,
       onDragEnd,
       onBegin,
@@ -411,7 +414,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
     return (
       <DndContext.Provider value={contextValue.current}>
-        <GestureDetector gesture={panGesture}>
+        <GestureDetector gesture={panGesture} touchAction={touchAction}>
           <View ref={containerRef} collapsable={false} style={style} testID="view">
             {children}
           </View>
