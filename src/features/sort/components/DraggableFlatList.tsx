@@ -4,28 +4,28 @@ import React, {
   useImperativeHandle,
   useMemo,
   type ComponentPropsWithoutRef,
+  type ReactElement,
+  type Ref,
 } from "react";
-import { type FlexStyle, type ViewProps } from "react-native";
+import { View, type FlexStyle, type ViewProps } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
 import { runOnUI } from "react-native-reanimated";
-import { View } from "react-native-reanimated/lib/typescript/Animated";
 import { useDraggableStack, type UseDraggableStackOptions } from "../hooks/useDraggableStack";
 
-export type DraggableFlatListProps = Pick<ViewProps, "style"> &
+export type DraggableFlatListProps<T> = Pick<ViewProps, "style"> &
   Pick<UseDraggableStackOptions, "onOrderChange" | "onOrderUpdate" | "shouldSwapWorklet"> & {
     direction?: FlexStyle["flexDirection"];
     gap?: number;
-    data: ArrayLike<unknown>;
-    keyExtractor: (item: unknown, index: number) => string;
+    keyExtractor: (item: T, index: number) => string;
   } & Omit<
-    ComponentPropsWithoutRef<typeof FlatList>,
-    "onScroll" | "ItemSeparatorComponent" | "data" | "keyExtractor"
+    ComponentPropsWithoutRef<typeof FlatList<T>>,
+    "onScroll" | "ItemSeparatorComponent" | "keyExtractor"
   >;
 
 export type DraggableFlatListHandle = Pick<ReturnType<typeof useDraggableStack>, "refreshOffsets">;
 
-export const DraggableFlatList = forwardRef<DraggableFlatListHandle, DraggableFlatListProps>(
-  function DraggableFlatList(
+export const DraggableFlatList = forwardRef<DraggableFlatListHandle, DraggableFlatListProps<unknown>>(
+  function DraggableFlatList<T>(
     {
       data,
       keyExtractor,
@@ -36,14 +36,14 @@ export const DraggableFlatList = forwardRef<DraggableFlatListHandle, DraggableFl
       shouldSwapWorklet,
       style: styleProp,
       ...props
-    },
-    ref,
+    }: DraggableFlatListProps<T>,
+    ref: React.Ref<DraggableFlatListHandle>,
   ) {
     const childrenIds = useMemo(() => {
-      const ids = Array.from(data).map((value, index) => keyExtractor(value, index));
+      const ids = data ? Array.from(data).map((value, index) => keyExtractor(value, index)) : [];
 
       return ids ? ids.filter(Boolean) : [];
-    }, [data]);
+    }, [data, keyExtractor]);
 
     const style = useMemo(
       () =>
@@ -85,14 +85,15 @@ export const DraggableFlatList = forwardRef<DraggableFlatListHandle, DraggableFl
         data={data}
         keyExtractor={keyExtractor}
         ItemSeparatorComponent={() => {
-          return <View style={{ height: gap }}></View>;
+          return <View style={horizontal ? { width: gap } : { height: gap }}></View>;
         }}
         onScroll={(event) => {
           scrollOffset.x.value = event.nativeEvent.contentOffset.x;
           scrollOffset.y.value = event.nativeEvent.contentOffset.y;
         }}
+        horizontal={horizontal}
         {...props}
       />
     );
   },
-);
+) as <T>(props: DraggableFlatListProps<T> & { ref?: Ref<DraggableFlatListHandle> }) => ReactElement;
