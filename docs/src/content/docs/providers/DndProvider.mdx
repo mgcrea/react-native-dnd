@@ -40,6 +40,9 @@ export const App: FunctionComponent = () => {
   <Property name="disabled" type="boolean" optional defaultValue={`false`}>
     An optional boolean value to disable the Drag and Drop functionality globally. Default is `false`.
   </Property>
+  <Property name="touchAction" type="TouchAction" optional>
+    An optional CSS touch-action value to pass to the GestureDetector for handling ScrollView interactions on web.
+  </Property>
   <Property name="onActivation" type="function" optional>
     A callback function that is called when a draggable item becomes active. Can be used to trigger haptic
     feedback.

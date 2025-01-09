@@ -20,8 +20,15 @@ export const useDraggableStack = ({
   horizontal = false,
   shouldSwapWorklet = doesOverlapOnAxis,
 }: UseDraggableStackOptions) => {
-  const { draggableStates, draggableActiveId, draggableOffsets, draggableRestingOffsets, draggableLayouts } =
-    useDndContext();
+  const {
+    draggableStates,
+    draggableActiveId,
+    draggableOffsets,
+    draggableRestingOffsets,
+    draggableLayouts,
+    scrollOffset,
+    draggableActiveLayout
+  } = useDndContext();
   const axis = horizontal ? "x" : "y";
   const size = horizontal ? "width" : "height";
 
@@ -194,5 +201,5 @@ export const useDraggableStack = ({
     [horizontal],
   );
 
-  return { draggablePlaceholderIndex, draggableSortOrder, resetSortOrder, refreshOffsets };
+  return { draggablePlaceholderIndex, draggableSortOrder, resetSortOrder, refreshOffsets, scrollOffset,draggableActiveLayout };
 };

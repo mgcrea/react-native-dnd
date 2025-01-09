@@ -29,6 +29,7 @@ export type DndContextValue = {
   draggableActiveLayout: SharedValue<LayoutRectangle | null>;
   draggableInitialOffset: SharedPoint;
   draggableContentOffset: SharedPoint;
+  scrollOffset: SharedPoint;
   panGestureState: SharedValue<GestureEventPayload["state"]>;
 };
 
