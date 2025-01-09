@@ -27,6 +27,7 @@ export const useDraggableStack = ({
     draggableRestingOffsets,
     draggableLayouts,
     scrollOffset,
+    draggableActiveLayout
   } = useDndContext();
   const axis = horizontal ? "x" : "y";
   const size = horizontal ? "width" : "height";
@@ -200,5 +201,5 @@ export const useDraggableStack = ({
     [horizontal],
   );
 
-  return { draggablePlaceholderIndex, draggableSortOrder, resetSortOrder, refreshOffsets, scrollOffset };
+  return { draggablePlaceholderIndex, draggableSortOrder, resetSortOrder, refreshOffsets, scrollOffset,draggableActiveLayout };
 };
