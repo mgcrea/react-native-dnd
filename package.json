@@ -1,7 +1,7 @@
 {
   "name": "@mgcrea/react-native-dnd",
   "version": "2.5.3",
-  "description": "Modern and easy-to-use drag&drop library for react-native",
+  "description": "Modern and easy-to-use drag&drop library for React Native",
   "author": "Olivier Louvignes <olivier@mgcrea.io>",
   "repository": "github:mgcrea/react-native-dnd",
   "license": "MIT",
