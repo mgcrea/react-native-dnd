@@ -11,6 +11,7 @@ import {
   PanGestureHandlerEventPayload,
   State,
 } from "react-native-gesture-handler";
+import type { TouchAction } from "react-native-gesture-handler/lib/typescript/handlers/gestureHandlerCommon";
 import {
   cancelAnimation,
   runOnJS,
@@ -46,6 +47,7 @@ export type DndProviderProps = {
   activationDelay?: number;
   minDistance?: number;
   disabled?: boolean;
+  touchAction?: TouchAction;
   onDragEnd?: (ev: { active: ItemOptions; over: ItemOptions | null }) => void;
   onBegin?: (
     event: GestureStateChangeEvent<PanGestureHandlerEventPayload>,
@@ -82,6 +84,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       minDistance = 0,
       activationDelay = 0,
       disabled,
+      touchAction,
       onActivation,
       onDragEnd,
       onBegin,
@@ -107,6 +110,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
     const draggableActiveLayout = useSharedValue<Rectangle | null>(null);
     const draggableInitialOffset = useSharedPoint(0, 0);
     const draggableContentOffset = useSharedPoint(0, 0);
+    const scrollOffset = useSharedPoint(0, 0);
     const panGestureState = useSharedValue<GestureEventPayload["state"]>(0);
 
     const contextValue = useRef<DndContextValue>({
@@ -125,6 +129,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
       draggableInitialOffset,
       draggableActiveLayout,
       draggableContentOffset,
+      scrollOffset,
     });
 
     useImperativeHandle(
@@ -168,8 +173,8 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
           if (
             !isDisabled &&
             includesPoint(layout.value, {
-              x: x - offset.x.value + draggableContentOffset.x.value,
-              y: y - offset.y.value + draggableContentOffset.y.value,
+              x: x - offset.x.value + draggableContentOffset.x.value + scrollOffset.x.value,
+              y: y - offset.y.value + draggableContentOffset.y.value + scrollOffset.y.value,
             })
           ) {
             return id;
@@ -411,7 +416,7 @@ export const DndProvider = forwardRef<DndProviderHandle, PropsWithChildren<DndPr
 
     return (
       <DndContext.Provider value={contextValue.current}>
-        <GestureDetector gesture={panGesture}>
+        <GestureDetector gesture={panGesture} touchAction={touchAction}>
           <View ref={containerRef} collapsable={false} style={style} testID="view">
             {children}
           </View>
